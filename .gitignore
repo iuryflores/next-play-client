@@ -1,5 +1,6 @@
 # dependencies
 /node_modules
+/.npm-cache/
 /.pnp
 .pnp.*
 .yarn/*
@@ -10,11 +11,6 @@
 
 # testing
 /coverage
-
-# next.js
-/.next/
-/.vinext/
-/out/
 
 # misc
 .DS_Store
@@ -30,9 +26,7 @@ yarn-error.log*
 .env*
 
 # deployment and generated files
-.vercel
-next-env.d.ts
+*.tsbuildinfo
 /dist/
-/.wrangler/
 /outputs/
 /work/

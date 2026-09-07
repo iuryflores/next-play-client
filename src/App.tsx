@@ -1,7 +1,4 @@
-'use client';
-
 import { useState, type SubmitEvent } from 'react';
-import Image from 'next/image';
 import {
   ArrowRight,
   Eye,
@@ -47,7 +44,7 @@ export default function LoginPage() {
         aria-label="NextPlay, sua biblioteca pessoal"
       >
         <div className="brand">
-          <Image src="/nextplay-symbol.svg" width={40} height={40} alt="" />
+          <img src="/nextplay-symbol.svg" width={40} height={40} alt="" />
           <span>NextPlay</span>
         </div>
         <div className="brand-story">
@@ -84,7 +81,7 @@ export default function LoginPage() {
       </section>
       <section className="login-panel" aria-labelledby="login-heading">
         <div className="mobile-brand brand">
-          <Image src="/nextplay-symbol.svg" width={36} height={36} alt="" />
+          <img src="/nextplay-symbol.svg" width={36} height={36} alt="" />
           <span>NextPlay</span>
         </div>
         <div className="login-content">

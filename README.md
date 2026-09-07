@@ -1,10 +1,10 @@
 # NextPlay
 
-Primeira tela de login em React/TypeScript, com a identidade visual aprovada.
+Primeira tela de login em React + TypeScript + Vite, com a identidade visual aprovada.
 
 ## Estrutura
 
-`nextplay/brand` contém a marca, `nextplay/client` é a raiz do frontend e `nextplay/server` fica reservado à API. A pasta `client/app` contém somente as rotas e os estilos do App Router; `package.json`, configurações, componentes e dependências ficam diretamente em `client`.
+`nextplay/brand` contém a marca, `nextplay/client` é a raiz do frontend e `nextplay/server` fica reservado à API. `src/App.tsx` contém a tela de login, `src/main.tsx` inicializa o React e `src/index.css` contém os estilos. `index.html`, configurações, componentes e dependências ficam diretamente em `client`.
 
 ## Desenvolvimento
 
@@ -17,7 +17,9 @@ npm run dev
 
 Use `npm run build` para compilar e `npm run lint` para verificar o código.
 
-O lint completo do scaffold apresenta apontamentos preexistentes nos componentes genéricos em `components/ui` e em `hooks/use-mobile.ts`. Para verificar esta tela separadamente, use `npx oxlint app` e `npx tsc --noEmit`.
+O desenvolvimento usa `http://localhost:3000`. `npm run build` verifica o TypeScript e gera os arquivos estáticos em `dist`; `npm run preview` permite conferir esse build localmente. A configuração de hospedagem foi adaptada para esse formato, mas a migração não republica automaticamente a prévia hospedada.
+
+O lint completo do scaffold apresenta apontamentos preexistentes nos componentes genéricos em `components/ui` e em `hooks/use-mobile.ts`. Para verificar esta tela separadamente, use `npx oxlint src` e `npx tsc --noEmit`.
 
 ## Escopo desta etapa
 
