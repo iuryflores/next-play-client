@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/iuryflores/next-play-client/compare/v0.2.0...v0.2.1) (2026-11-01)
+
+
+### Bug Fixes
+
+* wait for Nginx workers before verifying deployment ([dbf0ae6](https://github.com/iuryflores/next-play-client/commit/dbf0ae618115f8e5d93ef4c6047dcde2928e1364))
+
 ## [0.2.0](https://github.com/iuryflores/next-play-client/compare/v0.1.0...v0.2.0) (2026-11-01)
 
 
