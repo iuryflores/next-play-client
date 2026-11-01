@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/iuryflores/next-play-client/compare/v0.3.0...v0.4.0) (2026-11-01)
+
+
+### Features
+
+* deliver collection and reading MVP with mobile refinements ([bc58dad](https://github.com/iuryflores/next-play-client/commit/bc58dade55c470651378b6b64d074dfe4951c946))
+
 ## [0.3.0](https://github.com/iuryflores/next-play-client/compare/v0.2.1...v0.3.0) (2026-11-01)
 
 
