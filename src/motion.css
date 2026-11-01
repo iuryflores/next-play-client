@@ -1,0 +1,17 @@
+:root { --nextplay-ease: cubic-bezier(.2,.7,.2,1); }
+[data-slot="dialog-content"], [data-slot="dialog-overlay"] { animation-duration: 220ms; animation-timing-function: var(--nextplay-ease); }
+[data-slot="dialog-content"][data-closed], [data-slot="dialog-overlay"][data-closed] { animation-duration: 160ms; }
+[data-slot="tabs-content"]:not([hidden]), .title-details, .stats-page, .item-grid, .catalog-results, .friends-ranking, .page-loading { animation: nextplay-content-in 240ms var(--nextplay-ease) both; }
+.home-sidebar button, .home-content button, [data-slot="tabs-trigger"] { transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease; }
+.library-card, .recent-watched-card, .cast-card { transition: border-color 180ms ease, box-shadow 180ms ease, transform 200ms var(--nextplay-ease); }
+@media (hover: hover) { .recent-watched-card:hover, .cast-card:hover { transform: translateY(-2px); } }
+.recent-watched { transition: margin-bottom 260ms var(--nextplay-ease); }
+.recent-watched-reveal { display: grid; grid-template-rows: 1fr; opacity: 1; transition: grid-template-rows 280ms var(--nextplay-ease), opacity 200ms ease, visibility 280ms; visibility: visible; }
+.recent-watched-reveal-inner { min-height: 0; overflow: hidden; }
+.recent-watched-collapsed .recent-watched-reveal { grid-template-rows: 0fr; opacity: 0; visibility: hidden; }
+.recent-collapse-chevron { transform: rotate(180deg); transition: transform 240ms var(--nextplay-ease); }
+.recent-watched-collapsed .recent-collapse-chevron { transform: rotate(0); }
+@keyframes nextplay-content-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

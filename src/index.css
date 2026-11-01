@@ -311,15 +311,43 @@ h2 {
   background: #b9acff;
 }
 .form-notice {
-  display: block;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid #ed8296;
+  border-left: 4px solid #ff9bad;
+  border-radius: 12px;
+  background: #401e2a;
   font-size: 14px;
+  font-weight: 600;
   line-height: 1.6;
-  color: #e0d8ff;
-  margin: 16px 0 0;
+  color: #ffe1e7;
+  overflow-wrap: anywhere;
+  margin: 4px 0;
+}
+.form-notice svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: #ffafbd;
+}
+.register-toggle {
+  display: flex;
+  margin: 16px auto 0;
+  font-size: 14px;
 }
 .form-notice:empty {
   display: none;
 }
+.recovery-shell { min-height: 100svh; display: grid; place-items: center; padding: 24px; }
+.recovery-card { width: 100%; max-width: 460px; padding: clamp(24px, 5vw, 40px); border: 1px solid #4b435e; border-radius: 20px; background: #1d1b29; }
+.recovery-card h1 { font-size: 30px; margin: 12px 0 20px; }
+.recovery-card p { line-height: 1.65; }
+.recovery-fields { display: grid; gap: 12px; padding: 0; border: 0; margin: 20px 0 0; min-width: 0; }
+.recovery-success { color: #b9f5cc; }
+.recovery-success svg { margin-bottom: 12px; }
 .private-note {
   display: flex;
   justify-content: center;
@@ -404,3 +432,6 @@ h2 {
     transition: none !important;
   }
 }
+
+.home-footer, .login-footer { flex-wrap: wrap; }
+.development-credit { display: block; flex-basis: 100%; margin-top: 8px; font-size: 11px; line-height: 1.5; color: #a99dbb; }

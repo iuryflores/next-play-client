@@ -30,3 +30,5 @@ yarn-error.log*
 /dist/
 /outputs/
 /work/
+
+/application.tar.gz

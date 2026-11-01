@@ -11,7 +11,11 @@
     "start": "vite preview",
     "lint": "oxlint",
     "format": "oxfmt",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:episodes": "node --experimental-strip-types --test tests/episode-navigation.test.mjs",
+    "check:version": "node scripts/check-version.mjs",
+    "test:deploy": "node --test test-deploy/*.test.mjs",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs"
   },
   "dependencies": {
     "react": "19.2.6",
