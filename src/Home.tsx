@@ -66,6 +66,8 @@ import {
   type LibraryItem,
 } from './library';
 import './home.css';
+import MobileNavigation from './MobileNavigation';
+import './mobile.css';
 import Explore from './Explore';
 import QuickActions from './QuickActions';
 import CompletionFields from './CompletionFields';
@@ -613,21 +615,15 @@ function Home({
       </form>
     </>
   );
-  return (
-    <div className="home-shell">
-      <aside className="home-sidebar">
-        <div className="brand">
-          <img src="/nextplay-symbol.svg" width={36} height={36} alt="" />
-          <span>NextPlay</span>
-        </div>
-        <p className="nav-caption">{t(' SEU UNIVERSO ')}</p>
-        <nav aria-label={t('Biblioteca')}>
+  const libraryNavigation = (afterNavigate?: () => void) => (
+        <nav className="library-navigation" aria-label={t('Biblioteca')}>
           {views.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               className={view === id ? 'selected' : ''}
               aria-current={view === id ? 'page' : undefined}
               onClick={() => {
+                afterNavigate?.();
                 setDetailId(null);
                 setHistoryMode(false);
                 setView(id);
@@ -644,6 +640,7 @@ function Home({
             className={view === 'incoming' ? 'selected' : ''}
             aria-current={view === 'incoming' ? 'page' : undefined}
             onClick={() => {
+                afterNavigate?.();
               setDetailId(null);
               setView('incoming');
             }}
@@ -655,6 +652,7 @@ function Home({
             className={view === 'explore' ? 'selected' : ''}
             aria-current={view === 'explore' ? 'page' : undefined}
             onClick={() => {
+                afterNavigate?.();
               setDetailId(null);
               setView('explore');
             }}
@@ -666,6 +664,7 @@ function Home({
             className={view === 'stats' ? 'selected' : ''}
             aria-current={view === 'stats' ? 'page' : undefined}
             onClick={() => {
+                afterNavigate?.();
               setDetailId(null);
               setView('stats');
             }}
@@ -677,6 +676,7 @@ function Home({
             aria-current={view === 'friends' ? 'page' : undefined}
             className={view === 'friends' ? 'selected' : ''}
             onClick={() => {
+                afterNavigate?.();
               setDetailId(null);
               setView('friends');
             }}
@@ -685,6 +685,16 @@ function Home({
             {t('Amigos')}
           </button>
         </nav>
+  );
+  return (
+    <div className="home-shell">
+      <aside className="home-sidebar">
+        <div className="brand">
+          <img src="/nextplay-symbol.svg" width={36} height={36} alt="" />
+          <span>NextPlay</span>
+        </div>
+        <p className="nav-caption">{t(' SEU UNIVERSO ')}</p>
+        {libraryNavigation()}
         <div className="sidebar-note">
           <Bookmark aria-hidden="true" />
           <p>
@@ -726,6 +736,12 @@ function Home({
           </Button>
         </div>
       </aside>
+      <MobileNavigation view={view} navigate={(destination) => {
+        setDetailId(null);
+        setHistoryMode(false);
+        if (destination === 'add') edit(null);
+        else setView(destination);
+      }}>{libraryNavigation}</MobileNavigation>
       <main className="home-main" ref={pageRef}>
         <header className="home-topbar">
           <span>
@@ -998,7 +1014,7 @@ function Home({
                   {loading ? (
                     <PageLoading label={t('Carregando sua coleção…')} />
                   ) : error && !items.length ? null : visible.length ? (
-                    <div className="item-grid">
+                    <div className={`item-grid${compactCards ? ' compact-cards' : ''}`}>
                       {visible.map((item) => {
                         const Icon = icons[item.kind];
                         const minimalCover = compactCards;

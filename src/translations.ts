@@ -1,5 +1,9 @@
 // Portuguese source messages with English and Spanish equivalents.
 const rows = `
+Navegação principal|Main navigation|Navegación principal
+Fechar menu|Close menu|Cerrar menú
+Menu|Menu|Menú
+Escolha o que você quer acompanhar.|Choose what you want to follow.|Elige lo que quieres seguir.
 Confirme seu e-mail|Confirm your email|Confirma tu correo
 E-mail confirmado|Email confirmed|Correo confirmado
 E-mail confirmado. Você já pode entrar na sua conta.|Email confirmed. You can now sign in.|Correo confirmado. Ya puedes iniciar sesión.

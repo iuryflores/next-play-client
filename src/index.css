@@ -435,3 +435,16 @@ h2 {
 
 .home-footer, .login-footer { flex-wrap: wrap; }
 .development-credit { display: block; flex-basis: 100%; margin-top: 8px; font-size: 11px; line-height: 1.5; color: #a99dbb; }
+
+/* Mantém login e recuperação legíveis junto ao recorte e à barra de gestos do celular. */
+@media (max-width: 800px) {
+  .login-panel {
+    padding-top: max(28px, env(safe-area-inset-top));
+    padding-right: max(24px, env(safe-area-inset-right));
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+    padding-left: max(24px, env(safe-area-inset-left));
+  }
+}
+@media (max-width: 800px) and (pointer: coarse) {
+  .login-panel input { font-size: 16px; }
+}

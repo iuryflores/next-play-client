@@ -24,11 +24,11 @@
   color: #9c94ae;
   margin: 48px 12px 15px;
 }
-.home-sidebar nav {
+.library-navigation {
   display: grid;
   gap: 7px;
 }
-.home-sidebar nav button {
+.library-navigation button {
   display: flex;
   align-items: center;
   gap: 11px;
@@ -41,18 +41,18 @@
   font-size: 14px;
   background: transparent;
 }
-.home-sidebar nav button:hover {
+.library-navigation button:hover {
   background: #211d2d;
 }
-.home-sidebar nav button.selected {
+.library-navigation button.selected {
   background: #a899ff1c;
   color: #c5b9ff;
 }
-.home-sidebar nav svg {
+.library-navigation svg {
   width: 18px;
   height: 18px;
 }
-.home-sidebar nav button span {
+.library-navigation button span {
   margin-left: auto;
   font-size: 12px;
   opacity: 0.8;
