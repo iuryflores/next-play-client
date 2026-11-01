@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/iuryflores/next-play-client/compare/v0.4.0...v0.4.1) (2026-11-01)
+
+
+### Bug Fixes
+
+* show books as available on the MVP login screen ([92dcba9](https://github.com/iuryflores/next-play-client/commit/92dcba99ebbd5819019f61d25185384095e0f712))
+
 ## [0.4.0](https://github.com/iuryflores/next-play-client/compare/v0.3.0...v0.4.0) (2026-11-01)
 
 
