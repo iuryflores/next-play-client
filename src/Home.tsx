@@ -15,6 +15,7 @@ import RecentWatched, {
 } from './RecentWatched';
 import Friends from './Friends';
 import Account from './Account';
+import Collector from './Collector';
 import { ReviewProvider } from './Review';
 import TitleDetails from './TitleDetails';
 import SeriesResume from './SeriesResume';
@@ -110,6 +111,7 @@ function Home({
     | 'incoming'
     | 'coming-soon'
     | 'account'
+    | 'acervo'
     | 'archived'
     | 'friends'
     | Status
@@ -195,26 +197,36 @@ function Home({
     let active = true;
     const controller = new AbortController();
     // Agrupa notificações próximas e cancela a leitura substituída por uma mais nova.
-    const timer = window.setTimeout(() => { void libraryRequest<{ items: LibraryItem[] }>('GET', '', undefined, undefined, undefined, controller.signal)
-      .then((data) => {
-        if (active) {
-          setItems(data.items.filter((item) => item.kind !== 'book'));
-          setError('');
-        }
-      })
-      .catch((reason: unknown) => {
-        if (active)
-          setError(
-            reason instanceof ApiError && reason.status === 401
-              ? t('Sua sessão expirou. Entre novamente.')
-              : reason instanceof Error
-                ? reason.message
-                : t('Não foi possível carregar sua coleção.'),
-          );
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      }); }, 150);
+    const timer = window.setTimeout(() => {
+      void libraryRequest<{ items: LibraryItem[] }>(
+        'GET',
+        '',
+        undefined,
+        undefined,
+        undefined,
+        controller.signal,
+      )
+        .then((data) => {
+          if (active) {
+            // A leitura compartilha a lista de acompanhamento, sem importar exemplares da Minha Coleção.
+            setItems(data.items);
+            setError('');
+          }
+        })
+        .catch((reason: unknown) => {
+          if (active)
+            setError(
+              reason instanceof ApiError && reason.status === 401
+                ? t('Sua sessão expirou. Entre novamente.')
+                : reason instanceof Error
+                  ? reason.message
+                  : t('Não foi possível carregar sua coleção.'),
+            );
+        })
+        .finally(() => {
+          if (active) setLoading(false);
+        });
+    }, 150);
     return () => {
       active = false;
       window.clearTimeout(timer);
@@ -245,6 +257,10 @@ function Home({
       ),
   );
   {
+    // Livros em leitura compartilham a prioridade das séries em andamento na Visão geral.
+    const inProgress = (item: LibraryItem) =>
+      Boolean(item.inProgress) ||
+      (item.kind === 'book' && item.status === 'active');
     const releaseYear = (item: LibraryItem) =>
       /^\d{4}$/.test(item.year || '') ? Number(item.year) : 0;
     const releaseTime = (item: LibraryItem) => {
@@ -258,7 +274,7 @@ function Home({
           ? watchedTime(b) - watchedTime(a)
           : 0) ||
         (view === 'all'
-          ? Number(Boolean(b.inProgress)) - Number(Boolean(a.inProgress)) ||
+          ? Number(inProgress(b)) - Number(inProgress(a)) ||
             (a.inProgress && b.inProgress ? watchedTime(b) - watchedTime(a) : 0)
           : 0) ||
         releaseYear(b) - releaseYear(a) ||
@@ -267,9 +283,8 @@ function Home({
     );
   }
   function edit(item: LibraryItem | null) {
-    if (item?.kind === 'book') return;
     setSelectedTitle(null);
-    setCatalogMode(!item && category !== 'book');
+    setCatalogMode(!item);
     setEditing(item);
     setKind(item?.kind || (category === 'all' ? 'movie' : category));
     setFormError('');
@@ -281,12 +296,27 @@ function Home({
       setView('add');
     }
   }
+  function returnHome() {
+    setDetailId(null);
+    setView('all');
+    setCategory('all');
+    setSearch('');
+    setHistoryMode(false);
+  }
   function updateItem(item: LibraryItem) {
+    const previous = items.find((entry) => entry.id === item.id);
     if (item.kind === 'series') setReload((value) => value + 1);
     setItems((current) => [
       item,
       ...current.filter((entry) => entry.id !== item.id),
     ]);
+    // Uma nova conclusão volta à inicial; editar avaliações antigas mantém a tela atual.
+    if (
+      previous &&
+      previous.status !== 'completed' &&
+      item.status === 'completed'
+    )
+      returnHome();
   }
   async function save(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -312,13 +342,17 @@ function Home({
           favoriteCastId: data.get('favoriteCastId') || '',
           notes: data.get('notes'),
           ...(kind === 'game' ? { platform: data.get('platform') || '' } : {}),
-          genres:
-            editing?.catalogId && kind !== 'game'
-              ? editing.genres
-              : (typeof genreInput === 'string' ? genreInput : '')
-                  .split(',')
-                  .map((value) => value.trim())
-                  .filter(Boolean),
+          ...(kind === 'book' && (selectedTitle || editing?.catalogId)
+            ? {}
+            : {
+                genres:
+                  editing?.catalogId && kind !== 'game'
+                    ? editing.genres
+                    : (typeof genreInput === 'string' ? genreInput : '')
+                        .split(',')
+                        .map((value) => value.trim())
+                        .filter(Boolean),
+              }),
           ...(selectedTitle ? { catalogId: selectedTitle.catalogId } : {}),
         },
       );
@@ -333,6 +367,12 @@ function Home({
       }
       setOpen(false);
       if (kind === 'series') setReload((value) => value + 1);
+      if (
+        editing &&
+        editing.status !== 'completed' &&
+        result.item.status === 'completed'
+      )
+        returnHome();
     } catch (reason) {
       if (reason instanceof ApiError && reason.status === 401) onExpired();
       else
@@ -461,9 +501,8 @@ function Home({
                   onChange={(event) => setKind(event.target.value as Kind)}
                 >
                   {(Object.keys(categories) as Kind[]).map((key) => (
-                    <option key={key} value={key} disabled={key === 'book'}>
+                    <option key={key} value={key}>
                       {categories[key]}
-                      {key === 'book' ? t(' — Em breve') : ''}
                     </option>
                   ))}
                 </NativeSelect>
@@ -558,6 +597,7 @@ function Home({
               view === 'explore' ||
               view === 'add' ||
               view === 'stats' ||
+              view === 'acervo' ||
               view === 'incoming' ||
               view === 'coming-soon' ||
               view === 'friends' ||
@@ -616,75 +656,85 @@ function Home({
     </>
   );
   const libraryNavigation = (afterNavigate?: () => void) => (
-        <nav className="library-navigation" aria-label={t('Biblioteca')}>
-          {views.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              className={view === id ? 'selected' : ''}
-              aria-current={view === id ? 'page' : undefined}
-              onClick={() => {
-                afterNavigate?.();
-                setDetailId(null);
-                setHistoryMode(false);
-                setView(id);
-              }}
-            >
-              <Icon aria-hidden="true" />
-              {label}
-              <span>
-                {items.filter((item) => matchesView(item, id)).length}
-              </span>
-            </button>
-          ))}
-          <button
-            className={view === 'incoming' ? 'selected' : ''}
-            aria-current={view === 'incoming' ? 'page' : undefined}
-            onClick={() => {
-                afterNavigate?.();
-              setDetailId(null);
-              setView('incoming');
-            }}
-          >
-            <CalendarDays aria-hidden="true" />
-            {t('Próximas estreias')}
-          </button>
-          <button
-            className={view === 'explore' ? 'selected' : ''}
-            aria-current={view === 'explore' ? 'page' : undefined}
-            onClick={() => {
-                afterNavigate?.();
-              setDetailId(null);
-              setView('explore');
-            }}
-          >
-            <Compass aria-hidden="true" />
-            {t(' Explorar ')}
-          </button>
-          <button
-            className={view === 'stats' ? 'selected' : ''}
-            aria-current={view === 'stats' ? 'page' : undefined}
-            onClick={() => {
-                afterNavigate?.();
-              setDetailId(null);
-              setView('stats');
-            }}
-          >
-            <ChartNoAxesCombined aria-hidden="true" />
-            {t(' Estatísticas ')}
-          </button>
-          <button
-            aria-current={view === 'friends' ? 'page' : undefined}
-            className={view === 'friends' ? 'selected' : ''}
-            onClick={() => {
-                afterNavigate?.();
-              setDetailId(null);
-              setView('friends');
-            }}
-          >
-            <Users aria-hidden="true" />
-            {t('Amigos')}
-          </button>
-        </nav>
+    <nav className="library-navigation" aria-label={t('Biblioteca')}>
+      {views.map(({ id, label, icon: Icon }) => (
+        <button
+          key={id}
+          className={view === id ? 'selected' : ''}
+          aria-current={view === id ? 'page' : undefined}
+          onClick={() => {
+            afterNavigate?.();
+            setDetailId(null);
+            setHistoryMode(false);
+            setView(id);
+          }}
+        >
+          <Icon aria-hidden="true" />
+          {label}
+          <span>{items.filter((item) => matchesView(item, id)).length}</span>
+        </button>
+      ))}
+      <button
+        className={view === 'acervo' ? 'selected' : ''}
+        aria-current={view === 'acervo' ? 'page' : undefined}
+        onClick={() => {
+          afterNavigate?.();
+          setDetailId(null);
+          setView('acervo');
+        }}
+      >
+        <Library aria-hidden="true" />
+        {t('Minha Coleção')}
+      </button>
+      <button
+        className={view === 'incoming' ? 'selected' : ''}
+        aria-current={view === 'incoming' ? 'page' : undefined}
+        onClick={() => {
+          afterNavigate?.();
+          setDetailId(null);
+          setView('incoming');
+        }}
+      >
+        <CalendarDays aria-hidden="true" />
+        {t('Próximas estreias')}
+      </button>
+      <button
+        className={view === 'explore' ? 'selected' : ''}
+        aria-current={view === 'explore' ? 'page' : undefined}
+        onClick={() => {
+          afterNavigate?.();
+          setDetailId(null);
+          setView('explore');
+        }}
+      >
+        <Compass aria-hidden="true" />
+        {t(' Explorar ')}
+      </button>
+      <button
+        className={view === 'stats' ? 'selected' : ''}
+        aria-current={view === 'stats' ? 'page' : undefined}
+        onClick={() => {
+          afterNavigate?.();
+          setDetailId(null);
+          setView('stats');
+        }}
+      >
+        <ChartNoAxesCombined aria-hidden="true" />
+        {t(' Estatísticas ')}
+      </button>
+      <button
+        aria-current={view === 'friends' ? 'page' : undefined}
+        className={view === 'friends' ? 'selected' : ''}
+        onClick={() => {
+          afterNavigate?.();
+          setDetailId(null);
+          setView('friends');
+        }}
+      >
+        <Users aria-hidden="true" />
+        {t('Amigos')}
+      </button>
+    </nav>
   );
   return (
     <div className="home-shell">
@@ -736,12 +786,17 @@ function Home({
           </Button>
         </div>
       </aside>
-      <MobileNavigation view={view} navigate={(destination) => {
-        setDetailId(null);
-        setHistoryMode(false);
-        if (destination === 'add') edit(null);
-        else setView(destination);
-      }}>{libraryNavigation}</MobileNavigation>
+      <MobileNavigation
+        view={view}
+        navigate={(destination) => {
+          setDetailId(null);
+          setHistoryMode(false);
+          if (destination === 'add') edit(null);
+          else setView(destination);
+        }}
+      >
+        {libraryNavigation}
+      </MobileNavigation>
       <main className="home-main" ref={pageRef}>
         <header className="home-topbar">
           <span>
@@ -749,19 +804,21 @@ function Home({
             <span className="breadcrumb-dot">/</span>{' '}
             {detailItem
               ? detailItem.title
-              : view === 'incoming'
-                ? t('Próximas estreias')
-                : view === 'account'
-                  ? t(' Minha conta ')
-                  : view === 'friends'
-                    ? t('Amigos')
-                    : view === 'stats'
-                      ? t('Suas estatísticas')
-                      : view === 'add'
-                        ? t('Adicionar título')
-                        : view === 'explore'
-                          ? t('Explorar')
-                          : views.find((item) => item.id === view)?.label}
+              : view === 'acervo'
+                ? t('Minha Coleção')
+                : view === 'incoming'
+                  ? t('Próximas estreias')
+                  : view === 'account'
+                    ? t(' Minha conta ')
+                    : view === 'friends'
+                      ? t('Amigos')
+                      : view === 'stats'
+                        ? t('Suas estatísticas')
+                        : view === 'add'
+                          ? t('Adicionar título')
+                          : view === 'explore'
+                            ? t('Explorar')
+                            : views.find((item) => item.id === view)?.label}
           </span>
           <span className="private-library">
             <span /> {t(' Seu espaço pessoal ')}
@@ -782,6 +839,7 @@ function Home({
           )}
           {!detailItem &&
             view !== 'account' &&
+            view !== 'acervo' &&
             view !== 'incoming' &&
             view !== 'friends' && (
               <section className="home-heading">
@@ -805,7 +863,7 @@ function Home({
                       ? t(
                           'Sugestões da nossa coleção de títulos, inspiradas no que você curte.',
                         )
-                      : t('Para assistir ou jogar. No seu tempo.')}
+                      : t('Para assistir, jogar ou ler. No seu tempo.')}
                   </p>
                 </div>
                 <Button
@@ -814,7 +872,7 @@ function Home({
                   disabled={loading || Boolean(error)}
                 >
                   {view === 'add' ? (
-                    t('← Minha coleção')
+                    t('← Meu acompanhamento')
                   ) : (
                     <>
                       <Plus aria-hidden="true" /> {t(' Adicionar título ')}
@@ -823,7 +881,20 @@ function Home({
                 </Button>
               </section>
             )}
-          {view === 'account' ? (
+          {view === 'acervo' ? (
+            <Collector
+              onExpired={onExpired}
+              readingItems={items}
+              readingDisabled={loading || Boolean(error)}
+              onReadingChanged={(item) => {
+                // O atalho atualiza a biblioteca sem tirar a pessoa da coleção de exemplares.
+                setItems((current) => [
+                  item,
+                  ...current.filter((entry) => entry.id !== item.id),
+                ]);
+              }}
+            />
+          ) : view === 'account' ? (
             <Account
               user={user}
               onSaved={onUserChanged}
@@ -843,6 +914,7 @@ function Home({
               edit={edit}
               changed={updateItem}
               onProgress={() => setReload((value) => value + 1)}
+              onWatched={returnHome}
               onExpired={onExpired}
               removed={(id) => {
                 setItems((current) => current.filter((item) => item.id !== id));
@@ -860,12 +932,21 @@ function Home({
             >
               {catalogMode || editing ? (
                 <CatalogSearch
+                  key={kind}
                   initialKind={kind}
+                  onKindChange={setKind}
+                  choose={(title) => {
+                    setEditing(null);
+                    setSelectedTitle(title);
+                    setKind(title.kind);
+                    setCatalogMode(false);
+                  }}
                   onExpired={onExpired}
                   items={items}
                   changed={updateItem}
                   edit={edit}
-                  manual={() => {
+                  manual={(initialKind) => {
+                    if (initialKind) setKind(initialKind);
                     setEditing(null);
                     setSelectedTitle(null);
                     setCatalogMode(false);
@@ -873,7 +954,13 @@ function Home({
                 />
               ) : (
                 <div className="manual-title-page">
-                  <h2>{t(' Cadastro manual ')}</h2>
+                  <h2>
+                    {t(
+                      selectedTitle
+                        ? 'Seu acompanhamento'
+                        : ' Cadastro manual ',
+                    )}
+                  </h2>
                   {editor}
                 </div>
               )}
@@ -905,18 +992,10 @@ function Home({
                           matchesCollection(item, view),
                       ).length;
                       return (
-                        <TabsTrigger
-                          key={key}
-                          value={key}
-                          disabled={key === 'book'}
-                        >
+                        <TabsTrigger key={key} value={key}>
                           <Icon aria-hidden="true" />
                           {key === 'all' ? t('Todos') : categories[key]}
-                          {key === 'book' ? (
-                            <small>{t(' Em breve ')}</small>
-                          ) : (
-                            <span className="tab-count">{count}</span>
-                          )}
+                          <span className="tab-count">{count}</span>
                         </TabsTrigger>
                       );
                     },
@@ -974,7 +1053,7 @@ function Home({
                                 ? 'Últimos assistidos'
                                 : view === 'coming-soon'
                                   ? 'Em breve'
-                                  : 'Sua coleção',
+                                  : 'Seu acompanhamento',
                             )
                           : categories[category]}
                         <span>{visible.length}</span>
@@ -1014,7 +1093,9 @@ function Home({
                   {loading ? (
                     <PageLoading label={t('Carregando sua coleção…')} />
                   ) : error && !items.length ? null : visible.length ? (
-                    <div className={`item-grid${compactCards ? ' compact-cards' : ''}`}>
+                    <div
+                      className={`item-grid${compactCards ? ' compact-cards' : ''}`}
+                    >
                       {visible.map((item) => {
                         const Icon = icons[item.kind];
                         const minimalCover = compactCards;
@@ -1077,6 +1158,13 @@ function Home({
                                 edit={edit}
                                 onExpired={onExpired}
                               />
+                              {/* A faixa indica somente o estado de leitura; não inventa percentual sem páginas registradas. */}
+                              {item.kind === 'book' &&
+                                item.status === 'active' && (
+                                  <div className="book-reading-marker">
+                                    <strong>{statusNames.book.active}</strong>
+                                  </div>
+                                )}
                               {item.kind === 'series' &&
                                 item.episodeProgress?.initialized &&
                                 item.episodeProgress.total > 0 && (
@@ -1163,7 +1251,11 @@ function Home({
                                 <small className="completion-summary">
                                   {item.kind === 'movie'
                                     ? t('Assistido')
-                                    : t('Concluído')}{' '}
+                                    : t(
+                                        item.kind === 'book'
+                                          ? 'Lido'
+                                          : 'Concluído',
+                                      )}{' '}
                                   {t(' em ')} {dateLabel(item.completedOn)}
                                   {item.stars ? ` · ${item.stars} ★` : ''}
                                 </small>
@@ -1180,9 +1272,11 @@ function Home({
                                   target="_blank"
                                   rel="noreferrer"
                                 >
-                                  {item.catalogId?.startsWith('tmdb:')
-                                    ? 'TMDB'
-                                    : 'IGDB'}{' '}
+                                  {item.kind === 'book'
+                                    ? 'Google Books'
+                                    : item.catalogId?.startsWith('tmdb:')
+                                      ? 'TMDB'
+                                      : 'IGDB'}{' '}
                                   ↗
                                 </a>
                               )}
@@ -1219,7 +1313,7 @@ function Home({
                               'Experimente outra busca ou adicione um título a esta seleção.',
                             )
                           : t(
-                              'Salve aquele filme, a série da vez ou seu próximo jogo.',
+                              'Salve aquele filme, a série da vez, seu próximo jogo ou livro.',
                             )}
                       </p>
                       <Button

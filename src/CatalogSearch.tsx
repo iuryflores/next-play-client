@@ -7,7 +7,12 @@ import { Search, ImageOff, ChevronDown, LoaderCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
-import { categories, type Kind, type LibraryItem } from './library';
+import {
+  categories,
+  statusNames,
+  type Kind,
+  type LibraryItem,
+} from './library';
 import QuickActions, { findOwned } from './QuickActions';
 import { ApiError } from './auth';
 import {
@@ -17,6 +22,7 @@ import {
 } from './suggestion-batch';
 import { useRef } from 'react';
 import { shuffleSuggestions } from './suggestions';
+import BookSearch from './BookSearch';
 export interface CatalogTitle {
   platforms?: string[];
   genres?: string[];
@@ -30,27 +36,108 @@ export interface CatalogTitle {
   unreleased?: boolean;
   overview: string;
   sourceUrl: string;
+  authors?: string[];
+  isbn?: string;
+  publisher?: string;
+  language?: string;
 }
 function releaseTime(item: CatalogTitle) {
   const date = item.releaseDate ? Date.parse(item.releaseDate) : NaN;
   if (Number.isFinite(date)) return date;
   return /^\d{4}$/.test(item.year) ? Date.parse(`${item.year}-01-01`) : 0;
 }
-export default function CatalogSearch({
+type CatalogSearchProps = {
+  initialKind: Kind;
+  items: LibraryItem[];
+  changed: (item: LibraryItem) => void;
+  edit: (item: LibraryItem) => void;
+  manual: (kind?: Kind) => void;
+  onExpired: () => void;
+  select?: (title: CatalogTitle) => void;
+  choose?: (title: CatalogTitle) => void;
+  onKindChange?: (kind: Kind) => void;
+};
+export default function CatalogSearch(props: CatalogSearchProps) {
+  const [kind, setKind] = useState(props.initialKind);
+  // A mesma busca serve à posse e à leitura; cada fluxo usa suas próprias ações e sugestões.
+  if (kind === 'book')
+    return (
+      <>
+        <BookSearch
+          select={props.select || props.choose || (() => {})}
+          context={props.select ? 'collection' : 'reading'}
+          actions={
+            props.select
+              ? undefined
+              : (book) => {
+                  const item = findOwned(props.items, book);
+                  if (item)
+                    return (
+                      <>
+                        <small>{statusNames.book[item.status]}</small>
+                        <Button
+                          className="home-primary"
+                          onClick={() => props.edit(item)}
+                        >
+                          {t('Editar acompanhamento')}
+                        </Button>
+                      </>
+                    );
+                  if (props.choose)
+                    return (
+                      <Button
+                        className="home-primary"
+                        onClick={() => props.choose!(book)}
+                      >
+                        {t('Acompanhar livro')}
+                      </Button>
+                    );
+                  return (
+                    <QuickActions
+                      title={book}
+                      changed={props.changed}
+                      edit={props.edit}
+                      onExpired={props.onExpired}
+                    />
+                  );
+                }
+          }
+          category={(kind) => {
+            setKind(kind);
+            props.onKindChange?.(kind);
+          }}
+          onExpired={props.onExpired}
+        />
+        {!props.select && (
+          <Button variant="outline" onClick={() => props.manual('book')}>
+            {t('Cadastrar manualmente')}
+          </Button>
+        )}
+      </>
+    );
+  return (
+    <MediaCatalogSearch
+      key={kind}
+      {...props}
+      initialKind={kind}
+      onBook={() => {
+        setKind('book');
+        props.onKindChange?.('book');
+      }}
+    />
+  );
+}
+function MediaCatalogSearch({
   initialKind,
   items,
   changed,
   edit,
   manual,
   onExpired,
-}: {
-  initialKind: Kind;
-  items: LibraryItem[];
-  changed: (item: LibraryItem) => void;
-  edit: (item: LibraryItem) => void;
-  manual: () => void;
-  onExpired: () => void;
-}) {
+  select,
+  onBook,
+  onKindChange,
+}: CatalogSearchProps & { onBook: () => void }) {
   const [kind, setKind] = useState(
     initialKind === 'book' ? 'movie' : initialKind,
   );
@@ -204,9 +291,15 @@ export default function CatalogSearch({
             id="catalog-kind"
             value={kind}
             onChange={(event) => {
+              // Livros usam Google Books; não enviamos essa categoria ao TMDB/IGDB.
+              if (event.target.value === 'book') {
+                onBook();
+                return;
+              }
               setQuery('');
               load('');
               setKind(event.target.value as 'movie' | 'series' | 'game');
+              onKindChange?.(event.target.value as Kind);
             }}
           >
             {(['movie', 'series', 'game'] as const).map((key) => (
@@ -214,6 +307,7 @@ export default function CatalogSearch({
                 {categories[key]}
               </option>
             ))}
+            <option value="book">{categories.book}</option>
           </NativeSelect>
         </div>
         {kind === 'game' && (
@@ -369,13 +463,23 @@ export default function CatalogSearch({
                       : t('Não informadas pelo catálogo')}
                   </small>
                 )}
-                <QuickActions
-                  title={item}
-                  owned={findOwned(items, item)}
-                  changed={changed}
-                  edit={edit}
-                  onExpired={onExpired}
-                />
+                {select ? (
+                  <Button
+                    type="button"
+                    className="home-primary"
+                    onClick={() => select(item)}
+                  >
+                    {t('Escolher esta obra')}
+                  </Button>
+                ) : (
+                  <QuickActions
+                    title={item}
+                    owned={findOwned(items, item)}
+                    changed={changed}
+                    edit={edit}
+                    onExpired={onExpired}
+                  />
+                )}
               </div>
             </article>
           ))}
@@ -428,9 +532,12 @@ export default function CatalogSearch({
           </Button>
         </div>
       )}
-      <Button type="button" variant="link" onClick={manual}>
-        {t(' Não encontrou? Adicionar manualmente ')}
-      </Button>
+      {/* No acervo, o cadastro manual já está ao lado de Voltar; mantemos só uma entrada. */}
+      {!select && (
+        <Button type="button" variant="link" onClick={() => manual()}>
+          {t(' Não encontrou? Adicionar manualmente ')}
+        </Button>
+      )}
     </div>
   );
 }

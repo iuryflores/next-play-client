@@ -4,6 +4,7 @@ import App from './App';
 import Notifications from './SaveNotifications';
 import './index.css';
 import './motion.css';
+import './surfaces.css';
 import { language, t } from './i18n';
 document.documentElement.lang = language;
 document.title = t('Entrar · NextPlay');

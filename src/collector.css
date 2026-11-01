@@ -1,0 +1,336 @@
+/* O acervo usa exemplares próprios e não reaproveita os cartões/status de consumo. */
+.collector-reading {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+.collector-reading > small {
+  color: #c8bdd5;
+}
+.collector-reading-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.collector-reading-actions button {
+  min-height: 44px;
+  flex: 1 1 auto;
+}
+.collector-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+.collector-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.collector-heading h1 {
+  font-size: 32px;
+  margin: 10px 0;
+}
+.collector-entry-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.collector-entry-actions button {
+  min-height: 44px;
+}
+.collector-add-menu {
+  min-width: 220px;
+  max-width: calc(100vw - 32px);
+  background: #292232;
+  color: #f4eff9;
+  border: 1px solid #635174;
+  box-shadow: 0 12px 32px #0006;
+}
+.collector-add-menu [data-highlighted] {
+  background: #433750;
+}
+.collector-add-menu [data-slot='dropdown-menu-item'] {
+  min-height: 44px;
+  gap: 10px;
+  padding-inline: 12px;
+}
+.collector-heading p,
+.collector-hint,
+.collector-scope {
+  color: #b6acc5;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.collector-scope {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid #40334e;
+  border-radius: 12px;
+}
+.collector-scope svg {
+  flex: 0 0 20px;
+}
+.collector-totals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 22px 0;
+  color: #d0c1e9;
+  font-size: 13px;
+}
+.collector-totals span {
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #241c30;
+}
+.collector-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.collector-page label,
+.collector-dialog label {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  font-size: 13px;
+  color: #c8bdd5;
+}
+.collector-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: 18px;
+}
+.collector-card {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #41334e;
+  border-radius: 16px;
+  background: #1b1523;
+}
+.collector-copy-heading {
+  display: flex;
+  gap: 14px;
+}
+.collector-copy-heading > div:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.collector-cover {
+  width: 72px;
+  height: 104px;
+  flex: 0 0 72px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  overflow: hidden;
+  background: #30263d;
+  color: #b9a5e2;
+}
+.collector-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.collector-object-card .collector-cover {
+  width: 96px;
+  height: 96px;
+  flex-basis: 96px;
+}
+.collector-object-card .collector-cover img {
+  object-fit: contain;
+}
+.collector-photo-preview {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+}
+.collector-photo-preview img {
+  display: block;
+  width: 100%;
+  max-width: 280px;
+  height: 200px;
+  object-fit: contain;
+  border: 1px solid #544063;
+  border-radius: 10px;
+}
+.collector-card h2 {
+  font-size: 18px;
+  line-height: 1.4;
+  margin: 6px 0;
+  letter-spacing: -0.3px;
+}
+.collector-card small {
+  color: #aaa0ba;
+  font-size: 12px;
+}
+.collector-book-source {
+  font-size: 11px;
+  color: #b7a9c9;
+}
+.collector-card p {
+  font-size: 13px;
+  margin: 4px 0;
+  overflow-wrap: anywhere;
+}
+.collector-notes {
+  white-space: pre-wrap;
+  color: #b8adc7;
+}
+.collector-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+}
+.collector-actions button {
+  min-height: 44px;
+}
+.collector-actions svg {
+  width: 16px;
+  height: 16px;
+}
+/* Reduzimos os desenhos; a área de toque continua confortável no celular. */
+.collector-book-card .collector-actions svg {
+  width: 14px;
+  height: 14px;
+}
+.collector-book-card .collector-actions button {
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
+}
+.collector-book-card .collector-cover > svg {
+  width: 18px;
+  height: 18px;
+}
+.collector-book-details dl {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+}
+.collector-book-details dl > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 16px;
+}
+.collector-book-details dt {
+  color: #b6acc5;
+  font-size: 13px;
+}
+.collector-book-details dd {
+  margin: 0;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.collector-book-details h3 {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.collector-details-cover {
+  width: 96px;
+  height: 140px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: #30263d;
+  overflow: hidden;
+}
+.collector-details-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+@media (max-width: 600px) {
+  .collector-book-card .collector-actions button {
+    width: 44px;
+    height: 44px;
+  }
+}
+.collector-dialog {
+  background: #201829;
+  color: #f4eff9;
+  padding: 24px;
+  width: 560px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  border: 1px solid #544063;
+}
+.collector-dialog h2 {
+  font-size: 22px;
+  line-height: 1.3;
+  margin: 0;
+  padding-right: 20px;
+}
+.collector-dialog fieldset {
+  display: grid;
+  gap: 16px;
+  border: 0;
+  padding: 0;
+  margin: 0 0 20px;
+  min-width: 0;
+}
+.collector-form-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.collector-dialog textarea {
+  width: 100%;
+  resize: vertical;
+  padding: 10px;
+  background: #17121e;
+  border: 1px solid #4a3b59;
+  border-radius: 10px;
+  color: inherit;
+  font: inherit;
+}
+.collector-remove {
+  background: #71313c;
+  color: #fff;
+}
+/* Os selects ocupam a coluna inteira e permanecem confortáveis para toque. */
+.collector-page [data-slot='native-select-wrapper'],
+.collector-dialog [data-slot='native-select-wrapper'] {
+  width: 100%;
+}
+.collector-page select,
+.collector-dialog select {
+  min-height: 44px;
+}
+@media (max-width: 400px) {
+  .collector-filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .collector-heading h1 {
+    font-size: 28px;
+  }
+  .collector-entry-actions,
+  .collector-entry-actions button {
+    width: 100%;
+  }
+  .collector-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .collector-filters label:first-child {
+    grid-column: 1 / -1;
+  }
+  .collector-dialog {
+    padding: 20px;
+  }
+}

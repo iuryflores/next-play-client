@@ -17,13 +17,17 @@
 }
 :root {
   color-scheme: dark;
-  --background: #111018;
+  --background: #191621;
   --foreground: #f5f3fa;
   --primary: #a899ff;
   --primary-foreground: #111018;
-  --muted: #252230;
-  --muted-foreground: #aaa6ba;
-  --border: #353143;
+  --muted: #30293d;
+  --muted-foreground: #c0b5cf;
+  /* Fundo, painéis e cards usam camadas distintas para que as áreas não se confundam. */
+  --surface: #231e2e;
+  --surface-raised: #2c2539;
+  --border: #5c4d70;
+  --border-strong: #9179b0;
 }
 * {
   box-sizing: border-box;
@@ -341,13 +345,41 @@ h2 {
 .form-notice:empty {
   display: none;
 }
-.recovery-shell { min-height: 100svh; display: grid; place-items: center; padding: 24px; }
-.recovery-card { width: 100%; max-width: 460px; padding: clamp(24px, 5vw, 40px); border: 1px solid #4b435e; border-radius: 20px; background: #1d1b29; }
-.recovery-card h1 { font-size: 30px; margin: 12px 0 20px; }
-.recovery-card p { line-height: 1.65; }
-.recovery-fields { display: grid; gap: 12px; padding: 0; border: 0; margin: 20px 0 0; min-width: 0; }
-.recovery-success { color: #b9f5cc; }
-.recovery-success svg { margin-bottom: 12px; }
+.recovery-shell {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.recovery-card {
+  width: 100%;
+  max-width: 460px;
+  padding: clamp(24px, 5vw, 40px);
+  border: 1px solid #4b435e;
+  border-radius: 20px;
+  background: #1d1b29;
+}
+.recovery-card h1 {
+  font-size: 30px;
+  margin: 12px 0 20px;
+}
+.recovery-card p {
+  line-height: 1.65;
+}
+.recovery-fields {
+  display: grid;
+  gap: 12px;
+  padding: 0;
+  border: 0;
+  margin: 20px 0 0;
+  min-width: 0;
+}
+.recovery-success {
+  color: #b9f5cc;
+}
+.recovery-success svg {
+  margin-bottom: 12px;
+}
 .private-note {
   display: flex;
   justify-content: center;
@@ -433,8 +465,18 @@ h2 {
   }
 }
 
-.home-footer, .login-footer { flex-wrap: wrap; }
-.development-credit { display: block; flex-basis: 100%; margin-top: 8px; font-size: 11px; line-height: 1.5; color: #a99dbb; }
+.home-footer,
+.login-footer {
+  flex-wrap: wrap;
+}
+.development-credit {
+  display: block;
+  flex-basis: 100%;
+  margin-top: 8px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #a99dbb;
+}
 
 /* Mantém login e recuperação legíveis junto ao recorte e à barra de gestos do celular. */
 @media (max-width: 800px) {
@@ -446,5 +488,7 @@ h2 {
   }
 }
 @media (max-width: 800px) and (pointer: coarse) {
-  .login-panel input { font-size: 16px; }
+  .login-panel input {
+    font-size: 16px;
+  }
 }

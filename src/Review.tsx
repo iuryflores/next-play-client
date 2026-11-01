@@ -43,9 +43,11 @@ export type ReviewValue = {
 export function ReviewFields({
   initial,
   target,
+  showCharacter = true,
 }: {
   initial?: Partial<ReviewValue>;
   target?: CastTarget;
+  showCharacter?: boolean;
 }) {
   const id = useId();
   const [stars, setStars] = useState(initial?.stars || 0);
@@ -105,11 +107,13 @@ export function ReviewFields({
           })}
         </div>
       </fieldset>
-      <CastPicker
-        target={target}
-        initial={initial?.favoriteCharacter}
-        initialCastId={initial?.favoriteCastId}
-      />
+      {showCharacter && (
+        <CastPicker
+          target={target}
+          initial={initial?.favoriteCharacter}
+          initialCastId={initial?.favoriteCastId}
+        />
+      )}
     </fieldset>
   );
 }

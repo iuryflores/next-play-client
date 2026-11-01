@@ -17,7 +17,14 @@ import QuickActions from './QuickActions';
 import { feelings } from './Review';
 import CollectionActions from './CollectionActions';
 import CastPicker from './CastPicker';
-import { Clock3, Pencil, Film, ArrowLeft, CircleCheck } from 'lucide-react';
+import {
+  Clock3,
+  Pencil,
+  Film,
+  BookOpen,
+  ArrowLeft,
+  CircleCheck,
+} from 'lucide-react';
 import './title-details.css';
 
 export default function TitleDetails({
@@ -26,6 +33,7 @@ export default function TitleDetails({
   edit,
   changed,
   onProgress,
+  onWatched,
   onExpired,
   removed,
 }: {
@@ -34,6 +42,7 @@ export default function TitleDetails({
   edit: (item: LibraryItem) => void;
   changed: (item: LibraryItem) => void;
   onProgress: () => void;
+  onWatched: () => void;
   onExpired: () => void;
   removed: (id: string) => void;
 }) {
@@ -46,7 +55,7 @@ export default function TitleDetails({
       <div className="details-topbar">
         <Button variant="ghost" onClick={back}>
           <ArrowLeft aria-hidden="true" />
-          {t('Voltar à coleção')}
+          {t('Voltar ao acompanhamento')}
         </Button>
       </div>
       {(item.kind === 'movie' || item.kind === 'series') && (
@@ -70,7 +79,11 @@ export default function TitleDetails({
             />
           ) : (
             <div className="details-poster-placeholder">
-              <Film aria-hidden="true" />
+              {item.kind === 'book' ? (
+                <BookOpen aria-hidden="true" />
+              ) : (
+                <Film aria-hidden="true" />
+              )}
             </div>
           )}
           {item.status === 'completed' && (
@@ -96,7 +109,9 @@ export default function TitleDetails({
                         : 'Assistido',
                     )
                   : item.completedOn || item.completedAt
-                    ? t(' Concluído em ')
+                    ? item.kind === 'book'
+                      ? t('Lido em')
+                      : t(' Concluído em ')
                     : statusNames[item.kind][item.status]}
                 {(item.completedOn || item.completedAt) && (
                   <>
@@ -177,6 +192,12 @@ export default function TitleDetails({
             title={item.title}
             originalTitle={item.originalTitle}
           />
+          {item.kind === 'book' && (
+            <div className="details-book-metadata">
+              {item.authors?.length ? <p>{item.authors.join(' · ')}</p> : null}
+              {item.publisher && <p>{item.publisher}</p>}
+            </div>
+          )}
           <div className="details-genre-tags">
             {item.kind === 'game' && (
               <span>
@@ -220,7 +241,12 @@ export default function TitleDetails({
               rel="noreferrer"
             >
               {t(' Ver no ')}
-              {item.catalogId?.startsWith('tmdb:') ? 'TMDB' : 'IGDB'} ↗
+              {item.kind === 'book'
+                ? 'Google Books'
+                : item.catalogId?.startsWith('tmdb:')
+                  ? 'TMDB'
+                  : 'IGDB'}{' '}
+              ↗
             </a>
           )}
         </div>
@@ -253,6 +279,7 @@ export default function TitleDetails({
               itemId={item.id}
               onExpired={onExpired}
               onProgress={onProgress}
+              onWatched={onWatched}
             />
           )}
           <Community

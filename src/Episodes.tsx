@@ -30,11 +30,13 @@ export default function Episodes({
   item,
   onExpired,
   onProgress,
+  onWatched,
 }: {
   itemId: string;
   item?: LibraryItem;
   onExpired: () => void;
   onProgress: () => void;
+  onWatched?: () => void;
 }) {
   const [unwatch, setUnwatch] = useState<
     | { scope: 'season'; season: number; name: string }
@@ -100,6 +102,7 @@ export default function Episodes({
     setError('');
     let saved = false;
     let refreshNeeded = false;
+    let returnAfterSave = false;
     try {
       const watch = body as {
         watched?: boolean;
@@ -151,6 +154,8 @@ export default function Episodes({
           setSelection(nextEpisode(result));
         }
       }
+      // Assistir volta à coleção após salvar; importar ou desmarcar mantém o acompanhamento.
+      returnAfterSave = (method === 'PATCH' && watch.watched === true) || importing === 'watch-many';
     } catch (reason) {
       if (!mounted.current) return;
       if (reason instanceof ApiError && reason.status === 401) onExpired();
@@ -166,6 +171,7 @@ export default function Episodes({
       if (refreshNeeded && mounted.current) onProgress();
       pending.current = false;
       if (mounted.current) setBusy(false);
+      if (returnAfterSave && mounted.current) onWatched?.();
     }
   }
   const current = selection || (data ? nextEpisode(data) : null);

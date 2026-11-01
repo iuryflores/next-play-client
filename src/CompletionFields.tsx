@@ -63,7 +63,11 @@ export default function CompletionFields({
         <fieldset className="completion-review">
           <legend>{t(' Sua experiência ')}</legend>
           <label htmlFor="completed-on">
-            {kind === 'movie' ? t('Assistido em') : t('Concluído em')}
+            {kind === 'book'
+              ? t('Lido em')
+              : kind === 'movie'
+                ? t('Assistido em')
+                : t('Concluído em')}
           </label>
           <Input
             type="date"
@@ -75,6 +79,7 @@ export default function CompletionFields({
             required
           />
           <ReviewFields
+            showCharacter={kind !== 'book'}
             initial={item || undefined}
             target={item ? { itemId: item.id } : undefined}
           />

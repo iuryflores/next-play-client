@@ -1,5 +1,120 @@
 // Portuguese source messages with English and Spanish equivalents.
 const rows = `
+Minha Coleção|My Collection|Mi Colección
+Adicionar item|Add item|Añadir elemento
+Adicionar item à coleção|Add an item to your collection|Añadir un elemento a tu colección
+Salvar item|Save item|Guardar elemento
+Outros|Other|Otros
+Adicionar objeto|Add object|Añadir objeto
+Tipo de item|Item type|Tipo de elemento
+Categoria do objeto|Object category|Categoría del objeto
+Ex.: Carrinhos, Action figures|E.g.: Model cars, Action figures|Ej.: Coches en miniatura, Figuras de acción
+Foto do objeto (opcional)|Object photo (optional)|Foto del objeto (opcional)
+Prévia da foto do objeto|Object photo preview|Vista previa de la foto del objeto
+Preparando foto…|Preparing photo…|Preparando foto…
+Remover foto|Remove photo|Eliminar foto
+Não foi possível preparar a foto.|Could not prepare the photo.|No se pudo preparar la foto.
+A foto ficou muito grande. Escolha outra imagem.|The photo is too large. Choose another image.|La foto es demasiado grande. Elige otra imagen.
+Não foi possível preparar a foto. Escolha JPG, PNG ou WebP de até 10 MB.|Could not prepare the photo. Choose JPG, PNG or WebP up to 10 MB.|No se pudo preparar la foto. Elige JPG, PNG o WebP de hasta 10 MB.
+As obras e os objetos que você coleciona, em um só lugar.|The works and objects you collect, all in one place.|Las obras y los objetos que coleccionas, en un solo lugar.
+Sim|Yes|Sí
+Não|No|No
+Marcar “{0}” como “{1}”?|Mark “{0}” as “{1}”?|¿Marcar «{0}» como «{1}»?
+Editar cópia de {0}|Edit copy of {0}|Editar ejemplar de {0}
+Adicionar outra cópia de {0}|Add another copy of {0}|Añadir otro ejemplar de {0}
+Detalhes do livro e do seu exemplar.|Details about the book and your copy.|Detalles del libro y de tu ejemplar.
+Autor(es)|Author(s)|Autor(es)
+Editora|Publisher|Editorial
+Idioma|Language|Idioma
+Ainda não acompanhado|Not tracked yet|Aún sin seguimiento
+Anotações do exemplar|Copy notes|Notas del ejemplar
+Leitura|Reading|Lectura
+Leitura de {0}|Reading: {0}|Lectura de {0}
+Atualiza seu acompanhamento de leitura sem alterar os exemplares da coleção.|Updates your reading progress without changing the copies in your collection.|Actualiza tu seguimiento de lectura sin modificar los ejemplares de la colección.
+Salvar acompanhamento|Save progress|Guardar seguimiento
+Livro|Book|Libro
+Lido em|Read on|Leído el
+Marcar como lido|Mark as read|Marcar como leído
+Acompanhar livro|Track book|Seguir libro
+Editar acompanhamento|Edit progress|Editar seguimiento
+Sugestões por título, autor e editora dos seus livros|Suggestions by title, author and publisher from your books|Sugerencias por título, autor y editorial de tus libros
+Livros lidos|Books read|Libros leídos
+Início|Home|Inicio
+MODO COLECIONADOR|COLLECTOR MODE|MODO COLECCIONISTA
+As obras que você possui, independentemente de assistir, jogar ou ler.|The works you own, whether or not you watch, play or read them.|Las obras que posees, independientemente de verlas, jugarlas o leerlas.
+Seu acompanhamento e suas avaliações continuam separados da sua coleção.|Your progress and ratings stay separate from your owned collection.|Tu seguimiento y tus valoraciones siguen separados de tu colección propia.
+Escolher esta obra|Choose this title|Elegir esta obra
+Adicionar cópia|Add copy|Añadir copia
+Adicionar livro|Add book|Añadir libro
+Sugestões de livros em português|Book suggestions in Portuguese|Sugerencias de libros en portugués
+Sugestões baseadas nos gêneros e editoras da sua coleção|Suggestions based on genres and publishers in your collection|Sugerencias basadas en géneros y editoriales de tu colección
+Sugestões por título, autor e editora da sua coleção|Suggestions by title, author and publisher from your collection|Sugerencias por título, autor y editorial de tu colección
+Digite um ISBN completo para buscar automaticamente.|Enter a complete ISBN to search automatically.|Escribe un ISBN completo para buscar automáticamente.
+Digite pelo menos 2 caracteres para buscar.|Type at least 2 characters to search.|Escribe al menos 2 caracteres para buscar.
+Resultados da busca de livros|Book search results|Resultados de búsqueda de libros
+O que você quer adicionar?|What would you like to add?|¿Qué quieres añadir?
+Buscar por|Search by|Buscar por
+Autor|Author|Autor
+Buscar livros|Search books|Buscar libros
+ISBN de 10 ou 13 caracteres|10 or 13 character ISBN|ISBN de 10 o 13 caracteres
+Ex.: Clarice Lispector|E.g. Clarice Lispector|Ej.: Clarice Lispector
+Ex.: Dom Casmurro|E.g. Dom Casmurro|Ej.: Dom Casmurro
+Busque por título, autor ou ISBN para escolher a edição do seu livro.|Search by title, author or ISBN to choose your book's edition.|Busca por título, autor o ISBN para elegir la edición de tu libro.
+Dados e capas: Google Books|Data and covers: Google Books|Datos y portadas: Google Books
+Autor não informado|Author not specified|Autor no indicado
+Ver no Google Books|View on Google Books|Ver en Google Books
+Escolher esta edição|Choose this edition|Elegir esta edición
+Nenhum livro encontrado. Tente outro termo ou cadastre manualmente.|No books found. Try another search or enter manually.|No se encontraron libros. Prueba otra búsqueda o regístralo manualmente.
+Cadastrar livro manualmente|Enter book manually|Registrar libro manualmente
+Não foi possível consultar o Google Books.|Could not search Google Books.|No se pudo consultar Google Books.
+O Google Books não respondeu. Tente novamente ou cadastre manualmente.|Google Books did not respond. Try again or enter manually.|Google Books no respondió. Inténtalo de nuevo o regístralo manualmente.
+Adicionar cópia à coleção|Add a copy to your collection|Añadir una copia a tu colección
+Voltar à minha coleção|Back to owned collection|Volver a la colección propia
+Para livros, use o cadastro manual.|For books, use manual entry.|Para libros, usa el registro manual.
+{0} cópias na coleção|{0} owned copies|{0} copias en la colección
+{0} cópia na coleção|{0} owned copy|{0} copia en la colección
+{0} física|{0} physical|{0} física
+{0} digital|{0} digital|{0} digital
+{0} físicas|{0} physical|{0} físicas
+{0} digitais|{0} digital|{0} digitales
+Buscar na coleção|Search owned collection|Buscar en la colección propia
+Título, plataforma ou edição|Title, platform or edition|Título, plataforma o edición
+Todas as categorias|All categories|Todas las categorías
+Formato|Format|Formato
+Todos os formatos|All formats|Todos los formatos
+Físico|Physical|Físico
+Digital|Digital|Digital
+Carregando coleção…|Loading owned collection…|Cargando colección propia…
+Nenhuma cópia com esses filtros.|No copies match these filters.|Ninguna copia coincide con estos filtros.
+Sua coleção começa com a primeira cópia.|Your collection starts with the first copy.|Tu colección empieza con la primera copia.
+Você pode possuir várias edições e cópias da mesma obra.|You can own multiple editions and copies of the same title.|Puedes tener varias ediciones y copias de la misma obra.
+Cadastrar manualmente|Enter manually|Registrar manualmente
+Sem edição informada|Edition not specified|Edición no indicada
+Sem plataforma informada|Platform not specified|Plataforma no indicada
+Outra cópia|Another copy|Otra copia
+Remover cópia de {0}|Remove copy of {0}|Eliminar copia de {0}
+Editar cópia|Edit copy|Editar copia
+Cada exemplar é independente. Salvar aqui não altera seu acompanhamento.|Each copy is independent. Saving here does not change your progress.|Cada ejemplar es independiente. Guardarlo aquí no cambia tu seguimiento.
+Plataforma ou suporte|Platform or medium|Plataforma o soporte
+Ex.: PlayStation 5, Steam, Blu-ray|E.g. PlayStation 5, Steam, Blu-ray|Ej.: PlayStation 5, Steam, Blu-ray
+Edição|Edition|Edición
+Ex.: edição de colecionador, capa dura|E.g. collector's edition, hardcover|Ej.: edición de coleccionista, tapa dura
+Observações privadas|Private notes|Notas privadas
+Salvar cópia|Save copy|Guardar copia
+Remover esta cópia?|Remove this copy?|¿Eliminar esta copia?
+Somente este exemplar será removido. As outras cópias e o acompanhamento serão preservados.|Only this copy will be removed. Other copies and progress will be preserved.|Solo se eliminará este ejemplar. Las demás copias y el seguimiento se conservarán.
+Remover cópia|Remove copy|Eliminar copia
+Cópia salva na coleção.|Copy saved to your collection.|Copia guardada en tu colección.
+Cópia removida da coleção.|Copy removed from your collection.|Copia eliminada de tu colección.
+Não foi possível acessar sua coleção.|Could not access your owned collection.|No se pudo acceder a tu colección propia.
+Não foi possível salvar a cópia.|Could not save the copy.|No se pudo guardar la copia.
+Não foi possível remover a cópia.|Could not remove the copy.|No se pudo eliminar la copia.
+Seu acompanhamento|Your progress|Tu seguimiento
+Voltar ao acompanhamento|Back to progress|Volver al seguimiento
+Adicionar ao acompanhamento|Add to progress|Añadir al seguimiento
+← Meu acompanhamento|← My progress|← Mi seguimiento
+Remover do acompanhamento|Remove from progress|Eliminar del seguimiento
+Restaurar ao acompanhamento|Restore to progress|Restaurar al seguimiento
 Navegação principal|Main navigation|Navegación principal
 Fechar menu|Close menu|Cerrar menú
 Menu|Menu|Menú
@@ -569,7 +684,7 @@ Adicione suas próximas histórias|Add your next stories|Añade tus próximas hi
 Encontre sua próxima história|Find your next story|Encuentra tu próxima historia
 Qual é a próxima história?|What's your next story?|¿Cuál es tu próxima historia?
 Sugestões da nossa coleção de títulos, inspiradas no que você curte.|Suggestions from our title collection, inspired by what you enjoy.|Sugerencias de nuestra colección de títulos, inspiradas en tus gustos.
-Para assistir ou jogar. No seu tempo.|To watch or play. At your pace.|Para ver o jugar. A tu ritmo.
+Para assistir, jogar ou ler. No seu tempo.|To watch, play or read. At your pace.|Para ver, jugar o leer. A tu ritmo.
 ← Minha coleção|← My collection|← Mi colección
 Adicionar títulos|Add titles|Añadir títulos
 Cadastro manual|Add manually|Añadir manualmente
@@ -595,7 +710,7 @@ em|on|el
 Nenhum título por aqui.|No titles here.|No hay títulos aquí.
 Toda coleção começa com uma história.|Every collection starts with a story.|Toda colección empieza con una historia.
 Experimente outra busca ou adicione um título a esta seleção.|Try another search or add a title to this selection.|Prueba otra búsqueda o añade un título a esta selección.
-Salve aquele filme, a série da vez ou seu próximo jogo.|Save that movie, the latest series or your next game.|Guarda esa película, la serie del momento o tu próximo juego.
+Salve aquele filme, a série da vez, seu próximo jogo ou livro.|Save that movie, the latest series or your next game.|Guarda esa película, la serie del momento o tu próximo juego.
 Adicionar meu primeiro título|Add my first title|Añadir mi primer título
 Créditos dos catálogos|Catalog credits|Créditos de los catálogos
 Dados de jogos fornecidos por|Game data provided by|Datos de juegos proporcionados por

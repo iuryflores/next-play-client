@@ -12,7 +12,7 @@ import { t } from './i18n';
 
 type Destination = 'all' | 'planned' | 'add' | 'explore';
 const shortcuts = [
-  { id: 'all', label: 'Coleção', icon: LayoutGrid },
+  { id: 'all', label: 'Início', icon: LayoutGrid },
   { id: 'planned', label: 'Para depois', icon: Bookmark },
   { id: 'add', label: 'Adicionar', icon: Plus },
   { id: 'explore', label: 'Explorar', icon: Compass },

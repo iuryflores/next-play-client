@@ -156,12 +156,14 @@ export default function QuickActions({
       owned.status === 'completed'
         ? owned.kind === 'movie'
           ? t(disableCompleted ? 'Assistido' : 'Editar avaliação')
-          : t('Já concluído')
+          : t(owned.kind === 'book' ? 'Lido' : 'Já concluído')
         : owned.kind === 'series'
           ? t('Marcar o próximo episódio como assistido')
           : owned.kind === 'movie'
             ? t('Marcar como assistido')
-            : t('Marcar como concluído');
+            : owned.kind === 'book'
+              ? t('Marcar como lido')
+              : t('Marcar como concluído');
     return (
       <>
         <Button
@@ -218,7 +220,7 @@ export default function QuickActions({
         {busy
           ? t('Salvando…')
           : !owned
-            ? t('Adicionar à coleção')
+            ? t('Adicionar ao acompanhamento')
             : owned.kind === 'series'
               ? t('Ver episódios')
               : owned.status === 'completed'
@@ -227,7 +229,9 @@ export default function QuickActions({
                   : statusNames[owned.kind].completed
                 : owned.kind === 'movie'
                   ? t('Marcar como assistido')
-                  : t('Marcar como concluído')}
+                  : owned.kind === 'book'
+                    ? t('Marcar como lido')
+                    : t('Marcar como concluído')}
       </Button>
       {owned && (
         <Button variant="link" onClick={() => edit(owned)} disabled={busy}>

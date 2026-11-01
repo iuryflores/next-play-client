@@ -14,7 +14,7 @@ import { dateLabel } from './i18n';
 import { t } from './i18n';
 import { genreLabel, language } from './i18n';
 import { useEffect, useEffectEvent, useState } from 'react';
-import { Clock3, Tv, CheckCheck, Film } from 'lucide-react';
+import { Clock3, Tv, CheckCheck, Film, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { libraryRequest, type LibraryItem } from './library';
 import { request } from './episode-client';
@@ -342,11 +342,7 @@ export default function Stats({
     (entry) => rankingKey(entry.name),
   );
   const completed = items
-    .filter(
-      (item) =>
-        ['movie', 'series', 'game'].includes(item.kind) &&
-        item.status === 'completed',
-    )
+    .filter((item) => item.status === 'completed')
     .sort(
       (a, b) =>
         (Date.parse(b.completedOn || b.completedAt || '') || 0) -
@@ -372,10 +368,15 @@ export default function Stats({
             Icon: Gamepad2,
           },
           {
-            label: t('Títulos concluídos'),
+            label: t('Livros lidos'),
             value: items.filter(
-              (item) => item.kind !== 'book' && item.status === 'completed',
+              (item) => item.kind === 'book' && item.status === 'completed',
             ).length,
+            Icon: BookOpen,
+          },
+          {
+            label: t('Títulos concluídos'),
+            value: items.filter((item) => item.status === 'completed').length,
             Icon: CheckCheck,
           },
         ]

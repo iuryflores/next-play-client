@@ -1,0 +1,171 @@
+/* Camada visual compartilhada: separa navegação, seções e conteúdo sem mudar os fluxos. */
+.home-shell {
+  background: var(--background);
+}
+
+.home-shell .home-sidebar,
+.home-shell .home-topbar {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.home-shell .home-sidebar {
+  box-shadow: 4px 0 20px #0d081924;
+}
+
+.home-shell .home-footer,
+.home-shell .home-account,
+.home-shell .collection-tabs-scroll {
+  border-color: var(--border);
+}
+
+.home-shell .library-navigation button {
+  border: 1px solid transparent;
+  color: #d0c6df;
+}
+
+.home-shell .library-navigation button:hover {
+  background: var(--surface-raised);
+  border-color: var(--border);
+}
+
+.home-shell .library-navigation button.selected {
+  background: #3b2e52;
+  border-color: #8970b4;
+  color: #e4d9ff;
+}
+
+/* Painéis dão limites claros às áreas que antes compartilhavam o mesmo fundo. */
+.home-content
+  :is(.collection-section, .recent-watched, .stats-page, .explore-section),
+.collector-page .collector-filters,
+.catalog-search > form {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.home-content :is(.home-heading, .collector-heading) {
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.home-content
+  :is(
+    .collector-scope,
+    .account-form,
+    .friends-settings > section,
+    .friends-ranking,
+    .friends-connections,
+    .manual-title-page
+  ) {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+/* Os cards são mais claros que o painel e conservam as bordas também sem hover. */
+.home-content
+  :is(
+    .collector-card,
+    .catalog-result,
+    .library-card,
+    .category-card,
+    .stat-card,
+    .stats-series article,
+    .incoming-card
+  ) {
+  background: var(--surface-raised);
+  border-color: var(--border);
+  box-shadow: 0 5px 16px #0b071c24;
+}
+
+.home-content
+  :is(.collector-card, .catalog-result, .library-card, .category-card):hover {
+  border-color: var(--border-strong);
+}
+
+.home-content .recent-watched-card {
+  background: var(--surface-raised);
+  border-color: var(--border);
+}
+
+.home-content .collector-totals span {
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.home-content
+  :is(.collection-search input, .catalog-search input, .catalog-search select) {
+  background: #1c1726;
+  border-color: #75618d;
+}
+
+/* Os diálogos são renderizados em portal, fora do contêiner principal. */
+:is(.collector-dialog, .mobile-menu, .item-dialog) {
+  background: var(--surface);
+  border-color: var(--border-strong);
+}
+
+@media (max-width: 480px) {
+  .collector-page .collector-filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.mobile-navigation {
+  background: #282133f5;
+  border-color: var(--border-strong);
+}
+
+.login-panel {
+  background: var(--background);
+}
+
+.login-panel .login-content {
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: 0 12px 40px #08061130;
+}
+
+.login-panel :is(.login-input, .method-picker, .google-button) {
+  border: 1px solid var(--border);
+  background: #1c1726;
+}
+
+.brand-panel {
+  border-color: var(--border);
+  background: #241d33;
+}
+
+@media (max-width: 760px) {
+  .home-shell .home-sidebar {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .home-content
+    :is(.collection-section, .recent-watched, .stats-page, .explore-section),
+  .collector-page .collector-filters,
+  .catalog-search > form {
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .login-panel .login-content {
+    padding: 22px 18px;
+  }
+}
+
+@media (max-width: 380px) {
+  .login-panel .login-content {
+    padding: 20px 14px;
+  }
+
+  .login-panel .login-content h2 {
+    font-size: 26px;
+    line-height: 1.2;
+    letter-spacing: -0.6px;
+  }
+}

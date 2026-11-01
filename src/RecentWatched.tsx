@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { useId, useState } from 'react';
+import { useId, useLayoutEffect, useRef, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { dateLabel, t } from './i18n';
 import type { LibraryItem } from './library';
@@ -33,11 +33,23 @@ export default function RecentWatched({
   more: () => void;
 }) {
   const [expanded, setExpanded] = useState(true);
+  const [capacity, setCapacity] = useState(5);
+  const listRef = useRef<HTMLDivElement>(null);
   const listId = useId();
   const recent = items
     .filter((item) => !item.archived && hasWatched(item))
-    .sort((a, b) => watchedTime(b) - watchedTime(a) || a.id.localeCompare(b.id))
-    .slice(0, 5);
+    .sort((a, b) => watchedTime(b) - watchedTime(a) || a.id.localeCompare(b.id));
+  const hasRecent = recent.length > 0;
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    // A quantidade acompanha a largura real da coleção, preservando uma única linha de capas pequenas.
+    const observer = new ResizeObserver(([entry]) => {
+      setCapacity(Math.max(1, Math.ceil((entry.contentRect.width + 12) / 144)));
+    });
+    observer.observe(list);
+    return () => observer.disconnect();
+  }, [hasRecent]);
   if (!recent.length) return null;
   return (
     <section
@@ -71,8 +83,8 @@ export default function RecentWatched({
         aria-hidden={!expanded}
       >
         <div className="recent-watched-reveal-inner">
-          <div className="recent-watched-list">
-            {recent.map((item) => (
+          <div className="recent-watched-list" ref={listRef} style={{ gridTemplateColumns: `repeat(${capacity}, minmax(0, 1fr))` }}>
+            {recent.slice(0, capacity).map((item) => (
               <button
                 key={item.id}
                 onClick={() => open(item.id)}

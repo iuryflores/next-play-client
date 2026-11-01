@@ -65,14 +65,14 @@ export default function CollectionActions({
       <div className="title-details-actions">
         <IconAction
           icon={item.archived ? ArchiveRestore : Archive}
-          label={t(item.archived ? 'Restaurar à coleção' : 'Arquivar título')}
+          label={t(item.archived ? 'Restaurar ao acompanhamento' : 'Arquivar título')}
           variant="ghost"
           disabled={busy || (!item.archived && item.status === 'completed')}
           onClick={() => void run(false)}
         />
         <IconAction
           icon={Trash2}
-          label={t('Remover da coleção')}
+          label={t('Remover do acompanhamento')}
           variant="ghost"
           className="remove-item"
           disabled={busy}
@@ -90,7 +90,7 @@ export default function CollectionActions({
       >
         <DialogContent showCloseButton={false}>
           <DialogTitle>
-            {t('Remover da coleção')} · {item.title}
+            {t('Remover do acompanhamento')} · {item.title}
           </DialogTitle>
           <DialogDescription>
             {t(

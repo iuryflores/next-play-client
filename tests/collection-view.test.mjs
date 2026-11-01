@@ -2,6 +2,18 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { matchesView } from '../src/collection-view.ts';
 
+test('reading wishlist and active books leave overview when read and respect archiving', () => {
+  const book = { kind: 'book', status: 'planned', year: '2011' };
+  assert.equal(matchesView(book, 'all'), true);
+  assert.equal(matchesView(book, 'planned'), true);
+  assert.equal(matchesView({ ...book, status: 'active' }, 'active'), true);
+  assert.equal(matchesView({ ...book, status: 'active' }, 'all'), true);
+  assert.equal(matchesView({ ...book, status: 'completed' }, 'completed'), true);
+  assert.equal(matchesView({ ...book, status: 'completed' }, 'all'), false);
+  assert.equal(matchesView({ ...book, status: 'completed', archived: true }, 'completed'), false);
+  assert.equal(matchesView({ ...book, status: 'completed', archived: true }, 'archived'), true);
+});
+
 test('future releases have their own view and return to overview after release', () => {
   const movie = { kind: 'movie', status: 'planned', releaseDate: '2099-12-18' };
   assert.equal(matchesView(movie, 'coming-soon'), true);

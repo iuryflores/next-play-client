@@ -7,6 +7,10 @@ export interface LibraryItem {
   id: string;
   title: string;
   originalTitle?: string;
+  authors?: string[];
+  publisher?: string;
+  isbn?: string;
+  language?: string;
   kind: Kind;
   status: Status;
   inProgress?: boolean;

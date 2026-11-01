@@ -1,0 +1,72 @@
+.book-search .catalog-card-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+/* A miniatura lateral substitui a capa grande; só os dados essenciais ocupam o card. */
+.add-title-page .book-search .catalog-results {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr));
+  gap: 14px;
+}
+
+.add-title-page .book-search .catalog-result {
+  flex-direction: row;
+  gap: 12px;
+  padding: 14px;
+}
+
+.book-search .catalog-result .catalog-cover-frame {
+  width: 64px;
+  height: 92px;
+  flex: 0 0 64px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+}
+
+.book-search .catalog-result .catalog-card-info {
+  padding: 0;
+}
+
+.book-search .catalog-card-info > strong {
+  font-size: 15px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.book-search .catalog-card-info > span,
+.book-search .catalog-card-info > small {
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 3px 0;
+  overflow-wrap: anywhere;
+}
+
+/* O espaço variável fica antes do rodapé, alinhando o link mesmo com títulos e sinopses de alturas diferentes. */
+.book-card-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+/* O link externo é uma ação secundária; o botão de adicionar mantém o destaque. */
+.book-card-footer > a {
+  align-self: flex-start;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #b7a9c9;
+  text-underline-offset: 3px;
+}
+
+.book-card-footer > a:hover,
+.book-card-footer > a:focus-visible {
+  color: #f5f3fa;
+  text-decoration: underline;
+}
