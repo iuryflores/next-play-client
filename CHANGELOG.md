@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/iuryflores/next-play-client/compare/v0.2.1...v0.3.0) (2026-11-01)
+
+
+### Features
+
+* improve mobile navigation and collection usability ([17c2c81](https://github.com/iuryflores/next-play-client/commit/17c2c8155f69c645a5ef4c6e132a46e564d14d32))
+
 ## [0.2.1](https://github.com/iuryflores/next-play-client/compare/v0.2.0...v0.2.1) (2026-11-01)
 
 
