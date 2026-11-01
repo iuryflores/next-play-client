@@ -212,7 +212,7 @@ export default function LoginPage() {
               <Gamepad2 aria-hidden="true" /> {t(' Jogos ')}
             </span>
             <span>
-              <BookOpen aria-hidden="true" /> {t(' Livros · Em breve ')}
+              <BookOpen aria-hidden="true" /> {t('Livros')}
             </span>
           </div>
         </div>
