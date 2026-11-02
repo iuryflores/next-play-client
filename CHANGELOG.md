@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.0](https://github.com/iuryflores/next-play-client/compare/v0.13.0...v0.14.0) (2026-11-02)
+
+
+### Features
+
+* aprimora biblioteca e acompanhamento de jogos ([fcc81d4](https://github.com/iuryflores/next-play-client/commit/fcc81d400f2e42b26f48eb0e538d284cb605e519))
+
 ## [0.13.0](https://github.com/iuryflores/next-play-client/compare/v0.12.0...v0.13.0) (2026-11-02)
 
 
