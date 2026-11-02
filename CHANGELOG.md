@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/iuryflores/next-play-client/compare/v0.8.1...v0.9.0) (2026-11-02)
+
+
+### Features
+
+* mostra status e tempo jogado nos cards de jogos ([5841260](https://github.com/iuryflores/next-play-client/commit/5841260496b1b45d7993bcad4565a7bce4e3435b))
+
 ## [0.8.1](https://github.com/iuryflores/next-play-client/compare/v0.8.0...v0.8.1) (2026-11-02)
 
 
