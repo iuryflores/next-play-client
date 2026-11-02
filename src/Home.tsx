@@ -128,7 +128,11 @@ function Home({
   useEffect(() => {
     setDensity(user.collectionDensity || 'compact');
   }, [user.collectionDensity]);
-  const compactCards = view === 'all' && density === 'compact';
+  // Jogos concluídos compartilham a preferência da conta usada na visão geral.
+  const supportsDensity =
+    view === 'all' ||
+    (view === 'completed' && category === 'game' && !historyMode);
+  const compactCards = supportsDensity && density === 'compact';
   async function changeDensity(value: string) {
     if (savingDensity) return;
     const next = value === 'details' ? 'details' : 'compact';
@@ -1098,7 +1102,7 @@ function Home({
                         </Button>
                       </div>
                     )}
-                    {view === 'all' && (
+                    {supportsDensity && (
                       <div className="collection-density">
                         <label htmlFor="collection-density">
                           {t(' Exibição ')}
