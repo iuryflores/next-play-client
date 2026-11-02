@@ -921,6 +921,18 @@ Entre na sua conta para salvar a aparência. Antes de entrar, a escolha vale ape
 Não foi possível salvar a aparência. Tente novamente.|Could not save appearance. Try again.|No se pudo guardar la apariencia. Inténtalo de nuevo.
 Não foi possível salvar a exibição. Tente novamente.|Could not save the display preference. Try again.|No se pudo guardar la preferencia de visualización. Inténtalo de nuevo.
 Voltar|Back|Volver
+Seu tempo nos jogos|Your gaming time|Tu tiempo en juegos
+Tempo total jogado|Total play time|Tiempo total jugado
+Para começar|To start|Por empezar
+Taxa de conclusão|Completion rate|Tasa de finalización
+Jogos mais jogados|Most played games|Juegos más jugados
+Tempo por plataforma|Time by platform|Tiempo por plataforma
+Tempo informado por você no acompanhamento, incluindo jogos arquivados. Jogos sem tempo registrado ficam fora destes rankings.|Time entered in your tracking, including archived games. Games without recorded time are excluded from these rankings.|Tiempo indicado en tu seguimiento, incluidos los juegos archivados. Los juegos sin tiempo registrado quedan fuera de estas clasificaciones.
+Edite um jogo e informe as horas jogadas para começar.|Edit a game and enter your hours played to get started.|Edita un juego e indica las horas jugadas para empezar.
+Nenhum tempo jogado registrado ainda.|No play time recorded yet.|Todavía no hay tiempo jugado registrado.
+A taxa de conclusão compara jogos concluídos com o total cadastrado, incluindo arquivados.|The completion rate compares completed games with all tracked games, including archived ones.|La tasa de finalización compara los juegos completados con el total registrado, incluidos los archivados.
+Ver todos|View all|Ver todos
+Mostrar menos|Show less|Mostrar menos
 `;
 export const translations: Record<string, [string, string]> =
   Object.fromEntries(

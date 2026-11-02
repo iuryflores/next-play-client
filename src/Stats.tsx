@@ -1,4 +1,6 @@
 import { RefreshCw } from 'lucide-react';
+import GameActivity from './GameActivity';
+import { gameActivity } from './game-activity';
 import IconAction from './IconAction';
 import PageLoading from './PageLoading';
 import VotedActor from './VotedActor';
@@ -274,6 +276,7 @@ export default function Stats({
       <PageLoading label={t('Preparando seu histórico e suas estatísticas…')} />
     );
   const summary = summarizeKind(items, tab);
+  const games = gameActivity(items);
   const order = <T,>(
     rows: T[],
     ranking: string,
@@ -383,6 +386,25 @@ export default function Stats({
       : tab !== 'series'
         ? [
             { label: t('Na coleção'), value: summary.total, Icon: Library },
+            ...(tab === 'game'
+              ? [
+                  {
+                    label: t('Tempo total jogado'),
+                    value: duration(games.totalMinutes),
+                    Icon: Clock3,
+                  },
+                  {
+                    label: t('Para começar'),
+                    value: games.planned,
+                    Icon: Gamepad2,
+                  },
+                  {
+                    label: t('Taxa de conclusão'),
+                    value: `${games.completionRate}%`,
+                    Icon: CheckCheck,
+                  },
+                ]
+              : []),
             ...(tab === 'movie'
               ? [
                   {
@@ -481,6 +503,7 @@ export default function Stats({
               </article>
             ))}
           </div>
+          {tab === 'game' && <GameActivity items={items} />}
           {tab === 'series' && (
             <>
               <p className="stats-note">
