@@ -94,3 +94,13 @@ test('plataforma de jogos sobrevive ao refresh e à abertura dos detalhes, sem f
   assert.equal(readHomeRoute(new URL('https://nextplay.example/biblioteca?categoria=game&plataforma=invalid')).platform, undefined);
   assert.equal(readHomeRoute(new URL('https://nextplay.example/biblioteca?categoria=game&plataforma=missing')).platform, 'missing');
 });
+
+
+test('notificação preserva título e conversa específica após refresh sem aceitar IDs inválidos', () => {
+  const route = { view: 'all', category: 'all', detailId: 'a'.repeat(24), commentId: 'b'.repeat(24), historyMode: false };
+  const url = new URL(homeRouteUrl(route), 'https://nextplay.example');
+  assert.equal(url.searchParams.get('comentario'), route.commentId);
+  assert.deepEqual(readHomeRoute(url), route);
+  assert.equal(readHomeRoute(new URL('https://nextplay.example/biblioteca?comentario=' + route.commentId)).commentId, undefined);
+  assert.equal(readHomeRoute(new URL('https://nextplay.example/biblioteca?titulo=' + route.detailId + '&comentario=bad')).commentId, undefined);
+});

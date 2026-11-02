@@ -3246,9 +3246,14 @@ button.cast-card:focus-visible {
 .incoming-compact .incoming-card time { padding: 4px 7px; font-size: 11px; }
 /* A prioridade fica fora do texto oculto no modo enxuto para continuar visível. */
 
-/* Prioridade e progresso compartilham a faixa inferior da capa, sem sobreposição. */
-.cover-bottom-content { position: absolute; inset: auto 0 0; z-index: 2; pointer-events: none; padding-top: 28px; background: linear-gradient(transparent, #100b19ed 65%); }
+/* Estreia, prioridade e estado ocupam linhas no mesmo fluxo; alturas variáveis não se sobrepõem. */
+.cover-bottom-content { display: flex; flex-direction: column; position: absolute; inset: auto 0 0; z-index: 2; pointer-events: none; padding-top: 28px; background: linear-gradient(transparent, #100b19ed 65%); }
 .cover-bottom-content:empty { display: none; }
+.cover-bottom-content > .release-badge,
+.cover-bottom-content > .rewatch-tag { position: static; align-self: flex-start; margin: 0 12px 10px; max-width: calc(100% - 24px); min-width: 0; }
+.cover-bottom-content > .release-badge time { min-width: 0; overflow-wrap: anywhere; }
+.cover-bottom-content > .backlog-priority { align-self: flex-start; }
+
 .cover-bottom-content > .book-reading-marker,
 .cover-bottom-content > .game-playing-marker,
 .cover-bottom-content > .series-cover-progress { position: static; padding: 0 12px 10px; background: none; }

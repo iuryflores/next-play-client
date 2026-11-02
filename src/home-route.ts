@@ -18,6 +18,7 @@ export const homePaths = {
 export type HomeRoute = {
   view: keyof typeof homePaths;
   detailId: string | null;
+  commentId?: string;
   category: 'all' | 'movie' | 'series' | 'game' | 'book';
   historyMode: boolean;
   platform?: string;
@@ -33,8 +34,15 @@ export function readHomeRoute(url: URL): HomeRoute {
   const category = url.searchParams.get('categoria');
   const detailId = url.searchParams.get('titulo');
   const platform = url.searchParams.get('plataforma');
+  const commentId = url.searchParams.get('comentario');
   return {
     view,
+    ...(detailId &&
+    /^[a-f0-9]{24}$/i.test(detailId) &&
+    commentId &&
+    /^[a-f0-9]{24}$/i.test(commentId)
+      ? { commentId }
+      : {}),
     // O filtro faz parte do endereço para sobreviver a refresh, detalhes e voltar/avançar.
     ...(category === 'game' &&
     platform &&
@@ -60,6 +68,8 @@ export function homeRouteUrl(route: HomeRoute) {
   if (route.category === 'game' && route.platform)
     query.set('plataforma', route.platform);
   if (route.detailId) query.set('titulo', route.detailId);
+  if (route.detailId && route.commentId)
+    query.set('comentario', route.commentId);
   if (route.view === 'completed' && route.historyMode)
     query.set('historico', '1');
   return (

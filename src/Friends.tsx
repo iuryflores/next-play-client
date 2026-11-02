@@ -104,29 +104,13 @@ export default function Friends({
   const expired = useEffectEvent(onExpired);
   useEffect(() => {
     const refresh = () => setRevision((value) => value + 1);
-    const progression = (event: Event) => {
-      const value = (event as CustomEvent<{ totalXp: number; level: number }>)
-        .detail;
-      // A primeira sincronização pode terminar depois da leitura do ranking.
-      refresh();
-      setData((current) =>
-        current
-          ? {
-              ...current,
-              ranking: current.ranking.map((row) =>
-                row.me
-                  ? { ...row, xp: value.totalXp, level: value.level }
-                  : row,
-              ),
-            }
-          : current,
-      );
-    };
+    // XP e colocação vêm na mesma resposta para não mostrar pontos novos
+    // com uma posição antiga enquanto o ranking é recalculado no servidor.
     window.addEventListener('nextplay:friends-changed', refresh);
-    window.addEventListener('nextplay:progression-synced', progression);
+    window.addEventListener('nextplay:progression-synced', refresh);
     return () => {
       window.removeEventListener('nextplay:friends-changed', refresh);
-      window.removeEventListener('nextplay:progression-synced', progression);
+      window.removeEventListener('nextplay:progression-synced', refresh);
     };
   }, []);
   useEffect(() => {
@@ -235,12 +219,12 @@ export default function Friends({
             </h2>
             <p>
               {t(
-                'Tempo total em séries: soma dos episódios assistidos, uma vez por episódio. Filmes e jogos ainda não entram no tempo. Empates recebem a mesma posição.',
+                'A colocação é definida pelo XP total, do maior para o menor. Pessoas com o mesmo XP compartilham a mesma posição.',
               )}
             </p>
             <p className="friends-ranking-note">
               {t(
-                'Livros lidos e jogos concluídos contam títulos distintos, incluindo arquivados. O XP mostra o total já reconhecido no perfil; a posição continua pelo tempo em séries.',
+                'Livros lidos e jogos concluídos contam títulos distintos, incluindo arquivados. O tempo em séries soma os episódios assistidos uma vez por episódio e é apenas informativo.',
               )}
             </p>
             <div className="friends-table">
@@ -251,11 +235,11 @@ export default function Friends({
                     <th scope="col">
                       {t(scope === 'friends' ? 'Amigo' : 'Usuário')}
                     </th>
+                    <th scope="col">XP</th>
                     <th scope="col">{t('Tempo em séries')}</th>
                     <th scope="col">{t('Episódios assistidos')}</th>
                     <th scope="col">{t('Livros lidos')}</th>
                     <th scope="col">{t('Jogos concluídos')}</th>
-                    <th scope="col">XP</th>
                     <th scope="col">{t('Amizade')}</th>
                   </tr>
                 </thead>
@@ -317,6 +301,10 @@ export default function Friends({
                           </small>
                         )}
                       </th>
+                      <td className="ranking-xp">
+                        <strong>{row.xp.toLocaleString(language)}</strong>
+                        <small>{t('Nível {0}', row.level)}</small>
+                      </td>
                       <td>
                         {Math.floor(row.minutes / 60).toLocaleString(language)}h{' '}
                         {row.minutes % 60}min
@@ -327,10 +315,6 @@ export default function Friends({
                       </td>
                       <td className="ranking-number">
                         {row.games.toLocaleString(language)}
-                      </td>
-                      <td className="ranking-xp">
-                        <strong>{row.xp.toLocaleString(language)}</strong>
-                        <small>{t('Nível {0}', row.level)}</small>
                       </td>
                       <td>
                         {!row.me &&
@@ -481,7 +465,7 @@ export default function Friends({
                   <h2>{t('Adicionar amigo')}</h2>
                   <p>
                     {t(
-                      'Ao aceitar a amizade, vocês compartilham o tempo assistido e a quantidade de episódios no ranking. Sua coleção, avaliações e anotações continuam privadas.',
+                      'Ao aceitar a amizade, vocês aparecem no ranking por XP, com nível e totais de consumo. Sua coleção, avaliações e anotações continuam privadas.',
                     )}
                   </p>
                   <form

@@ -30,6 +30,7 @@ import './title-details.css';
 
 export default function TitleDetails({
   item,
+  focusCommentId,
   items,
   openTitle,
   back,
@@ -41,6 +42,7 @@ export default function TitleDetails({
   removed,
 }: {
   item: LibraryItem;
+  focusCommentId?: string;
   items: LibraryItem[];
   openTitle: (id: string) => void;
   back: () => void;
@@ -414,8 +416,9 @@ export default function TitleDetails({
             {!followingSeries && trailerCast}
             {!followingSeries && episodePanel}
             <Community
-              key={`community-${item.id}`}
+              key={`community-${item.id}-${focusCommentId || 'list'}`}
               itemId={item.id}
+              focusCommentId={focusCommentId}
               onExpired={onExpired}
             />
           </div>

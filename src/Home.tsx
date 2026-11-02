@@ -921,6 +921,11 @@ function Home({
               </button>
               <UserLevelBadge />
               <NotificationBell
+                onComment={(itemId, commentId) => {
+                  setView('all');
+                  setDetailId(itemId);
+                  setRouteField('commentId', commentId);
+                }}
                 onExpired={onExpired}
                 onAchievements={() => {
                   setDetailId(null);
@@ -1039,6 +1044,7 @@ function Home({
             ) : detailItem ? (
               <TitleDetails
                 items={items}
+                focusCommentId={route.commentId}
                 openTitle={setDetailId}
                 item={detailItem}
                 back={() => setDetailId(null)}
@@ -1307,7 +1313,6 @@ function Home({
                               <div
                                 className={`item-cover ${item.coverUrl ? 'has-poster' : ''}`}
                               >
-                                <ReleaseBadge item={item} />
                                 <Icon aria-hidden="true" />
                                 {item.coverUrl && (
                                   <img
@@ -1386,6 +1391,7 @@ function Home({
                                         )}
                                       </span>
                                     )}
+                                  <ReleaseBadge item={item} />
                                   {/* Sem páginas registradas, mostramos um selo de estado,
                                     nunca uma barra que possa sugerir leitura concluída. */}
                                   {item.kind === 'book' &&

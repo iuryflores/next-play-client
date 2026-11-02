@@ -1,5 +1,24 @@
 // Portuguese source messages with English and Spanish equivalents.
 const rows = `
+Resposta publicada.|Reply posted.|Respuesta publicada.
+Comentário removido|Comment removed|Comentario eliminado
+Retirar curtida|Unlike|Quitar Me gusta
+Curtir comentário|Like comment|Me gusta el comentario
+Responder|Reply|Responder
+Ocultar respostas ({0})|Hide replies ({0})|Ocultar respuestas ({0})
+Ver respostas ({0})|View replies ({0})|Ver respuestas ({0})
+Ver mais respostas|View more replies|Ver más respuestas
+Sua resposta|Your reply|Tu respuesta
+Publicar resposta|Post reply|Publicar respuesta
+Conquistas, convites de amizade e respostas aos seus comentários.|Achievements, friend requests and replies to your comments.|Logros, solicitudes de amistad y respuestas a tus comentarios.
+Resposta ao seu comentário|Reply to your comment|Respuesta a tu comentario
+Conversa indisponível|Conversation unavailable|Conversación no disponible
+{0} respondeu ao seu comentário.|{0} replied to your comment.|{0} respondió a tu comentario.
+Esta conversa não está mais disponível.|This conversation is no longer available.|Esta conversación ya no está disponible.
+Ver conversa|View conversation|Ver conversación
+A colocação é definida pelo XP total, do maior para o menor. Pessoas com o mesmo XP compartilham a mesma posição.|Rank is based on total XP, highest first. People with the same XP share the same rank.|La posición se define por el XP total, de mayor a menor. Las personas con el mismo XP comparten la misma posición.
+Livros lidos e jogos concluídos contam títulos distintos, incluindo arquivados. O tempo em séries soma os episódios assistidos uma vez por episódio e é apenas informativo.|Books read and games completed count distinct titles, including archived ones. Series time counts each watched episode once and is informational only.|Los libros leídos y juegos completados cuentan títulos distintos, incluidos los archivados. El tiempo en series cuenta cada episodio visto una vez y es solo informativo.
+Ao aceitar a amizade, vocês aparecem no ranking por XP, com nível e totais de consumo. Sua coleção, avaliações e anotações continuam privadas.|After accepting the friendship, you appear in the XP ranking with your level and consumption totals. Your collection, ratings and notes remain private.|Al aceptar la amistad, aparecen en el ranking por XP con su nivel y totales de consumo. Su colección, valoraciones y notas siguen siendo privadas.
 Reassistindo|Rewatching|Volviendo a ver
 Visualizações|Viewings|Visualizaciones
 Quero rever|Want to rewatch|Quiero volver a ver
