@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.0](https://github.com/iuryflores/next-play-client/compare/v0.5.0...v0.6.0) (2026-11-02)
+
+
+### Features
+
+* aprimora conquistas, rankings e navegação ([f13c88f](https://github.com/iuryflores/next-play-client/commit/f13c88f983cbbf80c3d7ab4809856668671bdd03))
+* registra tempo jogado no acompanhamento de jogos ([aac642f](https://github.com/iuryflores/next-play-client/commit/aac642f7c5b497aceca5b2a5dee988690ad2b702))
+
 ## [0.5.0](https://github.com/iuryflores/next-play-client/compare/v0.4.1...v0.5.0) (2026-11-02)
 
 
