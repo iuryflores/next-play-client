@@ -1,5 +1,26 @@
 // Portuguese source messages with English and Spanish equivalents.
 const rows = `
+Reassistindo|Rewatching|Volviendo a ver
+Visualizações|Viewings|Visualizaciones
+Quero rever|Want to rewatch|Quiero volver a ver
+Remover de Quero rever|Remove from rewatch list|Quitar de Quiero volver a ver
+Começar a rever|Start rewatching|Empezar a volver a ver
+Reassistindo · {0}ª vez|Rewatching · viewing {0}|Volviendo a ver · {0}.ª vez
+Concluir esta vez|Complete this viewing|Completar esta visualización
+Histórico de visualizações|Viewing history|Historial de visualizaciones
+Ver visualizações anteriores|View earlier viewings|Ver visualizaciones anteriores
+{0}ª vez|Viewing {0}|{0}.ª vez
+{0} episódios assistidos|{0} episodes watched|{0} episodios vistos
+Data não registrada|Date not recorded|Fecha no registrada
+Início|Started|Inicio
+Primeira visualização: registros originais preservados.|First viewing: original records preserved.|Primera visualización: registros originales conservados.
+Começar a rever?|Start rewatching?|¿Empezar a volver a ver?
+Concluir esta visualização?|Complete this viewing?|¿Completar esta visualización?
+Uma nova visualização começa do zero. A conclusão, as datas e os episódios anteriores ficam preservados no histórico.|A new viewing starts from scratch. Previous completions, dates and episodes remain in your history.|Una nueva visualización empieza desde cero. Las finalizaciones, fechas y episodios anteriores se conservan en el historial.
+Conclua todos os episódios regulares já lançados desta visualização antes de encerrá-la. Para marcar os pendentes de uma vez, use Concluir série.|Watch all released regular episodes in this viewing before completing it. To mark all pending episodes at once, use Complete series.|Ve todos los episodios regulares estrenados de esta visualización antes de completarla. Para marcar todos los pendientes, usa Completar serie.
+Esta data pertence somente a esta visualização. A primeira vez assistida continua preservada.|This date belongs only to this viewing. Your first viewing remains preserved.|Esta fecha pertenece solo a esta visualización. La primera vez que la viste se conserva.
+Plataforma (opcional)|Platform (optional)|Plataforma (opcional)
+Escolha a plataforma usada no acompanhamento ou digite outra. Em branco, contam todas.|Choose the platform used in tracking or enter another one. Leave blank to include all.|Elige la plataforma usada en el seguimiento o escribe otra. En blanco, cuentan todas.
 Desafios pessoais|Personal challenges|Desafíos personales
 Defina sua meta e acompanhe suas conclusões no período escolhido.|Set your goal and track completions in the chosen period.|Define tu meta y sigue tus finalizaciones en el período elegido.
 Atualizar desafios|Refresh challenges|Actualizar desafíos

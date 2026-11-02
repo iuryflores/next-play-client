@@ -8,14 +8,18 @@ export async function request(
   method = 'GET',
   body?: object,
   importing: boolean | 'complete' | 'watch-many' | 'unwatch-many' = false,
+  viewing?: string | null,
 ): Promise<EpisodeData> {
+  const headers = new Headers();
+  if (viewing) headers.set('X-Viewing-Id', viewing);
   const options: RequestInit = {
     method,
+    headers,
     credentials: 'same-origin',
     signal: AbortSignal.timeout(typeof importing === 'string' ? 120000 : 20000),
   };
   if (body && method !== 'GET') {
-    options.headers = { 'Content-Type': 'application/json' };
+    headers.set('Content-Type', 'application/json');
     options.body = JSON.stringify(body);
   }
   const response = await fetch(
@@ -43,13 +47,16 @@ export async function resume(
   id: string,
   data: EpisodeData,
   active: () => boolean,
+  viewing?: string | null,
 ): Promise<EpisodeData> {
   if (!data.supported || !active()) return data;
-  let result = data.seasons.length ? data : await request(id, 'POST', {}, true);
+  let result = data.seasons.length
+    ? data
+    : await request(id, 'POST', {}, true, viewing);
   while (active()) {
     const next = nextEpisode(result);
     if (!next || next.episode !== null) break;
-    result = await request(id, 'POST', { season: next.season }, true);
+    result = await request(id, 'POST', { season: next.season }, true, viewing);
   }
   return result;
 }

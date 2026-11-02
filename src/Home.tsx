@@ -1,3 +1,4 @@
+import './rewatch.css';
 import { groupGames } from './game-groups';
 import {
   matchesPlatform,
@@ -373,6 +374,9 @@ function Home({
         editing ? 'PATCH' : 'POST',
         editing?.id,
         {
+          ...(editing
+            ? { viewingId: editing.rewatchActiveId || 'original' }
+            : {}),
           title: data.get('title'),
           kind,
           status: data.get('status'),
@@ -1003,7 +1007,7 @@ function Home({
                 </section>
               )}
             {view === 'challenges' ? (
-              <Challenges onExpired={onExpired} />
+              <Challenges items={items} onExpired={onExpired} />
             ) : view === 'achievements' ? (
               <Achievements />
             ) : view === 'acervo' ? (
@@ -1351,7 +1355,25 @@ function Home({
                                   edit={edit}
                                   onExpired={onExpired}
                                 />
+                                {item.kind === 'game' && (
+                                  <GameTimeAction
+                                    item={original}
+                                    parts={item.gameParts}
+                                    changed={updateItem}
+                                    onExpired={onExpired}
+                                  />
+                                )}
                                 <div className="cover-bottom-content">
+                                  {(item.rewatching || item.rewatchWanted) && (
+                                    <span className="rewatch-tag">
+                                      {item.rewatching
+                                        ? t(
+                                            'Reassistindo · {0}ª vez',
+                                            (item.rewatchCount || 0) + 1,
+                                          )
+                                        : t('Quero rever')}
+                                    </span>
+                                  )}
                                   {item.priority &&
                                     item.priority !== 'none' && (
                                       <span
@@ -1483,11 +1505,13 @@ function Home({
                                     className={`item-status ${item.status}`}
                                   >
                                     <span />
-                                    {item.kind === 'series' &&
-                                    item.caughtUp &&
-                                    item.status !== 'completed'
-                                      ? t('Em dia')
-                                      : statusNames[item.kind][item.status]}
+                                    {item.rewatching
+                                      ? t('Reassistindo')
+                                      : item.kind === 'series' &&
+                                          item.caughtUp &&
+                                          item.status !== 'completed'
+                                        ? t('Em dia')
+                                        : statusNames[item.kind][item.status]}
                                   </span>
                                   <h3>{item.title}</h3>
                                   {view === 'completed' && historyMode && (
@@ -1498,14 +1522,6 @@ function Home({
                                     originalTitle={item.originalTitle}
                                   />
                                 </div>
-                                {item.kind === 'game' && (
-                                  <GameTimeAction
-                                    item={original}
-                                    parts={item.gameParts}
-                                    changed={updateItem}
-                                    onExpired={onExpired}
-                                  />
-                                )}
                                 {item.kind === 'series' && (
                                   <SeriesResume
                                     item={item}

@@ -3,6 +3,9 @@ type CollectionItem = ReleaseInfo & {
   kind: string;
   status: string;
   archived?: boolean;
+  rewatchWanted?: boolean;
+  rewatching?: boolean;
+  watchedBefore?: boolean;
   caughtUp?: boolean;
   inProgress?: boolean;
   episodeProgress?: { watched: number };
@@ -100,7 +103,11 @@ export function matchesView(item: CollectionItem, view: string) {
   const finished =
     item.status === 'completed' ||
     (item.kind === 'series' && item.caughtUp === true);
-  if (view === 'completed') return finished;
+  // A intenção aparece no backlog; a repetição ativa aparece no acompanhamento,
+  // mantendo o título entre os concluídos por sua visualização anterior.
+  if (view === 'completed') return finished || Boolean(item.watchedBefore);
+  if (item.rewatching) return view === 'all' || view === 'active';
+  if (view === 'planned' && item.rewatchWanted) return true;
   const upcoming = !finished && Boolean(upcomingRelease(item));
   // Séries já iniciadas aparecem em Suas séries, sem repetir o mesmo título entre novidades.
   if (view === 'coming-soon')

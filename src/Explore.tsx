@@ -10,7 +10,11 @@ import {
   useRef,
   useState,
 } from 'react';
-import { exploreSelection, shuffleSuggestions } from './suggestions';
+import {
+  appendSuggestionPage,
+  exploreSelection,
+  shuffleSuggestions,
+} from './suggestions';
 import { suggestionBatch } from './suggestion-batch';
 import { explorePageSize, missingExploreSlots } from './explore-grid';
 import {
@@ -347,7 +351,7 @@ export default function Explore({
                   ...value,
                   pending: buffer.pending,
                   nextPage: buffer.next,
-                  results: [...value.results, ...batch.results],
+                  results: appendSuggestionPage(value.results, batch.results),
                 },
           ),
         );

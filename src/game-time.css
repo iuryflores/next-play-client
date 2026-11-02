@@ -201,3 +201,24 @@
 
 .game-time-part { display: grid; gap: 8px; margin: 16px 0; min-width: 0; }
 .game-time-part small { color: var(--muted-foreground); font-size: 12px; }
+
+/* Na capa, o atalho fica em uma segunda linha de ações, sem cobrir horas, prioridade ou estreia. */
+.item-cover .game-time-trigger {
+  position: absolute;
+  top: 48px;
+  right: 8px;
+  z-index: 3;
+  width: auto;
+  min-height: 32px;
+  margin: 0;
+  padding: 0 10px;
+  gap: 6px;
+  font-size: 11px;
+  background: #17121ee6;
+  color: #fff;
+  border: 1px solid #ffffff30;
+  border-radius: 8px;
+  box-shadow: none;
+}
+.item-cover .game-time-trigger:hover { background: #332442f2; }
+.item-cover .game-time-trigger:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }

@@ -64,8 +64,10 @@ export default function Episodes({
   useEffect(() => {
     let active = true;
     mounted.current = true;
-    void request(itemId)
-      .then((result) => resume(itemId, result, () => active))
+    void request(itemId, 'GET', undefined, false, item?.rewatchActiveId)
+      .then((result) =>
+        resume(itemId, result, () => active, item?.rewatchActiveId),
+      )
       .then((result) => {
         if (active) {
           setData(result);
@@ -91,7 +93,7 @@ export default function Episodes({
       active = false;
       mounted.current = false;
     };
-  }, [itemId, retry]);
+  }, [itemId, retry, item?.rewatchActiveId]);
   async function run(
     method: string,
     body: object,
@@ -138,7 +140,13 @@ export default function Episodes({
         if (!review || !mounted.current) return;
         body = { ...body, ...review };
       }
-      let result = await request(itemId, method, body, importing);
+      let result = await request(
+        itemId,
+        method,
+        body,
+        importing,
+        item?.rewatchActiveId,
+      );
       refreshNeeded = true;
       saved =
         method === 'PATCH' ||
@@ -162,7 +170,12 @@ export default function Episodes({
           episode: season?.episodes[0]?.number ?? null,
         });
       } else {
-        result = await resume(itemId, result, () => mounted.current);
+        result = await resume(
+          itemId,
+          result,
+          () => mounted.current,
+          item?.rewatchActiveId,
+        );
         if (mounted.current) {
           setData(result);
           setSelection(nextEpisode(result));

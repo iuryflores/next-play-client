@@ -37,3 +37,19 @@ export function rankSuggestions<T extends { relevance?: number }>(
     (a, b) => (b.relevance || 0) - (a.relevance || 0),
   );
 }
+
+// Paginar só acrescenta novidades: duplicatas não substituem nem deslocam cards
+// que a pessoa já viu, mesmo quando o catálogo retorna outra ordem ou metadados.
+export function appendSuggestionPage<T extends { catalogId: string }>(
+  current: readonly T[],
+  incoming: readonly T[],
+): T[] {
+  const seen = new Set(current.map((item) => item.catalogId));
+  const results = [...current];
+  for (const item of incoming) {
+    if (seen.has(item.catalogId)) continue;
+    seen.add(item.catalogId);
+    results.push(item);
+  }
+  return results;
+}

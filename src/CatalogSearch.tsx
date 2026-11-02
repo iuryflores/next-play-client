@@ -22,7 +22,7 @@ import {
   type SuggestionBuffer,
 } from './suggestion-batch';
 import { useRef } from 'react';
-import { shuffleSuggestions } from './suggestions';
+import { appendSuggestionPage, shuffleSuggestions } from './suggestions';
 import BookSearch from './BookSearch';
 export interface CatalogTitle {
   platforms?: string[];
@@ -184,10 +184,7 @@ function MediaCatalogSearch({
       results.some((item) => item.catalogId === candidate.catalogId),
   );
   const batchSize = useEffectEvent((page: number) =>
-    suggestionCount(
-      page,
-      results.filter((item) => !findOwned(items, item)).length,
-    ),
+    suggestionCount(page, results.length),
   );
   useEffect(() => {
     const controller = new AbortController();
@@ -246,18 +243,9 @@ function MediaCatalogSearch({
               batchSize(page),
             );
         if (active) {
-          setResults((current) => {
-            const merged = [
-              ...new Map(
-                (page > 1 ? [...current, ...batch.results] : batch.results).map(
-                  (item) => [item.catalogId, item],
-                ),
-              ).values(),
-            ];
-            return request.term
-              ? merged.sort((a, b) => releaseTime(b) - releaseTime(a))
-              : merged;
-          });
+          setResults((current) =>
+            appendSuggestionPage(page > 1 ? current : [], batch.results),
+          );
           setNextPage(
             searchPage ? searchPage.nextPage : batch.hasMore ? page + 1 : null,
           );
@@ -443,86 +431,74 @@ function MediaCatalogSearch({
         </Button>
       )}
       <div className="catalog-results" aria-busy={busy}>
-        {results
-          .filter((item) => Boolean(request.term) || !findOwned(items, item))
-          .map((item) => (
-            <article key={item.catalogId} className="catalog-result">
-              <div className="catalog-cover-frame">
-                {findOwned(items, item) && (
-                  <span className="catalog-owned-badge">{t('Na coleção')}</span>
-                )}
-                <ReleaseBadge item={item} />
-                {item.coverUrl ? (
-                  <img
-                    src={item.coverUrl}
-                    alt=""
-                    loading="lazy"
-                    referrerPolicy="no-referrer"
-                  />
-                ) : (
-                  <span className="catalog-no-cover">
-                    <ImageOff aria-hidden="true" />
-                  </span>
-                )}
-              </div>
-              <div className="catalog-card-info">
-                <strong>{item.title}</strong>
-                <OriginalTitle
-                  title={item.title}
-                  originalTitle={item.originalTitle}
+        {/* Salvar mantém o card e sua posição; apenas as ações e o selo mudam. */}
+        {results.map((item) => (
+          <article key={item.catalogId} className="catalog-result">
+            <div className="catalog-cover-frame">
+              {findOwned(items, item) && (
+                <span className="catalog-owned-badge">{t('Na coleção')}</span>
+              )}
+              <ReleaseBadge item={item} />
+              {item.coverUrl ? (
+                <img
+                  src={item.coverUrl}
+                  alt=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
                 />
-                <small>
-                  {item.year || t('Ano não informado')} ·{' '}
-                  {kind === 'game' ? 'IGDB' : 'TMDB'}
-                </small>
-                <span className="catalog-overview">
-                  {item.overview || t('Sem sinopse disponível.')}
+              ) : (
+                <span className="catalog-no-cover">
+                  <ImageOff aria-hidden="true" />
                 </span>
-                {item.kind === 'game' && (
-                  <small className="catalog-platforms">
-                    {t('Plataformas')}:{' '}
-                    {item.platforms?.length
-                      ? item.platforms.join(' · ')
-                      : t('Não informadas pelo catálogo')}
-                  </small>
-                )}
-                {select ? (
-                  <Button
-                    type="button"
-                    className="home-primary"
-                    onClick={() => select(item)}
-                  >
-                    {t('Escolher esta obra')}
-                  </Button>
-                ) : (
-                  <QuickActions
-                    title={item}
-                    owned={findOwned(items, item)}
-                    changed={changed}
-                    edit={edit}
-                    onExpired={onExpired}
-                  />
-                )}
-              </div>
-            </article>
-          ))}
+              )}
+            </div>
+            <div className="catalog-card-info">
+              <strong>{item.title}</strong>
+              <OriginalTitle
+                title={item.title}
+                originalTitle={item.originalTitle}
+              />
+              <small>
+                {item.year || t('Ano não informado')} ·{' '}
+                {kind === 'game' ? 'IGDB' : 'TMDB'}
+              </small>
+              <span className="catalog-overview">
+                {item.overview || t('Sem sinopse disponível.')}
+              </span>
+              {item.kind === 'game' && (
+                <small className="catalog-platforms">
+                  {t('Plataformas')}:{' '}
+                  {item.platforms?.length
+                    ? item.platforms.join(' · ')
+                    : t('Não informadas pelo catálogo')}
+                </small>
+              )}
+              {select ? (
+                <Button
+                  type="button"
+                  className="home-primary"
+                  onClick={() => select(item)}
+                >
+                  {t('Escolher esta obra')}
+                </Button>
+              ) : (
+                <QuickActions
+                  title={item}
+                  owned={findOwned(items, item)}
+                  changed={changed}
+                  edit={edit}
+                  onExpired={onExpired}
+                />
+              )}
+            </div>
+          </article>
+        ))}
       </div>
-      {searched &&
-        !busy &&
-        !results.some(
-          (item) => Boolean(request.term) || !findOwned(items, item),
-        ) &&
-        !error && (
-          <p>
-            {results.length
-              ? t(
-                  'Todos os títulos desta lista já estão na sua coleção. Busque outro nome para encontrar novas opções.',
-                )
-              : t(
-                  'Nenhum resultado. Tente outro nome ou cadastre manualmente.',
-                )}
-          </p>
-        )}
+      {searched && !busy && !results.length && !error && (
+        <p>
+          {t('Nenhum resultado. Tente outro nome ou cadastre manualmente.')}
+        </p>
+      )}
       {nextPage !== null && (
         <div className="catalog-more-actions" ref={suggestionEnd}>
           <Button

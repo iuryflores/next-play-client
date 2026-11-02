@@ -60,6 +60,7 @@ export default function QuickActions({
           owned.id,
           await episodeRequest(owned.id),
           () => true,
+          owned.rewatchActiveId,
         );
         if (!data.supported)
           throw new Error(
@@ -86,12 +87,18 @@ export default function QuickActions({
           episode,
         );
         if (!review) return;
-        await episodeRequest(owned.id, 'PATCH', {
-          ...review,
-          season: next.season,
-          episode: next.episode,
-          watched: true,
-        });
+        await episodeRequest(
+          owned.id,
+          'PATCH',
+          {
+            ...review,
+            season: next.season,
+            episode: next.episode,
+            watched: true,
+          },
+          false,
+          owned.rewatchActiveId,
+        );
         const refreshed = await libraryRequest<{ items: LibraryItem[] }>();
         const item = refreshed.items.find((item) => item.id === owned.id);
         if (item) changed(item);
@@ -110,6 +117,7 @@ export default function QuickActions({
       if (review === null) return;
       const result = owned
         ? await libraryRequest<{ item: LibraryItem }>('PATCH', owned.id, {
+            viewingId: owned.rewatchActiveId || 'original',
             title: owned.title,
             kind: owned.kind,
             status: 'completed',
@@ -200,7 +208,9 @@ export default function QuickActions({
       {owned && !compact && (
         <small className="quick-status">
           {t(' Na coleção · ')}
-          {statusNames[owned.kind][owned.status]}
+          {owned.rewatching
+            ? t('Reassistindo')
+            : statusNames[owned.kind][owned.status]}
         </small>
       )}
       <Button

@@ -1,3 +1,5 @@
+import { platformOptions } from './game-platform-filter';
+import type { LibraryItem } from './library';
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { Flag, Plus, RefreshCw, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -18,6 +20,7 @@ type Challenge = {
   id: string;
   name: string;
   kind: 'game' | 'movie' | 'book';
+  platform?: string | null;
   target: number;
   startsOn: string;
   endsOn: string;
@@ -59,12 +62,22 @@ async function request<T>(
     );
   return value;
 }
-export default function Challenges({ onExpired }: { onExpired: () => void }) {
+export default function Challenges({
+  onExpired,
+  items,
+}: {
+  onExpired: () => void;
+  items: LibraryItem[];
+}) {
   const [data, setData] = useState<Data | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [reload, setReload] = useState(0);
   const [open, setOpen] = useState(false);
+  const [challengeKind, setChallengeKind] = useState<Challenge['kind']>('game');
+  const platforms = platformOptions(
+    items.filter((item) => !item.parentGameCatalogId),
+  );
   const [confirm, setConfirm] = useState<{
     item: Challenge;
     action: 'close' | 'delete';
@@ -197,6 +210,7 @@ export default function Challenges({ onExpired }: { onExpired: () => void }) {
             onClick={() => {
               createId.current = crypto.randomUUID();
               setFormError('');
+              setChallengeKind('game');
               setOpen(true);
             }}
           >
@@ -251,7 +265,12 @@ export default function Challenges({ onExpired }: { onExpired: () => void }) {
               <span>{phases[item.phase]}</span>
               {item.achieved && <span>{t('Meta atingida')}</span>}
             </div>
-            <p className="challenge-kind">{kinds[item.kind]}</p>
+            <p className="challenge-kind">
+              {kinds[item.kind]}
+              {item.kind === 'game' && (
+                <> · {item.platform || t('Todas as plataformas')}</>
+              )}
+            </p>
             <p className="challenge-count">
               <strong>{item.count}</strong> / {item.target}
             </p>
@@ -338,6 +357,9 @@ export default function Challenges({ onExpired }: { onExpired: () => void }) {
             onSubmit={(event) => {
               event.preventDefault();
               const form = new FormData(event.currentTarget);
+              const platformValue = form.get('platform');
+              const platform =
+                typeof platformValue === 'string' ? platformValue.trim() : '';
               let timeZone = 'UTC';
               try {
                 timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -347,6 +369,9 @@ export default function Challenges({ onExpired }: { onExpired: () => void }) {
                   id: createId.current,
                   name: form.get('name'),
                   kind: form.get('kind'),
+                  ...(form.get('kind') === 'game' && platform
+                    ? { platform }
+                    : {}),
                   target: Number(form.get('target')),
                   startsOn: form.get('startsOn'),
                   endsOn: form.get('endsOn'),
@@ -370,13 +395,48 @@ export default function Challenges({ onExpired }: { onExpired: () => void }) {
               <label htmlFor="challenge-kind">
                 {t('O que você quer concluir?')}
               </label>
-              <NativeSelect id="challenge-kind" name="kind" defaultValue="game">
+              <NativeSelect
+                id="challenge-kind"
+                name="kind"
+                value={challengeKind}
+                onChange={(event) =>
+                  setChallengeKind(event.target.value as Challenge['kind'])
+                }
+              >
                 {Object.entries(kinds).map(([value, label]) => (
                   <option key={value} value={value}>
                     {label}
                   </option>
                 ))}
               </NativeSelect>
+              {challengeKind === 'game' && (
+                <>
+                  <label htmlFor="challenge-platform">
+                    {t('Plataforma (opcional)')}
+                  </label>
+                  <Input
+                    id="challenge-platform"
+                    name="platform"
+                    list="challenge-platforms"
+                    maxLength={60}
+                    placeholder={t('Todas as plataformas')}
+                  />
+                  <datalist id="challenge-platforms">
+                    {platforms
+                      .filter((platform) => platform.name)
+                      .map((platform) => (
+                        <option key={platform.key} value={platform.name}>
+                          {platform.name}
+                        </option>
+                      ))}
+                  </datalist>
+                  <small className="challenge-platform-help">
+                    {t(
+                      'Escolha a plataforma usada no acompanhamento ou digite outra. Em branco, contam todas.',
+                    )}
+                  </small>
+                </>
+              )}
               <label htmlFor="challenge-target">{t('Quantidade')}</label>
               <Input
                 id="challenge-target"

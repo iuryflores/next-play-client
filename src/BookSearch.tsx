@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
 import { ApiError } from './auth';
 import PageLoading from './PageLoading';
+import { appendSuggestionPage } from './suggestions';
 import useSuggestionScroll from './useSuggestionScroll';
 import { categories, type Kind } from './library';
 import type { CatalogTitle } from './CatalogSearch';
@@ -112,16 +113,11 @@ export default function BookSearch({
                   : t('Não foi possível consultar o Google Books.'),
               );
             if (!controller.signal.aborted) {
-              setResults(
-                (current) =>
-                  [
-                    ...new Map(
-                      (request.page > 1
-                        ? [...current, ...data.results]
-                        : data.results
-                      ).map((book: BookTitle) => [book.catalogId, book]),
-                    ).values(),
-                  ] as BookTitle[],
+              setResults((current) =>
+                appendSuggestionPage<BookTitle>(
+                  request.page > 1 ? current : [],
+                  data.results,
+                ),
               );
               setNextPage(data.nextPage ?? null);
               setPersonalized(data.personalized === true);

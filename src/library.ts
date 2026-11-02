@@ -27,6 +27,11 @@ export interface LibraryItem {
   lastWatchedAt?: string;
   lastWatchedEpisode?: { season: number; episode: number };
   archived?: boolean;
+  rewatchWanted?: boolean;
+  rewatching?: boolean;
+  rewatchActiveId?: string | null;
+  rewatchCount?: number;
+  watchedBefore?: boolean;
   notes: string;
   episodeProgress?: {
     initialized: boolean;
@@ -92,6 +97,7 @@ export async function libraryRequest<T>(
   id = '',
   body?: object,
   action?:
+    | 'rewatches'
     | 'priority'
     | 'playtime'
     | 'archive'
@@ -141,7 +147,8 @@ export async function libraryRequest<T>(
       (!action ||
         action === 'archive' ||
         action === 'playtime' ||
-        action === 'priority')
+        action === 'priority' ||
+        action === 'rewatches')
     )
       notifySaved(
         t(method === 'DELETE' ? 'Removido da coleção.' : 'Alterações salvas.'),

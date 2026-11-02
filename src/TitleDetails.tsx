@@ -1,3 +1,4 @@
+import Rewatch from './Rewatch';
 import GameStatusHistory from './GameStatusHistory';
 import { Button } from '@/components/ui/button';
 import { groupGames } from './game-groups';
@@ -83,7 +84,7 @@ export default function TitleDetails({
   const episodePanel = item.kind === 'series' && (
     <Episodes
       item={item}
-      key={`episodes-${item.id}`}
+      key={`episodes-${item.id}-${item.rewatchActiveId || 'original'}`}
       itemId={item.id}
       onExpired={onExpired}
       onProgress={onProgress}
@@ -222,7 +223,9 @@ export default function TitleDetails({
                       ? item.kind === 'book'
                         ? t('Lido em')
                         : t(' Concluído em ')
-                      : statusNames[item.kind][item.status]}
+                      : item.rewatching
+                        ? t('Reassistindo')
+                        : statusNames[item.kind][item.status]}
                   {(item.completedOn ||
                     (item.watchedDateUnknown
                       ? undefined
@@ -286,6 +289,9 @@ export default function TitleDetails({
                 />
               </div>
             </div>
+            {(item.kind === 'movie' || item.kind === 'series') && (
+              <Rewatch item={item} changed={changed} onExpired={onExpired} />
+            )}
             <div className="details-meta">
               <small>
                 {categories[item.kind]}
