@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.0](https://github.com/iuryflores/next-play-client/compare/v0.15.0...v0.16.0) (2026-11-02)
+
+
+### Features
+
+* amplia conversas e destaca ranking por XP ([bc6e373](https://github.com/iuryflores/next-play-client/commit/bc6e3737f97b6157504f519013348cb976b236a6))
+
 ## [0.15.0](https://github.com/iuryflores/next-play-client/compare/v0.14.0...v0.15.0) (2026-11-02)
 
 
