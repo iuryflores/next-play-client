@@ -1,0 +1,107 @@
+.game-time-trigger {
+  width: 100%;
+  margin-top: 12px;
+  gap: 8px;
+  border-color: color-mix(in srgb, var(--primary) 35%, var(--border));
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 6%, transparent);
+}
+.game-time-trigger:hover {
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+}
+.game-time-trigger svg {
+  width: 17px;
+  height: 17px;
+}
+.game-time-dialog {
+  width: min(420px, calc(100vw - 32px));
+  max-width: 420px;
+  padding: 26px;
+  gap: 20px;
+}
+.game-time-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-right: 20px;
+}
+.game-time-heading > span {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 13px;
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  color: var(--primary);
+}
+.game-time-heading [data-slot='dialog-title'] {
+  font-size: 18px;
+}
+.game-time-heading [data-slot='dialog-description'] {
+  margin-top: 4px;
+  line-height: 1.5;
+}
+.game-time-current {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+.game-time-current svg {
+  width: 18px;
+}
+.game-time-current strong {
+  display: block;
+  margin-top: 3px;
+  color: var(--foreground);
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}
+.game-time-mode {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+.game-time-mode label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.game-time-mode input {
+  accent-color: var(--primary);
+}
+.game-time-help {
+  margin: 20px 0 12px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+.game-time-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.game-time-inputs label {
+  display: grid;
+  gap: 7px;
+  font-size: 12px;
+}
+.game-time-inputs input {
+  height: 44px;
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+.game-time-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+}

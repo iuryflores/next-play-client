@@ -1,5 +1,11 @@
 # NextPlay
 
+## Planejamento e acompanhamento
+
+A lista de referência do projeto é a planilha [NextPlay — Sugestões e progresso](https://docs.google.com/spreadsheets/d/1-tHmnBnsMw2x3ooq2H7sFMUSflLDgv40wCKSU6ncuc0/edit). As abas **Sugestoes** e **Melhorias adicionais** registram os itens, evidências e lacunas; **Resumo** calcula os totais automaticamente. Consulte essa fonte antes de recomendar o próximo item e atualize os estados somente com evidência no código e na publicação. Alterações de código não sincronizam a planilha automaticamente.
+
+Push e deploy são feitos somente quando solicitados pelo usuário.
+
 Login e biblioteca pessoal em React + TypeScript + Vite, com a identidade visual aprovada.
 
 ## Biblioteca

@@ -952,6 +952,53 @@ Jogar em {0} plataformas diferentes.|Play on {0} different platforms.|Juega en {
 {0} de 5 estrelas|{0} of 5 stars|{0} de 5 estrellas
 Maratonas diárias e variedade de plataformas têm metas fixas, sem níveis infinitos. Só mais um episódio termina em 10 episódios no mesmo dia. As demais regras de ciclos valem para conquistas acumulativas.|Daily marathons and platform variety have fixed targets without infinite levels. Just one more episode ends at 10 episodes on the same day. Cycle rules apply to cumulative achievements.|Las maratones diarias y la variedad de plataformas tienen metas fijas sin niveles infinitos. Solo un episodio más termina en 10 episodios el mismo día. Las reglas de ciclos se aplican a los logros acumulativos.
 Cada estrela vale {0} horas jogadas. Cinco estrelas completam um nível.|Each star is worth {0} hours played. Five stars complete one level.|Cada estrella vale {0} horas jugadas. Cinco estrellas completan un nivel.
+Notificações|Notifications|Notificaciones
+Notificações: {0} não lidas|Notifications: {0} unread|Notificaciones: {0} sin leer
+Suas conquistas e convites de amizade, em um só lugar.|Your achievements and friend requests, in one place.|Tus logros e invitaciones de amistad, en un solo lugar.
+Marcar todas como lidas|Mark all as read|Marcar todas como leídas
+Marcar como lida|Mark as read|Marcar como leída
+Atualizar notificações|Refresh notifications|Actualizar notificaciones
+Nenhuma notificação por enquanto.|No notifications yet.|Todavía no hay notificaciones.
+Não foi possível atualizar as notificações.|Could not refresh notifications.|No se pudieron actualizar las notificaciones.
+Não foi possível concluir a ação. Atualize e tente novamente.|Could not complete the action. Refresh and try again.|No se pudo completar la acción. Actualiza e inténtalo de nuevo.
+Convite de amizade|Friend request|Invitación de amistad
+Quer ser seu amigo.|Wants to be your friend.|Quiere ser tu amigo.
+Convite aceito.|Request accepted.|Invitación aceptada.
+Convite encerrado.|Request closed.|Invitación cerrada.
+Não lida|Unread|Sin leer
+Ver conquistas|View achievements|Ver logros
+Joguei|I played|Jugué
+Registrar tempo de jogo em {0}|Log playtime for {0}|Registrar tiempo de juego en {0}
+Registrar tempo de jogo|Log playtime|Registrar tiempo de juego
+Total registrado|Recorded total|Total registrado
+Como registrar o tempo?|How would you like to log time?|¿Cómo quieres registrar el tiempo?
+Adicionar tempo jogado|Add time played|Añadir tiempo jugado
+Atualizar total de horas|Update total hours|Actualizar total de horas
+Quanto tempo você jogou?|How long did you play?|¿Cuánto tiempo jugaste?
+Qual é o total de tempo jogado agora?|What is your total playtime now?|¿Cuál es el tiempo total jugado ahora?
+Salvar tempo|Save playtime|Guardar tiempo
+Informe um tempo de jogo válido.|Enter a valid playtime.|Introduce un tiempo de juego válido.
+Aparência: {0}|Appearance: {0}|Apariencia: {0}
+Progresso para o próximo nível|Progress to the next level|Progreso hacia el siguiente nivel
+Nível {0} · Ver experiência|Level {0} · View experience|Nivel {0} · Ver experiencia
+{0} XP acumulados|{0} XP earned|{0} XP acumulados
+Ver detalhes do XP|View XP details|Ver detalles del XP
+Cada história soma experiência ao seu perfil.|Every story adds experience to your profile.|Cada historia suma experiencia a tu perfil.
+De onde vem seu XP|Where your XP comes from|De dónde viene tu XP
+{0} registros · {1} XP cada|{0} records · {1} XP each|{0} registros · {1} XP cada uno
+Como funcionam os níveis?|How do levels work?|¿Cómo funcionan los niveles?
+Você começa no nível 1. O primeiro avanço exige 100 XP; cada próximo nível exige 25 XP a mais. Não há nível máximo.|You start at level 1. The first level-up requires 100 XP; each following level requires 25 XP more. There is no maximum level.|Empiezas en el nivel 1. El primer avance requiere 100 XP; cada siguiente nivel requiere 25 XP más. No hay nivel máximo.
+Cada obra, episódio e conquista pontua uma vez. Avaliar com nota ou sentimento rende um único bônus por registro. Editar, desmarcar ou recadastrar não repete o XP já reconhecido.|Each title, episode and achievement scores once. A rating or feeling gives a single bonus per record. Editing, unmarking or re-adding does not repeat XP already credited.|Cada obra, episodio y logro puntúa una vez. Una nota o sentimiento otorga un único bono por registro. Editar, desmarcar o volver a añadir no repite el XP ya reconocido.
+As primeiras {0} horas de cada jogo rendem XP. Horas extras continuam salvas, mas não geram pontos adicionais.|The first {0} hours of each game earn XP. Extra hours remain saved but do not earn additional points.|Las primeras {0} horas de cada juego otorgan XP. Las horas extra siguen guardadas, pero no generan puntos adicionales.
+O histórico existente também conta, mesmo sem data de consumo. O XP reconhecido fica salvo após exclusões. O nível do perfil é separado dos níveis das conquistas.|Existing history counts too, even without a completion date. Credited XP remains saved after deletions. Your profile level is separate from achievement levels.|El historial existente también cuenta, incluso sin fecha de consumo. El XP reconocido sigue guardado tras eliminar registros. El nivel del perfil es independiente de los niveles de los logros.
+Atividades reconhecidas recentemente|Recently credited activities|Actividades reconocidas recientemente
+As datas indicam quando o XP foi reconhecido. Importações antigas aparecem na data da sincronização; os valores mostram o crédito acumulado da atividade.|Dates show when XP was credited. Older imports appear on the sync date; values show the activity's accumulated credit.|Las fechas indican cuándo se reconoció el XP. Las importaciones antiguas aparecen en la fecha de sincronización; los valores muestran el crédito acumulado de la actividad.
+Sua próxima história pode render os primeiros pontos.|Your next story could earn your first points.|Tu próxima historia puede darte los primeros puntos.
+Atualizar experiência|Refresh experience|Actualizar experiencia
+Não foi possível carregar seu nível.|Could not load your level.|No se pudo cargar tu nivel.
+Livros concluídos|Books completed|Libros terminados
+Conquistas desbloqueadas|Achievements unlocked|Logros desbloqueados
+Livros lidos e jogos concluídos contam títulos distintos, incluindo arquivados. O XP mostra o total já reconhecido no perfil; a posição continua pelo tempo em séries.|Books read and games completed count distinct titles, including archived ones. XP shows the total already credited to the profile; positions still follow time spent on series.|Los libros leídos y juegos terminados cuentan títulos distintos, incluidos los archivados. El XP muestra el total ya reconocido en el perfil; la posición sigue el tiempo en series.
 `;
 export const translations: Record<string, [string, string]> =
   Object.fromEntries(

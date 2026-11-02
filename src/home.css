@@ -3085,3 +3085,80 @@ button.cast-card:focus-visible {
   color: #eee7f5;
   font-size: 12px;
 }
+/* Nome e título identificam o acesso ao perfil sem repetir o rótulo da página. */
+.account-label strong {
+  max-width: 190px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* O sino acompanha a identidade sem entrar no botão que abre o perfil. */
+.home-topbar-actions .home-account {
+  gap: 8px;
+}
+.home-topbar-actions .account-link {
+  gap: 11px;
+  padding: 6px 10px 6px 6px;
+}
+.home-topbar-actions .account-link .avatar {
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--muted) 60%, transparent);
+}
+.home-topbar-actions .account-label strong {
+  color: var(--foreground);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.15px;
+}
+.home-topbar-actions .account-label .achievement-profile-title {
+  margin-top: 3px;
+  color: var(--muted-foreground);
+  font-size: 10px;
+  font-weight: 400;
+}
+.home-topbar-actions .account-label .achievement-emoji {
+  font-size: 11px;
+}
+.home-topbar-actions .account-logout {
+  margin-left: 4px;
+  border-left: 1px solid var(--border);
+  border-radius: 0;
+  padding-left: 12px;
+  opacity: 0.65;
+}
+.home-topbar-actions .account-logout:hover {
+  opacity: 1;
+}
+@media (max-width: 900px) {
+  .home-topbar-actions .home-account {
+    gap: 3px;
+  }
+  .home-topbar-actions .account-link {
+    padding-right: 5px;
+  }
+}
+/* Novos totais mantêm colunas legíveis, com rolagem horizontal nas telas menores. */
+.friends-table table {
+  min-width: 850px;
+}
+.friends-table .ranking-number,
+.friends-table .ranking-xp {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.friends-table .ranking-xp strong {
+  color: var(--primary);
+  font-weight: 600;
+}
+.friends-table .ranking-xp small {
+  margin-top: 4px;
+  font-size: 10px;
+}
+.friends-ranking-note {
+  color: var(--muted-foreground);
+  font-size: 11px;
+  line-height: 1.7;
+  margin: 8px 0 16px;
+}

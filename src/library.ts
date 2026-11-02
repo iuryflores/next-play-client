@@ -81,6 +81,7 @@ export async function libraryRequest<T>(
   id = '',
   body?: object,
   action?:
+    | 'playtime'
     | 'archive'
     | 'upcoming'
     | 'runtime'
@@ -117,9 +118,15 @@ export async function libraryRequest<T>(
     );
   }
   const announce = () => {
-    if (method !== 'GET' && (!action || action === 'archive'))
+    if (
+      method !== 'GET' &&
+      (!action || action === 'archive' || action === 'playtime')
+    )
       achievementActivity();
-    if (method !== 'GET' && (!action || action === 'archive'))
+    if (
+      method !== 'GET' &&
+      (!action || action === 'archive' || action === 'playtime')
+    )
       notifySaved(
         t(method === 'DELETE' ? 'Removido da coleção.' : 'Alterações salvas.'),
       );

@@ -66,7 +66,7 @@ export function useAchievements() {
   if (!value) throw Error('AchievementProvider ausente');
   return value;
 }
-export function AchievementTitle() {
+export function AchievementTitle({ compact = false }: { compact?: boolean }) {
   const { data } = useAchievements();
   const selected = data?.achievements.find(
     (item) => item.id === data.selectedId && item.unlockedAt,
@@ -75,13 +75,15 @@ export function AchievementTitle() {
     <span className="achievement-profile-title" data-family={selected.family}>
       <AchievementIcon family={selected.family} />
       {t(selected.title)}
-      <AchievementStars
-        level={selected.level}
-        total={selected.levels}
-        progressionLevel={selected.progressionLevel}
-        cycleStars={selected.cycleStars}
-        progressionMode={selected.progressionMode}
-      />
+      {!compact && (
+        <AchievementStars
+          level={selected.level}
+          total={selected.levels}
+          progressionLevel={selected.progressionLevel}
+          cycleStars={selected.cycleStars}
+          progressionMode={selected.progressionMode}
+        />
+      )}
     </span>
   ) : null;
 }
@@ -142,6 +144,8 @@ export default function AchievementProvider({
                 : value,
             );
             setError('');
+            window.dispatchEvent(new Event('nextplay:notifications-changed'));
+            window.dispatchEvent(new Event('nextplay:achievements-synced'));
           }
         })
         .catch((reason) => {

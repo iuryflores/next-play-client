@@ -35,6 +35,10 @@ type FriendsData = {
     connection: { id: string; status: string; incoming: boolean } | null;
     minutes: number;
     episodes: number;
+    books: number;
+    games: number;
+    xp: number;
+    level: number;
     incomplete: boolean;
     rank: number;
     movement?: number | null;
@@ -66,6 +70,7 @@ async function request<T>(
     signal: AbortSignal.timeout(30000),
   });
   if (response.status === 204) {
+    window.dispatchEvent(new Event('nextplay:notifications-changed'));
     if (method !== 'GET') notifySaved(t('Alterações salvas.'));
     return undefined as T;
   }
@@ -97,6 +102,33 @@ export default function Friends({
   const [visitId] = useState(() => crypto.randomUUID());
   const [remove, setRemove] = useState<Connection | null>(null);
   const expired = useEffectEvent(onExpired);
+  useEffect(() => {
+    const refresh = () => setRevision((value) => value + 1);
+    const progression = (event: Event) => {
+      const value = (event as CustomEvent<{ totalXp: number; level: number }>)
+        .detail;
+      // A primeira sincronização pode terminar depois da leitura do ranking.
+      refresh();
+      setData((current) =>
+        current
+          ? {
+              ...current,
+              ranking: current.ranking.map((row) =>
+                row.me
+                  ? { ...row, xp: value.totalXp, level: value.level }
+                  : row,
+              ),
+            }
+          : current,
+      );
+    };
+    window.addEventListener('nextplay:friends-changed', refresh);
+    window.addEventListener('nextplay:progression-synced', progression);
+    return () => {
+      window.removeEventListener('nextplay:friends-changed', refresh);
+      window.removeEventListener('nextplay:progression-synced', progression);
+    };
+  }, []);
   useEffect(() => {
     let active = true;
     void request<FriendsData>(`?scope=${scope}`, 'GET', undefined, visitId)
@@ -206,6 +238,11 @@ export default function Friends({
                 'Tempo total em séries: soma dos episódios assistidos, uma vez por episódio. Filmes e jogos ainda não entram no tempo. Empates recebem a mesma posição.',
               )}
             </p>
+            <p className="friends-ranking-note">
+              {t(
+                'Livros lidos e jogos concluídos contam títulos distintos, incluindo arquivados. O XP mostra o total já reconhecido no perfil; a posição continua pelo tempo em séries.',
+              )}
+            </p>
             <div className="friends-table">
               <table>
                 <thead>
@@ -216,6 +253,9 @@ export default function Friends({
                     </th>
                     <th scope="col">{t('Tempo em séries')}</th>
                     <th scope="col">{t('Episódios assistidos')}</th>
+                    <th scope="col">{t('Livros lidos')}</th>
+                    <th scope="col">{t('Jogos concluídos')}</th>
+                    <th scope="col">XP</th>
                     <th scope="col">{t('Amizade')}</th>
                   </tr>
                 </thead>
@@ -282,6 +322,16 @@ export default function Friends({
                         {row.minutes % 60}min
                       </td>
                       <td>{row.episodes.toLocaleString(language)}</td>
+                      <td className="ranking-number">
+                        {row.books.toLocaleString(language)}
+                      </td>
+                      <td className="ranking-number">
+                        {row.games.toLocaleString(language)}
+                      </td>
+                      <td className="ranking-xp">
+                        <strong>{row.xp.toLocaleString(language)}</strong>
+                        <small>{t('Nível {0}', row.level)}</small>
+                      </td>
                       <td>
                         {!row.me &&
                           (row.connection?.status === 'accepted' ? (

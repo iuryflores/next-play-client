@@ -72,6 +72,62 @@ select:focus-visible {
   text-align: left;
   width: 100%;
 }
+/* O cabeçalho mostra somente o ícone; as três escolhas ficam no menu acessível. */
+.theme-picker-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.theme-icon-button {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: var(--muted-foreground);
+}
+.theme-icon-button > svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.7;
+}
+.theme-icon-button:hover {
+  color: var(--foreground);
+  background: var(--muted);
+}
+.theme-options-menu {
+  width: 230px;
+  padding: 6px;
+  border-radius: 12px;
+}
+.theme-options-menu [data-slot='dropdown-menu-label'] {
+  padding: 8px 10px;
+  font-size: 11px;
+}
+.theme-options-menu [data-slot='dropdown-menu-radio-item'] {
+  gap: 10px;
+  min-height: 38px;
+  padding-left: 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.theme-options-menu [data-checked] {
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+  color: var(--primary);
+}
+.theme-picker-error:not(:empty) {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 60;
+  width: min(260px, 80vw);
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--popover);
+  color: var(--destructive);
+  font-size: 12px;
+  box-shadow: 0 8px 24px #0002;
+}
 .catalog-more-button {
   color: #f4efff;
 }

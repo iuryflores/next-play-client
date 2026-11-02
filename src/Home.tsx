@@ -1,5 +1,8 @@
 import useHomeRoute from './useHomeRoute';
 import ThemePicker from './ThemePicker';
+import NotificationBell from './NotificationBell';
+import GameTimeAction from './GameTimeAction';
+import UserLevelProvider, { UserLevelBadge } from './UserLevel';
 import PageLoading from './PageLoading';
 import PageBoundary from './PageBoundary';
 import AchievementProvider, { AchievementTitle } from './AchievementProvider';
@@ -128,8 +131,8 @@ function Home({
   useEffect(() => {
     setDensity(user.collectionDensity || 'compact');
   }, [user.collectionDensity]);
-  // Concluídos e histórico compartilham a preferência de exibição da visão geral em todas as categorias.
-  const supportsDensity = view === 'all' || view === 'completed';
+  // Para depois, concluídos e histórico usam a mesma preferência da conta em todas as categorias.
+  const supportsDensity = view === 'all' || view === 'completed' || view === 'planned';
   const compactCards = supportsDensity && density === 'compact';
   async function changeDensity(value: string) {
     if (savingDensity) return;
@@ -868,12 +871,20 @@ function Home({
                   )}
                 </span>
                 <span className="account-label">
-                  <strong>{t(' Minha conta ')}</strong>
-                  <small>{user.displayName || user.email}</small>
-                  <AchievementTitle />
+                  <strong>{user.displayName || user.email}</strong>
+                  <AchievementTitle compact />
                 </span>
               </button>
+              <UserLevelBadge />
+              <NotificationBell
+                onExpired={onExpired}
+                onAchievements={() => {
+                  setDetailId(null);
+                  setView('achievements');
+                }}
+              />
               <Button
+                className="account-logout"
                 variant="ghost"
                 size="icon"
                 aria-label={t('Sair da conta')}
@@ -1338,6 +1349,13 @@ function Home({
                                     originalTitle={item.originalTitle}
                                   />
                                 </div>
+                                {item.kind === 'game' && (
+                                  <GameTimeAction
+                                    item={item}
+                                    changed={updateItem}
+                                    onExpired={onExpired}
+                                  />
+                                )}
                                 {item.kind === 'series' && (
                                   <SeriesResume
                                     item={item}
@@ -1500,9 +1518,11 @@ function Home({
 export default function HomeWithReviews(props: Parameters<typeof Home>[0]) {
   return (
     <AchievementProvider key={props.user.id} onExpired={props.onExpired}>
-      <ReviewProvider>
-        <Home {...props} />
-      </ReviewProvider>
+      <UserLevelProvider onExpired={props.onExpired}>
+        <ReviewProvider>
+          <Home {...props} />
+        </ReviewProvider>
+      </UserLevelProvider>
     </AchievementProvider>
   );
 }
