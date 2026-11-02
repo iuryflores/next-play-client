@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://github.com/iuryflores/next-play-client/compare/v0.8.0...v0.8.1) (2026-11-02)
+
+
+### Bug Fixes
+
+* permite registrar horas e minutos exatos nos jogos ([cb18018](https://github.com/iuryflores/next-play-client/commit/cb18018673b498a52978ed7df74b98eb301cea9c))
+
 ## [0.8.0](https://github.com/iuryflores/next-play-client/compare/v0.7.1...v0.8.0) (2026-11-02)
 
 
