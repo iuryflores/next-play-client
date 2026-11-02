@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/iuryflores/next-play-client/compare/v0.4.1...v0.5.0) (2026-11-02)
+
+
+### Features
+
+* expand discovery, achievements and app themes ([6b68e46](https://github.com/iuryflores/next-play-client/commit/6b68e465ef557d7c8f95ad87e3b14dbe3e5217e5))
+
 ## [0.4.1](https://github.com/iuryflores/next-play-client/compare/v0.4.0...v0.4.1) (2026-11-01)
 
 
