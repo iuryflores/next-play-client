@@ -5,6 +5,7 @@ import {
   RefreshCw,
   Trophy,
   MessageCircle,
+  Users,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,7 +21,7 @@ import './notification-center.css';
 
 type Notice = {
   id: string;
-  kind: 'achievement' | 'friend-request' | 'comment-reply';
+  kind: 'achievement' | 'friend-request' | 'comment-reply' | 'friend-activity';
   createdAt: string;
   readAt: string | null;
   achievement: {
@@ -38,6 +39,12 @@ type Notice = {
     itemId: string | null;
     parentCommentId: string | null;
     excerpt: string;
+  } | null;
+  friendActivity: {
+    available: boolean;
+    name: string;
+    title: string;
+    itemId: string | null;
   } | null;
   friendRequest: {
     id: string;
@@ -74,10 +81,12 @@ export default function NotificationBell({
   onExpired,
   onAchievements,
   onComment,
+  onTitle,
 }: {
   onExpired: () => void;
   onAchievements: () => void;
   onComment: (itemId: string, commentId: string) => void;
+  onTitle: (itemId: string) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState<Notices | null>(null);
@@ -235,7 +244,7 @@ export default function NotificationBell({
             <DialogTitle>{t('Notificações')}</DialogTitle>
             <DialogDescription>
               {t(
-                'Conquistas, convites de amizade e respostas aos seus comentários.',
+                'Conquistas, convites, respostas e atividades relacionadas ao seu Para depois.',
               )}
             </DialogDescription>
           </div>
@@ -292,6 +301,8 @@ export default function NotificationBell({
               <div className="notification-symbol" aria-hidden="true">
                 {item.achievement ? (
                   <Trophy />
+                ) : item.friendActivity ? (
+                  <Users />
                 ) : item.commentReply ? (
                   <MessageCircle />
                 ) : item.friendRequest?.avatar ? (
@@ -307,7 +318,9 @@ export default function NotificationBell({
                       ? 'Conquista desbloqueada!'
                       : item.kind === 'comment-reply'
                         ? 'Resposta ao seu comentário'
-                        : 'Convite de amizade',
+                        : item.kind === 'friend-activity'
+                          ? 'Atividade de amigo'
+                          : 'Convite de amizade',
                   )}
                   {!item.readAt && (
                     <span className="notification-unread">
@@ -322,7 +335,11 @@ export default function NotificationBell({
                       ? item.commentReply.available
                         ? item.commentReply.title
                         : t('Conversa indisponível')
-                      : item.friendRequest?.name}
+                      : item.friendActivity
+                        ? item.friendActivity.available
+                          ? item.friendActivity.title
+                          : t('Atividade indisponível')
+                        : item.friendRequest?.name}
                 </strong>
                 {item.achievement && (
                   <>
@@ -376,6 +393,16 @@ export default function NotificationBell({
                   ) : (
                     <p>{t('Esta conversa não está mais disponível.')}</p>
                   ))}
+                {item.friendActivity && (
+                  <p>
+                    {item.friendActivity.available
+                      ? t(
+                          '{0} registrou a conclusão deste título, que estava no seu Para depois.',
+                          item.friendActivity.name,
+                        )
+                      : t('Esta atividade não está mais disponível.')}
+                  </p>
+                )}
                 <time dateTime={item.createdAt}>
                   {new Date(item.createdAt).toLocaleString(language, {
                     dateStyle: 'short',
@@ -416,6 +443,22 @@ export default function NotificationBell({
                       }}
                     >
                       {t('Ver conversa')}
+                    </Button>
+                  )}
+                  {item.friendActivity?.available && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={busy}
+                      onClick={() => {
+                        if (!item.readAt)
+                          void act(`/notifications/${item.id}/read`, 'PATCH');
+                        opened.current = false;
+                        setOpen(false);
+                        onTitle(item.friendActivity!.itemId!);
+                      }}
+                    >
+                      {t('Ver título')}
                     </Button>
                   )}
                   {item.friendRequest?.status === 'pending' && (

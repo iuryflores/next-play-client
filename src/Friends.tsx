@@ -1,10 +1,11 @@
+import './social.css';
 import { RefreshCw } from 'lucide-react';
 import PageLoading from './PageLoading';
 import { notifySaved } from './notifications';
 import RankMovement from './RankMovement';
 import { useEffect, useEffectEvent, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { UserRoundMinus, X } from 'lucide-react';
+import { UserRoundMinus, UserRoundCheck, X } from 'lucide-react';
 import IconAction from './IconAction';
 import { Input } from '@/components/ui/input';
 import {
@@ -88,9 +89,15 @@ async function request<T>(
 export default function Friends({
   onExpired,
   onNameChanged,
+  onFeed,
+  onLists,
+  onProfile,
 }: {
   onExpired: () => void;
   onNameChanged: (name: string) => void;
+  onFeed: () => void;
+  onLists: () => void;
+  onProfile: (id: string) => void;
 }) {
   const [data, setData] = useState<FriendsData | null>(null);
   const [scope, setScope] = useState<'friends' | 'all'>('friends');
@@ -167,6 +174,7 @@ export default function Friends({
       <header className="collection-toolbar">
         <h1>{t('Amigos')}</h1>
         <Button
+          className="friends-invite-trigger"
           onClick={() => {
             setError('');
             setInviteOpen(true);
@@ -186,13 +194,25 @@ export default function Friends({
       <output className="home-error" aria-live="polite">
         {error}
       </output>
+      <div className="friends-social-actions">
+        <Button variant="outline" onClick={onLists}>
+          {t('Listas')}
+        </Button>
+        <Button variant="outline" onClick={onFeed}>
+          {t('Atividades dos amigos')}
+        </Button>
+        {data && (
+          <Button variant="outline" onClick={() => onProfile(data.code)}>
+            {t('Meu perfil social')}
+          </Button>
+        )}
+      </div>
       {!data && !error && <PageLoading label={t('Carregando amigos…')} />}
       {data && (
         <>
           <section className="friends-ranking">
-            <div
+            <fieldset
               className="friends-scopes"
-              role="group"
               aria-label={t('Usuários no ranking')}
             >
               {(['friends', 'all'] as const).map((option) => (
@@ -213,20 +233,23 @@ export default function Friends({
                   )}
                 </Button>
               ))}
-            </div>
+            </fieldset>
             <h2>
               {t(scope === 'friends' ? 'Ranking de amigos' : 'Ranking geral')}
             </h2>
-            <p>
-              {t(
-                'A colocação é definida pelo XP total, do maior para o menor. Pessoas com o mesmo XP compartilham a mesma posição.',
-              )}
-            </p>
-            <p className="friends-ranking-note">
-              {t(
-                'Livros lidos e jogos concluídos contam títulos distintos, incluindo arquivados. O tempo em séries soma os episódios assistidos uma vez por episódio e é apenas informativo.',
-              )}
-            </p>
+            <details className="friends-ranking-explanation">
+              <summary>{t('Como funciona o ranking?')}</summary>
+              <p>
+                {t(
+                  'A colocação é definida pelo XP total, do maior para o menor. Pessoas com o mesmo XP compartilham a mesma posição.',
+                )}
+              </p>
+              <p className="friends-ranking-note">
+                {t(
+                  'Livros lidos e jogos concluídos contam títulos distintos, incluindo arquivados. O tempo em séries soma os episódios assistidos uma vez por episódio e é apenas informativo.',
+                )}
+              </p>
+            </details>
             <div className="friends-table">
               <table>
                 <thead>
@@ -240,13 +263,13 @@ export default function Friends({
                     <th scope="col">{t('Episódios assistidos')}</th>
                     <th scope="col">{t('Livros lidos')}</th>
                     <th scope="col">{t('Jogos concluídos')}</th>
-                    <th scope="col">{t('Amizade')}</th>
+                    {scope === 'all' && <th scope="col">{t('Amizade')}</th>}
                   </tr>
                 </thead>
                 <tbody>
                   {data.ranking.map((row) => (
                     <tr key={row.id} className={row.me ? 'ranking-me' : ''}>
-                      <td>
+                      <td className="ranking-position">
                         {row.rank}{' '}
                         <RankMovement
                           changes={
@@ -258,22 +281,42 @@ export default function Friends({
                           id={row.id}
                         />
                       </td>
-                      <th scope="row">
-                        <span className="friend-avatar" aria-hidden="true">
-                          {row.name.charAt(0).toUpperCase()}
-                          {row.avatar && (
-                            <img
-                              src={row.avatar}
-                              alt=""
-                              loading="lazy"
-                              onError={(event) => {
-                                event.currentTarget.style.display = 'none';
-                              }}
-                            />
-                          )}
-                        </span>
-                        {row.name}
-                        {row.me ? ` · ${t('Você')}` : ''}
+                      <th scope="row" className="ranking-profile">
+                        <button
+                          type="button"
+                          className="friend-profile-heading friend-profile-link"
+                          onClick={() => onProfile(row.id)}
+                        >
+                          <span className="friend-avatar" aria-hidden="true">
+                            {row.name.charAt(0).toUpperCase()}
+                            {row.avatar && (
+                              <img
+                                src={row.avatar}
+                                alt=""
+                                loading="lazy"
+                                onError={(event) => {
+                                  event.currentTarget.style.display = 'none';
+                                }}
+                              />
+                            )}
+                          </span>
+                          <span className="friend-name">
+                            {row.name}
+                            {row.me ? ` · ${t('Você')}` : ''}
+                            {!row.me &&
+                              row.connection?.status === 'accepted' && (
+                                <span
+                                  className="friend-confirmed"
+                                  title={t('Amizade confirmada')}
+                                >
+                                  <UserRoundCheck aria-hidden="true" />
+                                  <span className="sr-only">
+                                    {t('Amizade confirmada')}
+                                  </span>
+                                </span>
+                              )}
+                          </span>
+                        </button>
                         {row.achievement && (
                           <div className="friend-achievement">
                             <span>
@@ -305,49 +348,66 @@ export default function Friends({
                         <strong>{row.xp.toLocaleString(language)}</strong>
                         <small>{t('Nível {0}', row.level)}</small>
                       </td>
-                      <td>
+                      <td
+                        className="ranking-stat"
+                        data-label={t('Tempo em séries')}
+                      >
                         {Math.floor(row.minutes / 60).toLocaleString(language)}h{' '}
                         {row.minutes % 60}min
                       </td>
-                      <td>{row.episodes.toLocaleString(language)}</td>
-                      <td className="ranking-number">
+                      <td
+                        className="ranking-stat"
+                        data-label={t('Episódios assistidos')}
+                      >
+                        {row.episodes.toLocaleString(language)}
+                      </td>
+                      <td
+                        className="ranking-number ranking-stat"
+                        data-label={t('Livros lidos')}
+                      >
                         {row.books.toLocaleString(language)}
                       </td>
-                      <td className="ranking-number">
+                      <td
+                        className="ranking-number ranking-stat"
+                        data-label={t('Jogos concluídos')}
+                      >
                         {row.games.toLocaleString(language)}
                       </td>
-                      <td>
-                        {!row.me &&
-                          (row.connection?.status === 'accepted' ? (
-                            <small>{t('Amizade confirmada')}</small>
-                          ) : row.connection?.incoming ? (
-                            <Button
-                              disabled={busy}
-                              onClick={() =>
-                                void action(
-                                  `/${row.connection!.id}/accept`,
-                                  'POST',
-                                )
-                              }
-                            >
-                              {t('Aceitar')}
-                            </Button>
-                          ) : row.connection ? (
-                            <small>{t('Pedido enviado')}</small>
-                          ) : (
-                            <Button
-                              variant="outline"
-                              disabled={busy}
-                              onClick={() =>
-                                void action('/requests', 'POST', {
-                                  code: row.id,
-                                })
-                              }
-                            >
-                              {t('Adicionar amigo')}
-                            </Button>
-                          ))}
-                      </td>
+                      {scope === 'all' && (
+                        <td
+                          className={`ranking-connection${row.me || row.connection?.status === 'accepted' ? ' is-empty' : ''}`}
+                        >
+                          {!row.me &&
+                            row.connection?.status !== 'accepted' &&
+                            (row.connection?.incoming ? (
+                              <Button
+                                disabled={busy}
+                                onClick={() =>
+                                  void action(
+                                    `/${row.connection!.id}/accept`,
+                                    'POST',
+                                  )
+                                }
+                              >
+                                {t('Aceitar')}
+                              </Button>
+                            ) : row.connection ? (
+                              <small>{t('Pedido enviado')}</small>
+                            ) : (
+                              <Button
+                                variant="outline"
+                                disabled={busy}
+                                onClick={() =>
+                                  void action('/requests', 'POST', {
+                                    code: row.id,
+                                  })
+                                }
+                              >
+                                {t('Adicionar amigo')}
+                              </Button>
+                            ))}
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -359,23 +419,32 @@ export default function Friends({
             {!data.connections.length && (
               <p>
                 {t(
-                  'Adicione seu primeiro amigo para comparar o tempo assistido.',
+                  'Adicione seu primeiro amigo para comparar o XP e acompanhar seus totais.',
                 )}
               </p>
             )}
             {data.connections.map((link) => (
               <div className="friend-connection" key={link.id}>
                 <div>
-                  <strong>{link.name}</strong>
-                  <small>
-                    {t(
-                      link.status === 'accepted'
-                        ? 'Amizade confirmada'
-                        : link.incoming
-                          ? 'Pedido recebido'
-                          : 'Pedido enviado',
+                  <strong className="friend-connection-name">
+                    {link.name}
+                    {link.status === 'accepted' && (
+                      <span
+                        className="friend-confirmed"
+                        title={t('Amizade confirmada')}
+                      >
+                        <UserRoundCheck aria-hidden="true" />
+                        <span className="sr-only">
+                          {t('Amizade confirmada')}
+                        </span>
+                      </span>
                     )}
-                  </small>
+                  </strong>
+                  {link.status !== 'accepted' && (
+                    <small>
+                      {t(link.incoming ? 'Pedido recebido' : 'Pedido enviado')}
+                    </small>
+                  )}
                 </div>
                 <div>
                   {link.status === 'pending' && link.incoming && (

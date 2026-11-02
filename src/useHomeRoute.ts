@@ -33,6 +33,8 @@ export default function useHomeRoute() {
   ) =>
     setRoute((previous) => ({
       ...previous,
+      ...(key === 'view' && value !== 'social' ? { profileId: undefined } : {}),
+      ...(key === 'view' && value !== 'lists' ? { listId: undefined } : {}),
       // Trocar de título limpa a âncora de conversa da navegação anterior.
       ...(key === 'detailId' ? { commentId: undefined } : {}),
       // Sair de Jogos limpa o filtro específico, sem afetar outras mídias.

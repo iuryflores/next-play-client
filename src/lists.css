@@ -1,0 +1,140 @@
+.list-scopes {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+.list-editor {
+  display: grid;
+  gap: 16px;
+  max-width: 900px;
+}
+.list-editor > label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+}
+.list-editor textarea {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--background);
+  color: var(--foreground);
+  padding: 10px;
+  width: 100%;
+  resize: vertical;
+}
+.list-picker {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+  border: 1px solid var(--border);
+  padding: 12px;
+  min-width: 0;
+  border-radius: 10px;
+}
+.list-picker > select:last-child {
+  grid-column: 1 / -1;
+}
+.list-picker select {
+  min-width: 0;
+  width: 100%;
+}
+.list-order {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.list-order li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+  padding: 8px 0;
+}
+.list-order li > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.list-order small,
+.list-summary small {
+  display: block;
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+.list-order-actions,
+.list-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.list-order-actions {
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+  gap: 2px;
+}
+.list-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.list-description {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.list-posters {
+  list-style: none;
+  padding: 0;
+}
+.list-collection {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+}
+.list-summary {
+  display: grid;
+  gap: 8px;
+  text-align: left;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  background: var(--card);
+  color: var(--foreground);
+  cursor: pointer;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.list-summary:hover {
+  border-color: var(--primary);
+}
+.list-preview {
+  display: flex;
+  height: 140px;
+  gap: 4px;
+  overflow: hidden;
+}
+.list-preview > img {
+  width: calc(25% - 3px);
+  object-fit: cover;
+  border-radius: 5px;
+}
+.list-preview > svg {
+  width: 40px;
+  align-self: center;
+  color: var(--muted-foreground);
+}
+@media (max-width: 550px) {
+  .list-picker {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .list-order li {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .list-order-actions {
+    align-self: flex-end;
+  }
+}

@@ -3149,7 +3149,7 @@ button.cast-card:focus-visible {
     padding-right: 5px;
   }
 }
-/* Novos totais mantêm colunas legíveis, com rolagem horizontal nas telas menores. */
+/* No desktop os totais ficam em colunas; o mobile usa cards nas regras responsivas abaixo. */
 .friends-table table {
   min-width: 850px;
 }
@@ -3274,3 +3274,51 @@ button.cast-card:focus-visible {
 .game-platform-filter label { font-size: 12px; color: var(--muted-foreground); }
 .game-platform-filter [data-slot='native-select-wrapper'] { width: min(100%, 280px); }
 .game-platform-filter button { font-size: 12px; }
+
+.friends-scopes { border: 0; padding: 0; min-width: 0; }
+.friend-profile-heading { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.friend-profile-heading .friend-avatar { flex-shrink: 0; margin-right: 0; }
+.friend-name, .friend-connection-name { overflow-wrap: anywhere; }
+.friend-confirmed { display: inline-flex; vertical-align: middle; align-items: center; margin-left: 6px; color: var(--success-ink, #78be98); }
+.friend-confirmed svg { width: 16px; height: 16px; }
+.friends-ranking-explanation { margin: 10px 0 18px; }
+.friends-ranking-explanation summary { width: fit-content; cursor: pointer; font-size: 12px; color: var(--muted-foreground); }
+.friends-ranking-explanation p { margin-top: 8px; }
+/* A mesma tabela vira cards no celular, preservando cabeçalhos para leitores de tela
+   e todos os totais, sem exigir uma faixa horizontal de 850 px para navegar. */
+@media (max-width: 960px) {
+  .friends-page > .collection-toolbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; }
+  .friends-page > .collection-toolbar h1 { grid-column: 1; grid-row: 1; }
+  .friends-page > .collection-toolbar > button:not(.friends-invite-trigger) { grid-column: 2; grid-row: 1; }
+  .friends-page .friends-invite-trigger { grid-column: 1 / -1; width: 100%; min-height: 42px; }
+  .friends-ranking, .friends-connections { padding: 16px; border-radius: 12px; }
+  .friends-scopes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .friends-scopes button { min-width: 0; min-height: 40px; height: auto; white-space: normal; padding: 8px; font-size: 12px; }
+  .friends-table { overflow: visible; }
+  .friends-table table { display: block; min-width: 0; width: 100%; }
+  .friends-table thead { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .friends-table tbody { display: grid; gap: 12px; }
+  .friends-table tbody tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 12px; padding: 14px; border: 1px solid var(--line, #40364f); border-radius: 12px; }
+  .friends-table tbody tr.ranking-me { border-color: color-mix(in srgb, var(--primary) 45%, var(--border)); }
+  .friends-table th, .friends-table td { min-width: 0; padding: 0; border: 0; }
+  .friends-table .ranking-position { order: 0; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 650; }
+  .friends-table .ranking-position::before { content: '#'; color: var(--muted-foreground); }
+  .friends-table .ranking-position .rank-movement { margin: 0; }
+  .friends-table .ranking-xp { order: 1; text-align: right; white-space: normal; overflow-wrap: anywhere; }
+  .friends-table .ranking-xp strong { font-size: 16px; }
+  .friends-table .ranking-xp strong::after { content: ' XP'; font-size: 11px; }
+  .friends-table .ranking-xp small { font-size: 11px; margin-top: 2px; }
+  .friends-table .ranking-profile { order: 2; grid-column: 1 / -1; }
+  .friends-table .friend-avatar { width: 36px; height: 36px; }
+  .friends-table .friend-name { font-size: 14px; }
+  .friends-table .friend-achievement { margin-top: 10px; font-size: 11px; }
+  .friends-table .ranking-profile > small { margin-top: 8px; font-size: 10px; }
+  .friends-table .ranking-stat { order: 3; font-size: 14px; font-variant-numeric: tabular-nums; white-space: normal; overflow-wrap: anywhere; }
+  .friends-table .ranking-stat::before { content: attr(data-label); display: block; margin-bottom: 4px; font-size: 10px; line-height: 1.5; color: var(--muted-foreground); }
+  .friends-table .ranking-connection { order: 4; grid-column: 1 / -1; padding-top: 10px; border-top: 1px solid var(--line, #40364f); }
+  .friends-table .ranking-connection.is-empty { display: none; }
+  .friends-table .ranking-connection button { width: 100%; min-height: 40px; }
+  .friend-connection { flex-wrap: nowrap; }
+  .friend-connection > div:first-child { flex: 1; min-width: 0; }
+  .friend-connection > div:last-child { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+}

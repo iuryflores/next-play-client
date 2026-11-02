@@ -104,3 +104,18 @@ test('notificação preserva título e conversa específica após refresh sem ac
   assert.equal(readHomeRoute(new URL('https://nextplay.example/biblioteca?comentario=' + route.commentId)).commentId, undefined);
   assert.equal(readHomeRoute(new URL('https://nextplay.example/biblioteca?titulo=' + route.detailId + '&comentario=bad')).commentId, undefined);
 });
+
+
+test('perfil social tem link próprio e restaura a pessoa selecionada após refresh', () => {
+  const route = { view: 'social', category: 'all', detailId: null, historyMode: false, profileId: 'c'.repeat(24) };
+  assert.deepEqual(readHomeRoute(new URL(homeRouteUrl(route), 'https://nextplay.example')), route);
+  assert.equal(readHomeRoute(new URL('https://nextplay.example/social?perfil=invalid')).profileId, undefined);
+  assert.equal(readHomeRoute(new URL('https://nextplay.example/amigos?perfil=' + route.profileId)).profileId, undefined);
+});
+
+test('lista compartilhada mantém o endereço no refresh e ignora referências inválidas ou em outras telas', () => {
+  const route = { view: 'lists', category: 'all', detailId: null, historyMode: false, listId: 'd'.repeat(24) };
+  assert.deepEqual(readHomeRoute(new URL(homeRouteUrl(route), 'https://nextplay.example')), route);
+  assert.equal(readHomeRoute(new URL('https://nextplay.example/listas?lista=bad')).listId, undefined);
+  assert.equal(readHomeRoute(new URL('https://nextplay.example/amigos?lista=' + route.listId)).listId, undefined);
+});

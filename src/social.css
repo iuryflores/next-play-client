@@ -1,0 +1,223 @@
+.social-page {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+.social-toolbar,
+.social-toolbar > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.social-toolbar h1 {
+  font-size: 26px;
+}
+.social-settings {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+}
+.social-settings summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.social-settings form {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+.social-settings p,
+.social-help {
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.social-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+.social-check input {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  accent-color: var(--primary);
+}
+.social-favorite-picker {
+  border: 0;
+  padding: 0;
+  margin: 8px 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  min-width: 0;
+}
+.social-favorite-picker > p {
+  grid-column: 1 / -1;
+}
+.social-favorite-picker label {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  min-width: 0;
+}
+.social-favorite-picker select {
+  width: 100%;
+  min-width: 0;
+}
+.social-empty {
+  padding: 30px 16px;
+  text-align: center;
+  color: var(--muted-foreground);
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+}
+.social-empty svg {
+  margin: 0 auto 12px;
+}
+.social-feed {
+  display: grid;
+  gap: 16px;
+}
+.social-activity {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+}
+.social-activity header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.social-activity header > div {
+  flex: 1;
+  min-width: 0;
+}
+.social-activity header p,
+.social-activity time {
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+.social-activity .social-title {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  column-gap: 12px;
+  text-align: left;
+}
+.social-activity .social-cover {
+  grid-row: span 2;
+}
+.social-person-link,
+.friend-profile-link {
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+.social-person-link:hover,
+.friend-profile-link:hover .friend-name {
+  text-decoration: underline;
+}
+.social-profile-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+.social-profile-header .friend-avatar {
+  width: 64px;
+  height: 64px;
+  margin: 0;
+}
+.social-profile-header > div {
+  flex: 1;
+}
+.social-profile-header h2 {
+  font-size: 24px;
+}
+.social-profile-header p {
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+.social-profile-header > div > span {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 12px;
+}
+.social-titles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 16px;
+}
+.social-top-four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.social-title {
+  min-width: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+  padding: 0;
+}
+button.social-title {
+  cursor: pointer;
+}
+.social-title strong {
+  display: block;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+  margin-top: 6px;
+}
+.social-title small {
+  font-size: 10px;
+  color: var(--muted-foreground);
+}
+.social-cover {
+  aspect-ratio: 2 / 3;
+  border-radius: 8px;
+  background: var(--muted);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+.social-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.friends-social-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 16px;
+}
+@media (max-width: 600px) {
+  .social-toolbar > div {
+    width: 100%;
+  }
+  .social-top-four {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .social-activity header {
+    flex-wrap: wrap;
+  }
+  .social-activity time {
+    width: 100%;
+  }
+  .social-profile-header > button {
+    width: 100%;
+  }
+  .social-favorite-picker {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

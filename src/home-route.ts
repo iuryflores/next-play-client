@@ -14,11 +14,15 @@ export const homePaths = {
   challenges: '/desafios',
   acervo: '/colecao',
   friends: '/amigos',
+  social: '/social',
+  lists: '/listas',
 } as const;
 export type HomeRoute = {
   view: keyof typeof homePaths;
   detailId: string | null;
   commentId?: string;
+  profileId?: string;
+  listId?: string;
   category: 'all' | 'movie' | 'series' | 'game' | 'book';
   historyMode: boolean;
   platform?: string;
@@ -35,8 +39,16 @@ export function readHomeRoute(url: URL): HomeRoute {
   const detailId = url.searchParams.get('titulo');
   const platform = url.searchParams.get('plataforma');
   const commentId = url.searchParams.get('comentario');
+  const profileId = url.searchParams.get('perfil');
+  const listId = url.searchParams.get('lista');
   return {
     view,
+    ...(view === 'lists' && listId && /^[a-f0-9]{24}$/i.test(listId)
+      ? { listId }
+      : {}),
+    ...(view === 'social' && profileId && /^[a-f0-9]{24}$/i.test(profileId)
+      ? { profileId }
+      : {}),
     ...(detailId &&
     /^[a-f0-9]{24}$/i.test(detailId) &&
     commentId &&
@@ -67,6 +79,9 @@ export function homeRouteUrl(route: HomeRoute) {
   if (route.category !== 'all') query.set('categoria', route.category);
   if (route.category === 'game' && route.platform)
     query.set('plataforma', route.platform);
+  if (route.view === 'social' && route.profileId)
+    query.set('perfil', route.profileId);
+  if (route.view === 'lists' && route.listId) query.set('lista', route.listId);
   if (route.detailId) query.set('titulo', route.detailId);
   if (route.detailId && route.commentId)
     query.set('comentario', route.commentId);

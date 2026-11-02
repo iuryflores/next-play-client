@@ -1,5 +1,45 @@
 // Portuguese source messages with English and Spanish equivalents.
 const rows = `
+Nota da comunidade|Community rating|Nota de la comunidad
+{0} avaliações|{0} ratings|{0} valoraciones
+{0} avaliações com {1} estrelas|{0} ratings with {1} stars|{0} valoraciones con {1} estrellas
+Ainda não há avaliações para este título.|There are no ratings for this title yet.|Todavía no hay valoraciones para este título.
+Atividades|Activity|Actividad
+Atividades dos amigos|Friends’ activity|Actividad de amigos
+Perfil social|Social profile|Perfil social
+Meu perfil social|My social profile|Mi perfil social
+Compartilhamento e favoritos|Sharing and favorites|Compartir y favoritos
+Publicar meu perfil para usuários do app|Publish my profile for app users|Publicar mi perfil para usuarios de la app
+Compartilha apenas títulos concluídos e não arquivados e os favoritos escolhidos. Anotações e avaliações individuais continuam privadas.|Shares only completed, unarchived titles and chosen favorites. Notes and individual ratings remain private.|Comparte solo títulos terminados y no archivados y los favoritos elegidos. Las notas y valoraciones individuales siguen siendo privadas.
+Compartilhar novas atividades com amigos|Share new activities with friends|Compartir nuevas actividades con amigos
+Somente novas ações após ativar. Desativar oculta o feed; reativar não publica o histórico anterior.|Only new actions after enabling. Disabling hides the feed; enabling again does not publish previous history.|Solo nuevas acciones tras activar. Desactivar oculta el feed; reactivar no publica el historial anterior.
+Avisar quando um amigo concluir algo do meu Para depois|Notify me when a friend finishes something on my backlog|Avisarme cuando un amigo termine algo de mi lista pendiente
+Meus quatro favoritos|My four favorites|Mis cuatro favoritos
+Escolha até quatro títulos concluídos, na ordem que devem aparecer.|Choose up to four completed titles in display order.|Elige hasta cuatro títulos terminados, en el orden en que deben aparecer.
+Favorito {0}|Favorite {0}|Favorito {0}
+Nenhum|None|Ninguno
+Salvar preferências sociais|Save social preferences|Guardar preferencias sociales
+Preferências sociais salvas.|Social preferences saved.|Preferencias sociales guardadas.
+Atividades compartilhadas por amigos aceitos. As datas indicam quando a ação foi registrada no app, não necessariamente o dia do consumo.|Activities shared by accepted friends. Dates indicate when an action was recorded in the app, not necessarily the consumption date.|Actividades compartidas por amigos aceptados. Las fechas indican cuándo se registró la acción en la app, no necesariamente el día del consumo.
+Ainda não há atividades compartilhadas. Seus amigos precisam habilitar o compartilhamento para aparecer aqui.|There are no shared activities yet. Your friends need to enable sharing to appear here.|Todavía no hay actividades compartidas. Tus amigos deben activar el uso compartido para aparecer aquí.
+Adicionou à lista|Added to their list|Añadió a su lista
+Começou a acompanhar|Started tracking|Empezó a seguir
+Registrou a conclusão|Recorded a completion|Registró una finalización
+Ver mais atividades|View more activities|Ver más actividades
+Copiar link do perfil|Copy profile link|Copiar enlace del perfil
+Link do perfil copiado.|Profile link copied.|Enlace del perfil copiado.
+Pré-visualização privada. Publique o perfil nas opções acima para outras pessoas poderem abri-lo.|Private preview. Publish your profile using the options above so others can open it.|Vista previa privada. Publica tu perfil en las opciones de arriba para que otros puedan abrirlo.
+Favoritos em destaque|Featured favorites|Favoritos destacados
+Nenhum favorito em destaque.|No featured favorites.|No hay favoritos destacados.
+Ver mais títulos|View more titles|Ver más títulos
+Conquistas, convites, respostas e atividades relacionadas ao seu Para depois.|Achievements, requests, replies and activities related to your backlog.|Logros, solicitudes, respuestas y actividades relacionadas con tu lista pendiente.
+Atividade de amigo|Friend activity|Actividad de amigo
+Atividade indisponível|Activity unavailable|Actividad no disponible
+{0} registrou a conclusão deste título, que estava no seu Para depois.|{0} recorded completion of this title, which was on your backlog.|{0} registró la finalización de este título, que estaba en tu lista pendiente.
+Esta atividade não está mais disponível.|This activity is no longer available.|Esta actividad ya no está disponible.
+Ver título|View title|Ver título
+Como funciona o ranking?|How does the ranking work?|¿Cómo funciona el ranking?
+Adicione seu primeiro amigo para comparar o XP e acompanhar seus totais.|Add your first friend to compare XP and track your totals.|Añade a tu primer amigo para comparar XP y seguir sus totales.
 Resposta publicada.|Reply posted.|Respuesta publicada.
 Comentário removido|Comment removed|Comentario eliminado
 Retirar curtida|Unlike|Quitar Me gusta
@@ -1167,6 +1207,37 @@ Prioridade em Para depois|Backlog priority|Prioridad en Para después
 Prioridades mais altas aparecem primeiro em Para depois.|Higher priorities appear first in your backlog.|Las prioridades más altas aparecen primero en Para después.
 Prioridade {0}|{0} priority|Prioridad {0}
 Sobre a série|About the series|Sobre la serie
+Listas|Lists|Listas
+Criar lista|Create list|Crear lista
+Editar lista|Edit list|Editar lista
+Nome da lista|List name|Nombre de la lista
+Descrição|Description|Descripción
+Quem pode ver|Who can view|Quién puede ver
+Somente eu|Only me|Solo yo
+O link exige login e amizade aceita. A lista compartilha apenas os títulos escolhidos, sem notas ou progresso. Remover da biblioteca não remove da lista.|The link requires login and an accepted friendship. Only selected titles are shared, without ratings or progress. Removing from your library does not remove from the list.|El enlace requiere iniciar sesión y una amistad aceptada. Solo comparte los títulos elegidos, sin notas ni progreso. Eliminar de la biblioteca no elimina de la lista.
+Adicionar títulos da biblioteca|Add titles from your library|Añadir títulos de la biblioteca
+Buscar na biblioteca|Search your library|Buscar en la biblioteca
+Tipo de título|Title type|Tipo de título
+Adicionar título à lista|Add title to list|Añadir título a la lista
+Selecione um título|Select a title|Selecciona un título
+{0} de 100 títulos|{0} of 100 titles|{0} de 100 títulos
+Subir {0}|Move {0} up|Subir {0}
+Descer {0}|Move {0} down|Bajar {0}
+Remover {0} da lista|Remove {0} from list|Quitar {0} de la lista
+Salvar lista|Save list|Guardar lista
+Lista salva.|List saved.|Lista guardada.
+Excluir lista|Delete list|Eliminar lista
+Link da lista copiado.|List link copied.|Enlace de la lista copiado.
+Copiar link da lista|Copy list link|Copiar enlace de la lista
+{0} títulos|{0} titles|{0} títulos
+Esta lista ainda não tem títulos.|This list has no titles yet.|Esta lista aún no tiene títulos.
+Minhas listas|My lists|Mis listas
+Listas dos amigos|Friends' lists|Listas de amigos
+Crie sua primeira lista e compartilhe com amigos.|Create your first list and share it with friends.|Crea tu primera lista y compártela con amigos.
+Seus amigos ainda não compartilharam listas.|Your friends haven't shared any lists yet.|Tus amigos aún no han compartido listas.
+Ver mais listas|More lists|Ver más listas
+A lista e seu link serão removidos. Os títulos continuam na sua biblioteca.|The list and its link will be removed. Titles stay in your library.|La lista y su enlace se eliminarán. Los títulos siguen en tu biblioteca.
+Lista excluída.|List deleted.|Lista eliminada.
 `;
 export const translations: Record<string, [string, string]> =
   Object.fromEntries(

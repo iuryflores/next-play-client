@@ -1,6 +1,6 @@
 import PageLoading from './PageLoading';
 import { notifySaved } from './notifications';
-import { dateLabel, t } from './i18n';
+import { dateLabel, t, language } from './i18n';
 import {
   useEffect,
   useEffectEvent,
@@ -9,7 +9,7 @@ import {
   type SubmitEvent,
   type ReactNode,
 } from 'react';
-import { Heart, MessageCircle, Reply, Trash2 } from 'lucide-react';
+import { Heart, MessageCircle, Reply, Trash2, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ApiError } from './auth';
 import './community.css';
@@ -27,7 +27,15 @@ type Comment = {
   replyCount: number;
   parentReplyCount?: number;
 };
-type CommunityData = { comments: Comment[]; next: string | null };
+type CommunityData = {
+  ratingSummary?: {
+    average: number | null;
+    count: number;
+    distribution: { stars: number; count: number }[];
+  };
+  comments: Comment[];
+  next: string | null;
+};
 type Thread = { comment: Comment; replies: Comment[]; next: string | null };
 function mergeRows(
   previous: Comment[],
@@ -205,6 +213,7 @@ export default function Community({
             ? {
                 comments: mergeRows(current.comments, incoming, true),
                 next: current.next,
+                ratingSummary: result.ratingSummary,
               }
             : { ...result, comments: incoming },
         );
@@ -400,6 +409,48 @@ export default function Community({
           ' Os comentários são visíveis para todas as pessoas que adicionaram este título à coleção. Podem conter spoilers. ',
         )}
       </p>
+      {data?.ratingSummary && (
+        <section
+          className="community-rating"
+          aria-label={t('Nota da comunidade')}
+        >
+          <div>
+            <strong>
+              <Star aria-hidden="true" />
+              {data.ratingSummary.average === null
+                ? '—'
+                : data.ratingSummary.average.toLocaleString(language, {
+                    minimumFractionDigits: 1,
+                    maximumFractionDigits: 2,
+                  })}
+              <small>/ 5</small>
+            </strong>
+            <span>{t('Nota da comunidade')}</span>
+            <small>{t('{0} avaliações', data.ratingSummary.count)}</small>
+          </div>
+          {data.ratingSummary.count ? (
+            <div className="community-rating-bars">
+              {data.ratingSummary.distribution.map((row) => (
+                <label key={row.stars}>
+                  <span>{row.stars} ★</span>
+                  <progress
+                    value={row.count}
+                    max={data.ratingSummary!.count}
+                    aria-label={t(
+                      '{0} avaliações com {1} estrelas',
+                      row.count,
+                      row.stars,
+                    )}
+                  />
+                  <small>{row.count}</small>
+                </label>
+              ))}
+            </div>
+          ) : (
+            <p>{t('Ainda não há avaliações para este título.')}</p>
+          )}
+        </section>
+      )}
       {error && (
         <div role="alert" className="home-error">
           {error}

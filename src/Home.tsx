@@ -95,6 +95,8 @@ import type { CatalogTitle } from './CatalogSearch';
 const Stats = lazy(() => import('./Stats'));
 const Incoming = lazy(() => import('./Incoming'));
 const Friends = lazy(() => import('./Friends'));
+const Social = lazy(() => import('./Social'));
+const Lists = lazy(() => import('./Lists'));
 const Account = lazy(() => import('./Account'));
 const Collector = lazy(() => import('./Collector'));
 const TitleDetails = lazy(() => import('./TitleDetails'));
@@ -828,8 +830,16 @@ function Home({
         {t(' Estatísticas ')}
       </button>
       <button
-        aria-current={view === 'friends' ? 'page' : undefined}
-        className={view === 'friends' ? 'selected' : ''}
+        aria-current={
+          view === 'friends' || view === 'social' || view === 'lists'
+            ? 'page'
+            : undefined
+        }
+        className={
+          view === 'friends' || view === 'social' || view === 'lists'
+            ? 'selected'
+            : ''
+        }
         onClick={() => {
           afterNavigate?.();
           setDetailId(null);
@@ -885,15 +895,20 @@ function Home({
                     ? t('Conquistas')
                     : view === 'account'
                       ? t(' Minha conta ')
-                      : view === 'friends'
-                        ? t('Amigos')
-                        : view === 'stats'
-                          ? t('Suas estatísticas')
-                          : view === 'add'
-                            ? t('Adicionar título')
-                            : view === 'explore'
-                              ? t('Explorar')
-                              : views.find((item) => item.id === view)?.label}
+                      : view === 'lists'
+                        ? t('Listas')
+                        : view === 'social'
+                          ? t('Atividades')
+                          : view === 'friends'
+                            ? t('Amigos')
+                            : view === 'stats'
+                              ? t('Suas estatísticas')
+                              : view === 'add'
+                                ? t('Adicionar título')
+                                : view === 'explore'
+                                  ? t('Explorar')
+                                  : views.find((item) => item.id === view)
+                                      ?.label}
           </span>
           <div className="home-topbar-actions">
             <ThemePicker compact account />
@@ -921,6 +936,10 @@ function Home({
               </button>
               <UserLevelBadge />
               <NotificationBell
+                onTitle={(id) => {
+                  setView('all');
+                  setDetailId(id);
+                }}
                 onComment={(itemId, commentId) => {
                   setView('all');
                   setDetailId(itemId);
@@ -965,7 +984,9 @@ function Home({
               view !== 'challenges' &&
               view !== 'acervo' &&
               view !== 'incoming' &&
-              view !== 'friends' && (
+              view !== 'friends' &&
+              view !== 'social' &&
+              view !== 'lists' && (
                 <section className="home-heading">
                   <div>
                     <span className="home-kicker">
@@ -1034,8 +1055,42 @@ function Home({
                 onSaved={onUserChanged}
                 onExpired={onExpired}
               />
+            ) : view === 'lists' ? (
+              <Lists
+                key={route.listId || 'lists'}
+                listId={route.listId}
+                items={items}
+                onSelect={(id) => setRouteField('listId', id)}
+                onExpired={onExpired}
+              />
+            ) : view === 'social' ? (
+              <Social
+                key={route.profileId || 'feed'}
+                userId={user.id}
+                items={items}
+                profileId={route.profileId}
+                onProfile={(id) => setRouteField('profileId', id)}
+                onOpenTitle={(id) => {
+                  setView('all');
+                  setDetailId(id);
+                }}
+                onExpired={onExpired}
+              />
             ) : view === 'friends' ? (
               <Friends
+                onLists={() => {
+                  setDetailId(null);
+                  setView('lists');
+                }}
+                onFeed={() => {
+                  setDetailId(null);
+                  setView('social');
+                }}
+                onProfile={(id) => {
+                  setDetailId(null);
+                  setView('social');
+                  setRouteField('profileId', id);
+                }}
                 onExpired={onExpired}
                 onNameChanged={(displayName) =>
                   onUserChanged({ ...user, displayName })
