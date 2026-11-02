@@ -14,10 +14,12 @@ import { t } from './i18n';
 type Video = { key: string; name: string; language: string };
 export default function Trailer({
   itemId,
+  catalogId,
   title,
   onExpired,
 }: {
-  itemId: string;
+  itemId?: string;
+  catalogId?: string;
   title: string;
   onExpired: () => void;
 }) {
@@ -31,12 +33,34 @@ export default function Trailer({
   const expired = useEffectEvent(onExpired);
   useEffect(() => {
     let active = true;
-    void libraryRequest<{ trailer: Video | null }>(
-      'GET',
-      itemId,
-      undefined,
-      'trailer',
-    )
+    const controller = new AbortController();
+    // Na descoberta consultamos o catálogo, sem criar um item privado só para ver o vídeo.
+    const request = itemId
+      ? libraryRequest<{ trailer: Video | null }>(
+          'GET',
+          itemId,
+          undefined,
+          'trailer',
+          undefined,
+          controller.signal,
+        )
+      : catalogId
+        ? fetch(`/api/catalog/trailer?${new URLSearchParams({ catalogId })}`, {
+            credentials: 'same-origin',
+            signal: AbortSignal.any([
+              controller.signal,
+              AbortSignal.timeout(20000),
+            ]),
+          }).then(async (response) => {
+            if (!response.ok)
+              throw new ApiError(
+                response.status,
+                t('Não foi possível carregar o trailer. Tente novamente.'),
+              );
+            return (await response.json()) as { trailer: Video | null };
+          })
+        : Promise.resolve({ trailer: null });
+    void request
       .then((result) => {
         if (!active) return;
         if (result.trailer && /^[A-Za-z0-9_-]{11}$/.test(result.trailer.key))
@@ -58,8 +82,9 @@ export default function Trailer({
       });
     return () => {
       active = false;
+      controller.abort();
     };
-  }, [itemId, retry]);
+  }, [itemId, catalogId, retry]);
   return (
     <div className="title-trailer">
       <h2 className="trailer-heading">{t('Trailer')}</h2>

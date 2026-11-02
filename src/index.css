@@ -12,6 +12,10 @@
   --color-border: var(--border);
   --color-input: var(--border);
   --color-ring: var(--primary);
+  --color-popover: var(--surface);
+  --color-popover-foreground: var(--foreground);
+  --color-accent: var(--muted);
+  --color-accent-foreground: var(--foreground);
   --color-destructive: #ffb4ab;
   --font-sans: 'Inter', 'Segoe UI', sans-serif;
 }
@@ -66,8 +70,8 @@ input:focus-visible {
   display: flex;
   flex-direction: column;
   padding: 48px 64px 36px;
-  background: #1a1726;
-  border-right: 1px solid #302b42;
+  background: var(--panel, #1a1726);
+  border-right: 1px solid var(--line, #302b42);
   isolation: isolate;
 }
 .brand-panel::before {
@@ -78,7 +82,7 @@ input:focus-visible {
   height: 660px;
   left: -330px;
   bottom: -420px;
-  border: 1px solid #514573;
+  border: 1px solid var(--line, #514573);
   border-radius: 50%;
   box-shadow:
     0 0 0 70px #a899ff05,
@@ -104,7 +108,7 @@ input:focus-visible {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #b9f5cc;
+  color: var(--success-ink, #b9f5cc);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 1.7px;
@@ -124,10 +128,10 @@ h1 {
   font-weight: 650;
 }
 h1 span {
-  color: #a899ff;
+  color: var(--accent-ink, #a899ff);
 }
 .brand-story p {
-  color: #b6b0c8;
+  color: var(--ink-muted, #b6b0c8);
   font-size: 16px;
   line-height: 1.9;
 }
@@ -142,20 +146,20 @@ h1 span {
   align-items: center;
   gap: 8px;
   font-size: 14px;
-  border: 1px solid #40384f;
+  border: 1px solid var(--line, #40384f);
   border-radius: 24px;
   padding: 9px 15px;
-  color: #d3cce2;
+  color: var(--ink, #d3cce2);
 }
 .media-types svg {
   width: 16px;
   height: 16px;
-  color: #aaa0c9;
+  color: var(--ink-muted, #aaa0c9);
 }
 .brand-footer {
   display: flex;
   justify-content: space-between;
-  color: #aaa0bd;
+  color: var(--ink-muted, #aaa0bd);
   font-size: 14px;
   align-items: center;
 }
@@ -174,7 +178,7 @@ h1 span {
   padding: 36px 0 22px;
 }
 .section-number {
-  color: #aaa6ba;
+  color: var(--ink-muted, #aaa6ba);
   font-size: 11px;
   letter-spacing: 2px;
   font-weight: 600;
@@ -187,7 +191,7 @@ h2 {
   font-weight: 650;
 }
 .login-description {
-  color: #aaa6ba;
+  color: var(--ink-muted, #aaa6ba);
   font-size: 15px;
   margin: 0 0 31px;
   line-height: 1.6;
@@ -198,17 +202,17 @@ h2 {
   font-size: 14px;
   gap: 12px;
   border-radius: 12px;
-  border: 1px solid #464150;
-  background: #19171f;
+  border: 1px solid var(--line, #464150);
+  background: var(--panel, #19171f);
 }
 .google-button:hover {
-  background: #252230;
+  background: var(--panel, #252230);
 }
 .google-letter {
   font:
     700 21px Arial,
     sans-serif;
-  color: #f5f3fa;
+  color: var(--ink, #f5f3fa);
 }
 .separator {
   display: flex;
@@ -216,19 +220,19 @@ h2 {
   gap: 15px;
   margin: 25px 0;
   font-size: 13px;
-  color: #aaa6ba;
+  color: var(--ink-muted, #aaa6ba);
 }
 .separator span {
   height: 1px;
   flex: 1;
-  background: #2e2a38;
+  background: var(--panel-raised, #2e2a38);
 }
 .method-picker {
   min-width: 0;
   border: 0;
   display: flex;
   padding: 5px;
-  background: #1d1b26;
+  background: var(--panel, #1d1b26);
   border-radius: 12px;
   gap: 5px;
   margin-bottom: 24px;
@@ -239,11 +243,11 @@ h2 {
   font-size: 14px;
   gap: 8px;
   border-radius: 8px;
-  color: #aaa6ba;
+  color: var(--ink-muted, #aaa6ba);
 }
 .method-picker button[aria-pressed='true'] {
-  background: #373045;
-  color: #e2daff;
+  background: var(--panel-raised, #373045);
+  color: var(--accent-ink, #e2daff);
   box-shadow: 0 2px 5px #0002;
 }
 .login-form {
@@ -256,18 +260,18 @@ h2 {
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 9px;
-  color: #e2dfeb;
+  color: var(--ink, #e2dfeb);
 }
 .login-input {
   height: 52px;
   padding: 0 15px;
-  background: #17151e;
+  background: var(--panel, #17151e);
   border-radius: 12px;
-  border: 1px solid #3c3748;
+  border: 1px solid var(--line, #3c3748);
   font-size: 16px;
 }
 .login-input::placeholder {
-  color: #898395;
+  color: var(--ink-muted, #898395);
   font-size: 14px;
 }
 .password-field {
@@ -282,11 +286,11 @@ h2 {
   top: 5px;
   width: 42px;
   height: 42px;
-  color: #aaa6ba;
+  color: var(--ink-muted, #aaa6ba);
   padding: 0;
 }
 .field-help {
-  color: #aaa6ba;
+  color: var(--ink-muted, #aaa6ba);
   line-height: 1.65;
   font-size: 14px;
   margin-top: 12px;
@@ -319,14 +323,14 @@ h2 {
   align-items: flex-start;
   gap: 10px;
   padding: 14px 16px;
-  border: 1px solid #ed8296;
-  border-left: 4px solid #ff9bad;
+  border: 1px solid var(--danger-ink, #ed8296);
+  border-left: 4px solid var(--danger-ink, #ff9bad);
   border-radius: 12px;
-  background: #401e2a;
+  background: var(--danger-surface, #401e2a);
   font-size: 14px;
   font-weight: 600;
   line-height: 1.6;
-  color: #ffe1e7;
+  color: var(--danger-ink, #ffe1e7);
   overflow-wrap: anywhere;
   margin: 4px 0;
 }
@@ -335,7 +339,7 @@ h2 {
   height: 22px;
   flex-shrink: 0;
   margin-top: 1px;
-  color: #ffafbd;
+  color: var(--danger-ink, #ffafbd);
 }
 .register-toggle {
   display: flex;
@@ -355,9 +359,9 @@ h2 {
   width: 100%;
   max-width: 460px;
   padding: clamp(24px, 5vw, 40px);
-  border: 1px solid #4b435e;
+  border: 1px solid var(--line, #4b435e);
   border-radius: 20px;
-  background: #1d1b29;
+  background: var(--panel, #1d1b29);
 }
 .recovery-card h1 {
   font-size: 30px;
@@ -375,7 +379,7 @@ h2 {
   min-width: 0;
 }
 .recovery-success {
-  color: #b9f5cc;
+  color: var(--success-ink, #b9f5cc);
 }
 .recovery-success svg {
   margin-bottom: 12px;
@@ -385,7 +389,7 @@ h2 {
   justify-content: center;
   align-items: center;
   gap: 7px;
-  color: #aaa6ba;
+  color: var(--ink-muted, #aaa6ba);
   font-size: 12px;
   margin-top: 25px;
 }
@@ -399,7 +403,7 @@ h2 {
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 12px;
-  color: #aaa6ba;
+  color: var(--ink-muted, #aaa6ba);
   font-size: 12px;
   margin-top: 36px;
 }
@@ -475,7 +479,7 @@ h2 {
   margin-top: 8px;
   font-size: 11px;
   line-height: 1.5;
-  color: #a99dbb;
+  color: var(--ink-muted, #a99dbb);
 }
 
 /* Mantém login e recuperação legíveis junto ao recorte e à barra de gestos do celular. */

@@ -14,7 +14,11 @@ export function handler(req, res) {
     if (!file.startsWith(root + sep) || pathname.split('/').some(part => part.startsWith('.'))) { res.writeHead(404); res.end(); return; }
     const info = await stat(file);
     if (!info.isFile()) { res.writeHead(404); res.end(); return; }
-    res.writeHead(200, { 'Content-Type': mime[extname(file)] || 'application/octet-stream', 'Content-Length': info.size, 'Cache-Control': 'no-cache', 'X-Content-Type-Options': 'nosniff' });
+    // O hash muda a URL em cada alteração: esses arquivos podem ser reutilizados
+    // sem revalidação. HTML e nomes fixos continuam consultando o release atual.
+    const immutable = /^\/assets\/[^/]+-[\w-]{8,}\.[a-z0-9]+$/i.test(pathname);
+    const cacheControl = pathname === '/deploy-meta.json' ? 'no-store' : immutable ? 'public, max-age=31536000, immutable' : 'no-cache';
+    res.writeHead(200, { 'Content-Type': mime[extname(file)] || 'application/octet-stream', 'Content-Length': info.size, 'Cache-Control': cacheControl, 'X-Content-Type-Options': 'nosniff' });
     if (req.method === 'HEAD') res.end(); else createReadStream(file).on('error', () => res.destroy()).pipe(res);
   })().catch(() => { if (!res.headersSent) res.writeHead(404); res.end(); });
 }

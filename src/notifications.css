@@ -14,10 +14,10 @@
   align-items: center;
   gap: 12px;
   padding: 16px;
-  border: 1px solid #78608d;
+  border: 1px solid var(--line, #78608d);
   border-radius: 14px;
-  background: #282032;
-  color: #f5effc;
+  background: var(--panel, #282032);
+  color: var(--accent-ink, #f5effc);
   box-shadow: 0 12px 35px #0005;
   font-size: 14px;
   line-height: 1.5;
@@ -27,7 +27,7 @@
 .save-notification > svg {
   width: 22px;
   height: 22px;
-  color: #91e3b0;
+  color: var(--success-ink, #91e3b0);
 }
 .save-notification button {
   display: grid;
@@ -37,14 +37,14 @@
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: #c7b7d5;
+  color: var(--ink-muted, #c7b7d5);
   cursor: pointer;
 }
 .save-notification button:hover {
   background: #ffffff10;
 }
 .save-notification button:focus-visible {
-  outline: 2px solid #d3a6f6;
+  outline: 2px solid var(--accent-ink, #d3a6f6);
 }
 .save-notification button svg {
   width: 16px;

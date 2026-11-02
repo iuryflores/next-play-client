@@ -61,12 +61,12 @@
   align-self: flex-start;
   font-size: 11px;
   line-height: 1.4;
-  color: #b7a9c9;
+  color: var(--ink-muted, #b7a9c9);
   text-underline-offset: 3px;
 }
 
 .book-card-footer > a:hover,
 .book-card-footer > a:focus-visible {
-  color: #f5f3fa;
+  color: var(--ink, #f5f3fa);
   text-decoration: underline;
 }

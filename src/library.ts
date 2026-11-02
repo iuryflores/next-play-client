@@ -1,6 +1,7 @@
 import { t } from './i18n';
 import { notifySaved } from './notifications';
 import { ApiError } from './auth';
+import { achievementActivity } from './achievement-client';
 export type Kind = 'movie' | 'series' | 'game' | 'book';
 export type Status = 'planned' | 'active' | 'completed';
 export interface LibraryItem {
@@ -90,12 +91,15 @@ export async function libraryRequest<T>(
 ): Promise<T> {
   let response: Response;
   try {
+    // Descoberta pode recuperar metadados e consultar provedores externos;
+    // a biblioteca salva continua com o prazo curto para navegação cotidiana.
+    const timeout = AbortSignal.timeout(
+      method === 'GET' ? (id === 'explore' ? 45000 : 15000) : 120000,
+    );
     const options: RequestInit = {
       method,
       credentials: 'same-origin',
-      signal: signal
-        ? AbortSignal.any([signal, AbortSignal.timeout(method === 'GET' ? 15000 : 120000)])
-        : AbortSignal.timeout(method === 'GET' ? 15000 : 120000),
+      signal: signal ? AbortSignal.any([signal, timeout]) : timeout,
       ...(visitId ? { headers: { 'X-Ranking-Visit': visitId } } : {}),
     };
     if (body && method !== 'GET') {
@@ -112,6 +116,8 @@ export async function libraryRequest<T>(
     );
   }
   const announce = () => {
+    if (method !== 'GET' && (!action || action === 'archive'))
+      achievementActivity();
     if (method !== 'GET' && (!action || action === 'archive'))
       notifySaved(
         t(method === 'DELETE' ? 'Removido da coleção.' : 'Alterações salvas.'),

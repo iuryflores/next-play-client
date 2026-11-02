@@ -1,0 +1,117 @@
+/* Tokens claros substituem as cores de conteúdo; os fallbacks conservam a paleta escura.
+   Capas, fotos e gradientes sobre imagens mantêm suas cores para preservar o contraste. */
+:root[data-theme='light'] {
+  color-scheme: light;
+  --background: #f5f3f9;
+  --foreground: #24202e;
+  --primary: #6141ad;
+  --primary-foreground: #fff;
+  --muted: #ede8f4;
+  --muted-foreground: #61596f;
+  --surface: #fff;
+  --surface-raised: #f8f6fc;
+  --border: #cec5dc;
+  --border-strong: #8975a3;
+  --ink: #24202e;
+  --ink-muted: #61596f;
+  --accent-ink: #6442ad;
+  --panel: #fff;
+  --panel-raised: #f0ebf6;
+  --selected-surface: #e7dff2;
+  --line: #cec5dc;
+  --success-ink: #21613b;
+  --success-surface: #e3f3e9;
+  --danger-ink: #a8263d;
+  --danger-surface: #fce8ec;
+  --warning-ink: #785018;
+  --warning-surface: #fff1d8;
+}
+
+/* Cores explícitas nas opções evitam texto roxo herdado sobre o popup branco do SO.
+   A mesma regra atende selects nativos, filtros e menus renderizados em portal. */
+select,
+[data-slot='select-trigger'] {
+  color-scheme: inherit;
+  color: var(--foreground);
+}
+select option,
+select optgroup,
+[data-slot='select-content'] {
+  background: var(--surface);
+  color: var(--foreground);
+}
+[data-slot='select-content'] {
+  border: 1px solid var(--border);
+}
+[data-slot='select-item'][data-highlighted] {
+  background: var(--muted);
+  color: var(--foreground);
+}
+select:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.theme-picker {
+  display: grid;
+  gap: 10px;
+  margin: 22px 0 30px;
+}
+.theme-picker label {
+  font-weight: 600;
+}
+.theme-picker select {
+  min-height: 44px;
+  background: var(--surface-raised);
+}
+.theme-picker small {
+  color: var(--muted-foreground);
+  line-height: 1.5;
+}
+.login-footer .theme-picker {
+  text-align: left;
+  width: 100%;
+}
+.catalog-more-button {
+  color: #f4efff;
+}
+.collector-remove {
+  background: #71313c;
+  color: #fff;
+}
+
+:root[data-theme='light'] .mobile-navigation {
+  background: #fffffff5;
+}
+:root[data-theme='light'] .movie {
+  --kind-color: #6442ad;
+}
+:root[data-theme='light'] .series {
+  --kind-color: #98456f;
+}
+:root[data-theme='light'] .game {
+  --kind-color: #2d6187;
+}
+:root[data-theme='light'] .book {
+  --kind-color: #21613b;
+}
+:root[data-theme='light'] .title-details .title-details-hero {
+  background: linear-gradient(135deg, #eee5f8, #fff);
+}
+
+/* As legendas sobre capas ficam sobre um degradê escuro em ambos os temas. */
+.book-reading-marker strong {
+  color: #b9f5cc;
+}
+.series-cover-progress-label small {
+  color: #e0d9eb;
+}
+.collection-kind-badge {
+  color: #f0e5fa;
+}
+.has-poster .edit-item {
+  color: #f5f3fa;
+}
+.complete-cover-action {
+  color: #b9f5cc;
+}

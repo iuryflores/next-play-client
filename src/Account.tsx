@@ -1,4 +1,5 @@
 import Settings from './Settings';
+import { AchievementTitle } from './AchievementProvider';
 import { useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import IconAction from './IconAction';
@@ -62,6 +63,7 @@ export default function Account({
     <section className="account-page">
       <h1>{t(' Minha conta ')}</h1>
       <p>{t('Sua foto e seus dados, do seu jeito.')}</p>
+      <AchievementTitle />
       <form
         className="item-form account-form"
         onChange={() => setSaved(false)}

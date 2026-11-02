@@ -14,6 +14,7 @@ test('servidor PM2 entrega build e marcador, sem transformar assets inexistentes
   await mkdir(join(dir, 'dist', 'assets'), { recursive: true });
   await writeFile(join(dir, 'dist', 'index.html'), '<div id="root">NextPlay</div>');
   await writeFile(join(dir, 'dist', 'assets', 'app.js'), 'console.log("NextPlay")');
+  await writeFile(join(dir, 'dist', 'assets', 'app-AbCdEf12.js'), 'console.log("build")');
   await writeFile(join(dir, 'dist', 'deploy-meta.json'), '{"releaseId":"test"}');
   const child = spawn(process.execPath, [fileURLToPath(new URL('../scripts/serve-frontend.mjs', import.meta.url))], { cwd: dir, env: { ...process.env, PORT: String(port) }, stdio: 'ignore' });
   t.after(async () => { if (child.exitCode === null) { child.kill(); await once(child, 'exit'); } await rm(dir, { recursive: true, force: true }); });
@@ -21,7 +22,17 @@ test('servidor PM2 entrega build e marcador, sem transformar assets inexistentes
   let ready = false;
   for (let i = 0; i < 50; i++) { try { if ((await fetch(base)).ok) { ready = true; break; } } catch {} await new Promise(resolve => setTimeout(resolve, 50)); }
   assert.ok(ready);
-  assert.equal((await fetch(base + '/deploy-meta.json')).status, 200);
+  const metadata = await fetch(base + '/deploy-meta.json');
+  assert.equal(metadata.status, 200);
+  assert.equal(metadata.headers.get('cache-control'), 'no-store');
+  assert.equal((await fetch(base)).headers.get('cache-control'), 'no-cache');
+  assert.equal((await fetch(base + '/assets/app.js')).headers.get('cache-control'), 'no-cache');
+  const hashed = await fetch(base + '/assets/app-AbCdEf12.js');
+  assert.equal(hashed.headers.get('cache-control'), 'public, max-age=31536000, immutable');
+  assert.equal(await hashed.text(), 'console.log("build")');
+  const head = await fetch(base + '/assets/app-AbCdEf12.js', { method: 'HEAD' });
+  assert.equal(head.headers.get('cache-control'), hashed.headers.get('cache-control'));
+  assert.equal(await head.text(), '');
   assert.match((await fetch(base + '/assets/app.js')).headers.get('content-type'), /javascript/);
   assert.equal((await fetch(base + '/assets/missing.js')).status, 404);
   assert.equal((await fetch(base + '/.env')).status, 404);

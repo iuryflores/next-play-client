@@ -1,0 +1,111 @@
+/* A prévia é independente do acompanhamento: pode ser fechada sem salvar nada. */
+/* A sinopse ocupa o espaço variável do card; o rodapé continua alinhado na mesma linha. */
+.explore .library-card .item-info {
+  display: flex;
+  flex-direction: column;
+}
+.explore .item-info .explore-overview {
+  /* A altura intrínseca de três linhas mantém os cards compactos. A contenção
+     permite mostrar mais texto no espaço livre sem aumentar toda a fileira. */
+  contain: size;
+  flex: 1;
+  min-height: 3lh;
+  margin-bottom: 0;
+  -webkit-line-clamp: var(--overview-lines, 3);
+}
+.explore-card-actions {
+  margin-top: auto;
+  padding-top: 8px;
+}
+.explore-card-actions .quick-actions {
+  margin-top: 0;
+}
+.explore-card-actions .explore-reason {
+  margin: 0 0 10px;
+}
+.explore-load-more {
+  flex-direction: column;
+  align-items: center;
+  min-height: 56px;
+}
+
+.item-dialog.explore-title-dialog {
+  width: min(760px, calc(100vw - 24px));
+  max-width: min(760px, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+}
+.explore-preview-heading {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+.explore-preview-cover {
+  width: 112px;
+  aspect-ratio: 2 / 3;
+  background: var(--panel-raised, #302a3c);
+  border: 1px solid var(--line, #5c4d70);
+  border-radius: 10px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+.explore-preview-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.explore-preview-cover svg {
+  width: 34px;
+  height: 34px;
+}
+.explore-preview-heading p {
+  margin: 0 0 8px;
+  overflow-wrap: anywhere;
+}
+.explore-preview-synopsis {
+  white-space: pre-line;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.explore-cover-action {
+  width: 100%;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+.explore-title-action {
+  background: none;
+  border: 0;
+  color: inherit;
+  padding: 0;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+.explore-cover-action:focus-visible,
+.explore-title-action:focus-visible {
+  outline: 2px solid var(--accent-ink, #b7a0ff);
+  outline-offset: 3px;
+}
+.explore .explore-complete-action {
+  width: 100%;
+  margin-top: 8px;
+  min-height: 40px;
+  white-space: normal;
+}
+@media (max-width: 600px) {
+  .explore-preview-heading {
+    grid-template-columns: 82px minmax(0, 1fr);
+    gap: 12px;
+  }
+  .explore-preview-cover {
+    width: 82px;
+  }
+  .explore .explore-complete-action {
+    min-height: 44px;
+  }
+}

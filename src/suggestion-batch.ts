@@ -10,7 +10,9 @@ export async function suggestionBatch<T extends { catalogId: string }>(
   exclude: (item: T) => boolean,
   signal: AbortSignal,
   size = 12,
+  maxPages = Infinity,
 ) {
+  let fetched = 0;
   const available = () => [
     ...new Map(
       buffer.pending
@@ -18,10 +20,17 @@ export async function suggestionBatch<T extends { catalogId: string }>(
         .map((item) => [item.catalogId, item]),
     ).values(),
   ];
-  while (available().length < size && buffer.next !== null) {
+  // Algumas páginas podem conter apenas obras já vistas; o limite mantém o
+  // botão responsivo e preserva o cursor para a próxima tentativa.
+  while (
+    available().length < size &&
+    buffer.next !== null &&
+    fetched < maxPages
+  ) {
     signal.throwIfAborted();
     const page = buffer.next;
     const data = await fetchPage(page);
+    fetched++;
     signal.throwIfAborted();
     buffer.pending.push(...data.results);
     buffer.next =

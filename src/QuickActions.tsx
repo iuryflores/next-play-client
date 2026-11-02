@@ -220,7 +220,7 @@ export default function QuickActions({
         {busy
           ? t('Salvando…')
           : !owned
-            ? t('Adicionar ao acompanhamento')
+            ? t('Adicionar')
             : owned.kind === 'series'
               ? t('Ver episódios')
               : owned.status === 'completed'

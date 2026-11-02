@@ -67,6 +67,30 @@ O lint completo do scaffold apresenta apontamentos preexistentes nos componentes
 
 ## Escopo desta etapa
 
+### Conquistas e títulos (implementação local)
+
+O menu **Conquistas** acompanha 11 famílias e 54 metas: Primeiro play (1 filme), Só mais um episódio (5 em 5 episódios no mesmo dia, até 100), Temporada encerrada (1/5/10/25 temporadas regulares), Cinéfilo (10/25/50/100 filmes), Devorador de páginas (5/10/25/50 livros) Colecionador (10/25/50/100 itens possuídos), Até o último episódio (1/5/10/25 séries concluídas), Universo em episódios (25/100/250/500 episódios), De volta aos clássicos (5/10/25/50 filmes anteriores a 2000), Na cadeira do crítico (5/10/25/50 filmes assistidos avaliados) e Hoje tem final (uma temporada completa no mesmo dia, com marcações individuais). Conquistas concedidas ficam na conta; itens removidos não apagam medalhas. A posse continua independente de leitura/consumo.
+
+Cada família tem emoji e cor próprios, presentes no card, no perfil e na celebração. Famílias de quatro níveis mostram quatro estrelas, preenchidas conforme os desbloqueios; maratonas usam estrela e contador até 20. O título pode ser atualizado para o nível mais recente conquistado. Ao desbloquear, uma celebração central mostra medalha, confetes, brilho e animações. Várias conquistas entram em sequência; “Próxima conquista” confirma somente a atual e “Voltar ao app” dispensa o lote. Pendências ficam no servidor e retornam se a apresentação for interrompida. O efeito respeita movimento reduzido. No painel, escolha um título desbloqueado para aparecer no perfil e na navegação; todas as metas de maratona podem ser expandidas.
+
+O frontend sincroniza ao entrar, ao retornar à aba e após salvar consumo/episódios/posse, agrupando eventos próximos. Nenhuma contagem é confiada ao cliente. O servidor usa o fuso IANA do navegador para agrupar marcações individuais novas; lotes, conclusões integrais, especiais e registros legados não simulam uma maratona de hoje. Histórico de filmes, livros, posse e temporadas pode conceder medalhas retroativas. Falhas de sincronização não bloqueiam a biblioteca. Sem novas variáveis de ambiente; sem commit/push/deploy.
+
+### Desempenho (implementação local)
+
+O login baixa a entrada do aplicativo; biblioteca, Estatísticas, Minha Coleção, Explorar, Amigos e detalhes têm módulos separados, carregados conforme a navegação. Os estilos continuam compartilhados para preservar os temas claro/escuro. A sessão é consultada em paralelo aos provedores de login. Falhas de carregamento de uma tela oferecem recarga explícita, sem atualização automática da página.
+
+Na medição de 01/11/2026, a entrada JavaScript do build local passou de aproximadamente 682 KB para 341 KB, sem contar os módulos carregados posteriormente. O site publicado ainda entregava 667 KB de JavaScript sem compressão e com `Cache-Control: no-cache`. Os templates do Nginx agora preparam gzip para JS/CSS/SVG públicos; o servidor PM2 permite cache longo apenas em assets com hash. HTML e nomes fixos continuam revalidando; o marcador de deploy usa `no-store`. Essas alterações de entrega dependem de um próximo deploy.
+
+O Explorar começa com uma página sorteada (até 20 candidatos), preenchendo a grade e buscando outras páginas conforme necessário. Mantém variedade entre visitas e rolagem automática. As consultas a TMDB/Google Books continuam sujeitas à latência dos provedores. As otimizações permanecem sem commit/push.
+
+Para filmes e séries, o sorteio dá mais peso às páginas populares dentro dos gêneros preferidos, mantendo todas as páginas válidas e evitando repetições até terminar o ciclo. A ordem de afinidade/popularidade retornada pela API é preservada nos cards iniciais, ao carregar mais e nas sugestões de Adicionar item. Livros mantêm sua própria ordem por título, autor e editora. A mudança não acrescenta chamadas ao catálogo. `tests/explore-pages.test.mjs` verifica o viés e a variedade com gerador determinístico; `tests/explore-selection.test.mjs` cobre prioridade, novidades e ausência de duplicatas.
+
+### Aparência (implementação local)
+
+Em **Minha conta → Configurações → Aparência**, escolha Claro, Escuro ou Usar tema do dispositivo. A mesma escolha está disponível no rodapé do login. A mudança é imediata e fica salva apenas neste navegador (`nextplay.theme`), sem enviar dados à API. Outras abas acompanham a preferência; no modo automático, mudanças do sistema também são aplicadas. Se o armazenamento estiver bloqueado, a troca continua funcionando na sessão. As cores de campos, opções abertas, cards, navegação e diálogos seguem o tema; imagens e legendas sobre capas preservam o contraste próprio.
+
+Alteração ainda sem commit, push ou versão publicada. `tests/theme.test.mjs` verifica preferência explícita, sistema, sincronização entre abas e armazenamento indisponível.
+
 - Layout responsivo em português, com logo original.
 - Seleção entre e-mail/senha e telefone internacional com código SMS.
 - Botão de acesso com Google.

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import ThemePicker from './ThemePicker';
 import { Button } from '@/components/ui/button';
 import { NativeSelect } from '@/components/ui/native-select';
 import { authRequest } from './auth';
@@ -10,6 +11,7 @@ export default function Settings() {
   return (
     <section className="manual-title-page">
       <h2>{t('Configurações')}</h2>
+      <ThemePicker />
       <form
         className="item-form"
         onSubmit={async (event) => {

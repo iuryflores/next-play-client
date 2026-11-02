@@ -21,7 +21,7 @@
 
 .home-shell .library-navigation button {
   border: 1px solid transparent;
-  color: #d0c6df;
+  color: var(--ink-muted, #d0c6df);
 }
 
 .home-shell .library-navigation button:hover {
@@ -30,9 +30,9 @@
 }
 
 .home-shell .library-navigation button.selected {
-  background: #3b2e52;
-  border-color: #8970b4;
-  color: #e4d9ff;
+  background: var(--panel-raised, #3b2e52);
+  border-color: var(--accent-ink, #8970b4);
+  color: var(--accent-ink, #e4d9ff);
 }
 
 /* Painéis dão limites claros às áreas que antes compartilhavam o mesmo fundo. */
@@ -97,8 +97,8 @@
 
 .home-content
   :is(.collection-search input, .catalog-search input, .catalog-search select) {
-  background: #1c1726;
-  border-color: #75618d;
+  background: var(--panel, #1c1726);
+  border-color: var(--line, #75618d);
 }
 
 /* Os diálogos são renderizados em portal, fora do contêiner principal. */
@@ -132,12 +132,12 @@
 
 .login-panel :is(.login-input, .method-picker, .google-button) {
   border: 1px solid var(--border);
-  background: #1c1726;
+  background: var(--panel, #1c1726);
 }
 
 .brand-panel {
   border-color: var(--border);
-  background: #241d33;
+  background: var(--panel, #241d33);
 }
 
 @media (max-width: 760px) {

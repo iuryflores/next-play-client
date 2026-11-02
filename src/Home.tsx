@@ -1,10 +1,10 @@
 import PageLoading from './PageLoading';
+import PageBoundary from './PageBoundary';
+import AchievementProvider, { AchievementTitle } from './AchievementProvider';
 import { genreLabel } from './i18n';
 import { dateLabel } from './i18n';
 import { language } from './i18n';
 import { t } from './i18n';
-import Stats from './Stats';
-import Incoming from './Incoming';
 import ReleaseBadge from './ReleaseBadge';
 import IconAction from './IconAction';
 import { Trash2, CircleAlert } from 'lucide-react';
@@ -13,15 +13,12 @@ import RecentWatched, {
   watchedTime,
   WatchedWhen,
 } from './RecentWatched';
-import Friends from './Friends';
-import Account from './Account';
-import Collector from './Collector';
 import { ReviewProvider } from './Review';
-import TitleDetails from './TitleDetails';
 import SeriesResume from './SeriesResume';
 import OriginalTitle from './OriginalTitle';
 import {
   useEffect,
+  lazy,
   useLayoutEffect,
   useRef,
   useState,
@@ -29,6 +26,7 @@ import {
 } from 'react';
 import {
   BookOpen,
+  Trophy,
   Film,
   Tv,
   Gamepad2,
@@ -69,11 +67,21 @@ import {
 import './home.css';
 import MobileNavigation from './MobileNavigation';
 import './mobile.css';
-import Explore from './Explore';
 import QuickActions from './QuickActions';
 import CompletionFields from './CompletionFields';
-import { matchesView } from './collection-view';
-import CatalogSearch, { type CatalogTitle } from './CatalogSearch';
+import { matchesView, activityTime } from './collection-view';
+import type { CatalogTitle } from './CatalogSearch';
+
+// Cada tela tem seu próprio arquivo de produção; voltar a ela reutiliza o módulo baixado.
+const Stats = lazy(() => import('./Stats'));
+const Incoming = lazy(() => import('./Incoming'));
+const Friends = lazy(() => import('./Friends'));
+const Account = lazy(() => import('./Account'));
+const Collector = lazy(() => import('./Collector'));
+const TitleDetails = lazy(() => import('./TitleDetails'));
+const Explore = lazy(() => import('./Explore'));
+const CatalogSearch = lazy(() => import('./CatalogSearch'));
+const Achievements = lazy(() => import('./Achievements'));
 
 const icons = { movie: Film, series: Tv, game: Gamepad2, book: BookOpen };
 const views = [
@@ -111,6 +119,7 @@ function Home({
     | 'incoming'
     | 'coming-soon'
     | 'account'
+    | 'achievements'
     | 'acervo'
     | 'archived'
     | 'friends'
@@ -257,10 +266,6 @@ function Home({
       ),
   );
   {
-    // Livros em leitura compartilham a prioridade das séries em andamento na Visão geral.
-    const inProgress = (item: LibraryItem) =>
-      Boolean(item.inProgress) ||
-      (item.kind === 'book' && item.status === 'active');
     const releaseYear = (item: LibraryItem) =>
       /^\d{4}$/.test(item.year || '') ? Number(item.year) : 0;
     const releaseTime = (item: LibraryItem) => {
@@ -273,10 +278,7 @@ function Home({
         (view === 'completed' && historyMode
           ? watchedTime(b) - watchedTime(a)
           : 0) ||
-        (view === 'all'
-          ? Number(inProgress(b)) - Number(inProgress(a)) ||
-            (a.inProgress && b.inProgress ? watchedTime(b) - watchedTime(a) : 0)
-          : 0) ||
+        (view === 'all' ? activityTime(b) - activityTime(a) : 0) ||
         releaseYear(b) - releaseYear(a) ||
         a.title.localeCompare(b.title, language) ||
         a.id.localeCompare(b.id),
@@ -303,17 +305,17 @@ function Home({
     setSearch('');
     setHistoryMode(false);
   }
-  function updateItem(item: LibraryItem) {
+  function updateItem(item: LibraryItem, keepExplore = false) {
     const previous = items.find((entry) => entry.id === item.id);
-    if (item.kind === 'series') setReload((value) => value + 1);
+    if (item.kind === 'series' && !keepExplore) setReload((value) => value + 1);
     setItems((current) => [
       item,
       ...current.filter((entry) => entry.id !== item.id),
     ]);
-    // Uma nova conclusão volta à inicial; editar avaliações antigas mantém a tela atual.
+    // No Explorar, salvar atualiza apenas os cards, sem refazer a página ou navegar.
     if (
-      previous &&
-      previous.status !== 'completed' &&
+      !keepExplore &&
+      previous?.status !== 'completed' &&
       item.status === 'completed'
     )
       returnHome();
@@ -602,7 +604,8 @@ function Home({
               view === 'coming-soon' ||
               view === 'friends' ||
               view === 'archived' ||
-              view === 'account'
+              view === 'account' ||
+              view === 'achievements'
                 ? 'planned'
                 : view)
             }
@@ -685,6 +688,19 @@ function Home({
       >
         <Library aria-hidden="true" />
         {t('Minha Coleção')}
+      </button>
+      <button
+        className={view === 'achievements' ? 'selected' : ''}
+        aria-current={view === 'achievements' ? 'page' : undefined}
+        onClick={() => {
+          afterNavigate?.();
+          setDetailId(null);
+          setHistoryMode(false);
+          setView('achievements');
+        }}
+      >
+        <Trophy aria-hidden="true" />
+        {t('Conquistas')}
       </button>
       <button
         className={view === 'incoming' ? 'selected' : ''}
@@ -773,6 +789,7 @@ function Home({
             <span className="account-label">
               <strong>{t(' Minha conta ')}</strong>
               <small>{user.displayName || user.email}</small>
+              <AchievementTitle />
             </span>
           </button>
           <Button
@@ -808,534 +825,558 @@ function Home({
                 ? t('Minha Coleção')
                 : view === 'incoming'
                   ? t('Próximas estreias')
-                  : view === 'account'
-                    ? t(' Minha conta ')
-                    : view === 'friends'
-                      ? t('Amigos')
-                      : view === 'stats'
-                        ? t('Suas estatísticas')
-                        : view === 'add'
-                          ? t('Adicionar título')
-                          : view === 'explore'
-                            ? t('Explorar')
-                            : views.find((item) => item.id === view)?.label}
+                  : view === 'achievements'
+                    ? t('Conquistas')
+                    : view === 'account'
+                      ? t(' Minha conta ')
+                      : view === 'friends'
+                        ? t('Amigos')
+                        : view === 'stats'
+                          ? t('Suas estatísticas')
+                          : view === 'add'
+                            ? t('Adicionar título')
+                            : view === 'explore'
+                              ? t('Explorar')
+                              : views.find((item) => item.id === view)?.label}
           </span>
           <span className="private-library">
             <span /> {t(' Seu espaço pessoal ')}
           </span>
         </header>
         <div className="home-content">
-          {view === 'all' && !detailItem && (
-            <RecentWatched
-              items={items}
-              open={setDetailId}
-              more={() => {
-                setHistoryMode(true);
-                setCategory('all');
-                setSearch('');
-                setView('completed');
-              }}
-            />
-          )}
-          {!detailItem &&
-            view !== 'account' &&
-            view !== 'acervo' &&
-            view !== 'incoming' &&
-            view !== 'friends' && (
-              <section className="home-heading">
-                <div>
-                  <span className="home-kicker">
-                    {t(' TUDO O QUE VOCÊ CURTE, AQUI. ')}
-                  </span>
-                  <h1>
-                    {view === 'stats'
-                      ? t('Suas estatísticas')
-                      : view === 'add'
-                        ? t('Adicione suas próximas histórias')
-                        : view === 'explore'
-                          ? t('Encontre sua próxima história')
-                          : view === 'all'
-                            ? t('Qual é a próxima história?')
-                            : views.find((item) => item.id === view)?.label}
-                  </h1>
-                  <p>
-                    {view === 'explore'
-                      ? t(
-                          'Sugestões da nossa coleção de títulos, inspiradas no que você curte.',
-                        )
-                      : t('Para assistir, jogar ou ler. No seu tempo.')}
-                  </p>
-                </div>
-                <Button
-                  className="home-primary"
-                  onClick={() => (view === 'add' ? setView('all') : edit(null))}
-                  disabled={loading || Boolean(error)}
-                >
-                  {view === 'add' ? (
-                    t('← Meu acompanhamento')
-                  ) : (
-                    <>
-                      <Plus aria-hidden="true" /> {t(' Adicionar título ')}
-                    </>
-                  )}
-                </Button>
-              </section>
+          <PageBoundary key={detailId ? 'details' : view}>
+            {view === 'all' && !detailItem && (
+              <RecentWatched
+                items={items}
+                open={setDetailId}
+                more={() => {
+                  setHistoryMode(true);
+                  setCategory('all');
+                  setSearch('');
+                  setView('completed');
+                }}
+              />
             )}
-          {view === 'acervo' ? (
-            <Collector
-              onExpired={onExpired}
-              readingItems={items}
-              readingDisabled={loading || Boolean(error)}
-              onReadingChanged={(item) => {
-                // O atalho atualiza a biblioteca sem tirar a pessoa da coleção de exemplares.
-                setItems((current) => [
-                  item,
-                  ...current.filter((entry) => entry.id !== item.id),
-                ]);
-              }}
-            />
-          ) : view === 'account' ? (
-            <Account
-              user={user}
-              onSaved={onUserChanged}
-              onExpired={onExpired}
-            />
-          ) : view === 'friends' ? (
-            <Friends
-              onExpired={onExpired}
-              onNameChanged={(displayName) =>
-                onUserChanged({ ...user, displayName })
-              }
-            />
-          ) : detailItem ? (
-            <TitleDetails
-              item={detailItem}
-              back={() => setDetailId(null)}
-              edit={edit}
-              changed={updateItem}
-              onProgress={() => setReload((value) => value + 1)}
-              onWatched={returnHome}
-              onExpired={onExpired}
-              removed={(id) => {
-                setItems((current) => current.filter((item) => item.id !== id));
-                setDetailId(null);
-              }}
-            />
-          ) : view === 'incoming' ? (
-            <Incoming items={items} open={setDetailId} onExpired={onExpired} />
-          ) : view === 'stats' ? (
-            <Stats items={items} onExpired={onExpired} />
-          ) : view === 'add' ? (
-            <section
-              className="add-title-page"
-              aria-label={t('Adicionar títulos')}
-            >
-              {catalogMode || editing ? (
-                <CatalogSearch
-                  key={kind}
-                  initialKind={kind}
-                  onKindChange={setKind}
-                  choose={(title) => {
-                    setEditing(null);
-                    setSelectedTitle(title);
-                    setKind(title.kind);
-                    setCatalogMode(false);
-                  }}
-                  onExpired={onExpired}
-                  items={items}
-                  changed={updateItem}
-                  edit={edit}
-                  manual={(initialKind) => {
-                    if (initialKind) setKind(initialKind);
-                    setEditing(null);
-                    setSelectedTitle(null);
-                    setCatalogMode(false);
-                  }}
-                />
-              ) : (
-                <div className="manual-title-page">
-                  <h2>
-                    {t(
-                      selectedTitle
-                        ? 'Seu acompanhamento'
-                        : ' Cadastro manual ',
-                    )}
-                  </h2>
-                  {editor}
-                </div>
-              )}
-            </section>
-          ) : view === 'explore' ? (
-            <Explore
-              onExpired={onExpired}
-              items={items}
-              changed={updateItem}
-              edit={edit}
-            />
-          ) : (
-            <Tabs
-              value={category}
-              onValueChange={(value) => setCategory(value as 'all' | Kind)}
-              className="collection-tabs"
-            >
-              <div className="collection-tabs-scroll">
-                <TabsList
-                  aria-label={t('Tipo de título na coleção')}
-                  variant="line"
-                >
-                  {(['all', 'movie', 'series', 'game', 'book'] as const).map(
-                    (key) => {
-                      const Icon = key === 'all' ? Library : icons[key];
-                      const count = items.filter(
-                        (item) =>
-                          (key === 'all' || item.kind === key) &&
-                          matchesCollection(item, view),
-                      ).length;
-                      return (
-                        <TabsTrigger key={key} value={key}>
-                          <Icon aria-hidden="true" />
-                          {key === 'all' ? t('Todos') : categories[key]}
-                          <span className="tab-count">{count}</span>
-                        </TabsTrigger>
-                      );
-                    },
-                  )}
-                </TabsList>
-              </div>
-              <TabsContent value={category}>
-                <section
-                  className="collection-section"
-                  aria-labelledby="collection-title"
-                >
-                  {view === 'completed' && (
-                    <div className="history-mode">
-                      <Button
-                        variant={historyMode ? 'default' : 'outline'}
-                        onClick={() => {
-                          setHistoryMode(true);
-                          if (category === 'game' || category === 'book')
-                            setCategory('all');
-                        }}
-                      >
-                        {t('Últimos assistidos')}
-                      </Button>
-                      <Button
-                        variant={!historyMode ? 'default' : 'outline'}
-                        onClick={() => setHistoryMode(false)}
-                      >
-                        {t('Títulos concluídos')}
-                      </Button>
-                    </div>
-                  )}
-                  {view === 'all' && (
-                    <div className="collection-density">
-                      <label htmlFor="collection-density">
-                        {t(' Exibição ')}
-                      </label>
-                      <NativeSelect
-                        id="collection-density"
-                        value={density}
-                        onChange={(event) => changeDensity(event.target.value)}
-                      >
-                        <option value="compact">{t(' Enxuto ')}</option>
-                        <option value="details">
-                          {t(' Mais informações ')}
-                        </option>
-                      </NativeSelect>
-                    </div>
-                  )}
-                  <div className="collection-toolbar">
-                    <div>
-                      <h2 id="collection-title">
-                        {category === 'all'
-                          ? t(
-                              view === 'completed' && historyMode
-                                ? 'Últimos assistidos'
-                                : view === 'coming-soon'
-                                  ? 'Em breve'
-                                  : 'Seu acompanhamento',
-                            )
-                          : categories[category]}
-                        <span>{visible.length}</span>
-                      </h2>
-                    </div>
-                    <div className="collection-search">
-                      <Search aria-hidden="true" />
-                      <Input
-                        aria-label={t('Buscar na sua coleção')}
-                        placeholder={t('Buscar título ou produtora…')}
-                        value={search}
-                        onChange={(event) => setSearch(event.target.value)}
-                      />
-                    </div>
+            {!detailItem &&
+              view !== 'account' &&
+              view !== 'achievements' &&
+              view !== 'acervo' &&
+              view !== 'incoming' &&
+              view !== 'friends' && (
+                <section className="home-heading">
+                  <div>
+                    <span className="home-kicker">
+                      {t(' TUDO O QUE VOCÊ CURTE, AQUI. ')}
+                    </span>
+                    <h1>
+                      {view === 'stats'
+                        ? t('Suas estatísticas')
+                        : view === 'add'
+                          ? t('Adicione suas próximas histórias')
+                          : view === 'explore'
+                            ? t('Encontre sua próxima história')
+                            : view === 'all'
+                              ? t('Qual é a próxima história?')
+                              : views.find((item) => item.id === view)?.label}
+                    </h1>
+                    <p>
+                      {view === 'explore'
+                        ? t(
+                            'Sugestões da nossa coleção de títulos, inspiradas no que você curte.',
+                          )
+                        : t('Para assistir, jogar ou ler. No seu tempo.')}
+                    </p>
                   </div>
-                  {(notice || error) && (
-                    <div className="home-error" role="alert">
-                      {notice || error}
-                      {error && (
-                        <>
-                          <Button
-                            variant="outline"
-                            onClick={() => {
-                              setLoading(true);
-                              setReload(reload + 1);
-                            }}
-                          >
-                            {t(' Tentar novamente ')}
-                          </Button>
-                          <Button variant="link" onClick={onExpired}>
-                            {t(' Voltar ao login ')}
-                          </Button>
-                        </>
+                  <Button
+                    className="home-primary"
+                    onClick={() =>
+                      view === 'add' ? setView('all') : edit(null)
+                    }
+                    disabled={loading || Boolean(error)}
+                  >
+                    {view === 'add' ? (
+                      t('← Meu acompanhamento')
+                    ) : (
+                      <>
+                        <Plus aria-hidden="true" /> {t(' Adicionar título ')}
+                      </>
+                    )}
+                  </Button>
+                </section>
+              )}
+            {view === 'achievements' ? (
+              <Achievements />
+            ) : view === 'acervo' ? (
+              <Collector
+                onExpired={onExpired}
+                readingItems={items}
+                readingDisabled={loading || Boolean(error)}
+                onReadingChanged={(item) => {
+                  // O atalho atualiza a biblioteca sem tirar a pessoa da coleção de exemplares.
+                  setItems((current) => [
+                    item,
+                    ...current.filter((entry) => entry.id !== item.id),
+                  ]);
+                }}
+              />
+            ) : view === 'account' ? (
+              <Account
+                user={user}
+                onSaved={onUserChanged}
+                onExpired={onExpired}
+              />
+            ) : view === 'friends' ? (
+              <Friends
+                onExpired={onExpired}
+                onNameChanged={(displayName) =>
+                  onUserChanged({ ...user, displayName })
+                }
+              />
+            ) : detailItem ? (
+              <TitleDetails
+                item={detailItem}
+                back={() => setDetailId(null)}
+                edit={edit}
+                changed={updateItem}
+                onProgress={() => setReload((value) => value + 1)}
+                onWatched={returnHome}
+                onExpired={onExpired}
+                removed={(id) => {
+                  setItems((current) =>
+                    current.filter((item) => item.id !== id),
+                  );
+                  setDetailId(null);
+                }}
+              />
+            ) : view === 'incoming' ? (
+              <Incoming
+                items={items}
+                open={setDetailId}
+                onExpired={onExpired}
+              />
+            ) : view === 'stats' ? (
+              <Stats items={items} onExpired={onExpired} />
+            ) : view === 'add' ? (
+              <section
+                className="add-title-page"
+                aria-label={t('Adicionar títulos')}
+              >
+                {catalogMode || editing ? (
+                  <CatalogSearch
+                    key={kind}
+                    initialKind={kind}
+                    onKindChange={setKind}
+                    choose={(title) => {
+                      setEditing(null);
+                      setSelectedTitle(title);
+                      setKind(title.kind);
+                      setCatalogMode(false);
+                    }}
+                    onExpired={onExpired}
+                    items={items}
+                    changed={updateItem}
+                    edit={edit}
+                    manual={(initialKind) => {
+                      if (initialKind) setKind(initialKind);
+                      setEditing(null);
+                      setSelectedTitle(null);
+                      setCatalogMode(false);
+                    }}
+                  />
+                ) : (
+                  <div className="manual-title-page">
+                    <h2>
+                      {t(
+                        selectedTitle
+                          ? 'Seu acompanhamento'
+                          : ' Cadastro manual ',
                       )}
-                    </div>
-                  )}
-                  {loading ? (
-                    <PageLoading label={t('Carregando sua coleção…')} />
-                  ) : error && !items.length ? null : visible.length ? (
-                    <div
-                      className={`item-grid${compactCards ? ' compact-cards' : ''}`}
-                    >
-                      {visible.map((item) => {
-                        const Icon = icons[item.kind];
-                        const minimalCover = compactCards;
+                    </h2>
+                    {editor}
+                  </div>
+                )}
+              </section>
+            ) : view === 'explore' ? (
+              <Explore
+                onExpired={onExpired}
+                items={items}
+                changed={(item) => updateItem(item, true)}
+                edit={edit}
+              />
+            ) : (
+              <Tabs
+                value={category}
+                onValueChange={(value) => setCategory(value as 'all' | Kind)}
+                className="collection-tabs"
+              >
+                <div className="collection-tabs-scroll">
+                  <TabsList
+                    aria-label={t('Tipo de título na coleção')}
+                    variant="line"
+                  >
+                    {(['all', 'movie', 'series', 'game', 'book'] as const).map(
+                      (key) => {
+                        const Icon = key === 'all' ? Library : icons[key];
+                        const count = items.filter(
+                          (item) =>
+                            (key === 'all' || item.kind === key) &&
+                            matchesCollection(item, view),
+                        ).length;
                         return (
-                          <article
-                            key={item.id}
-                            aria-label={item.title}
-                            title={minimalCover ? item.title : undefined}
-                            className={`library-card ${item.kind}`}
-                          >
-                            <div
-                              className={`item-cover ${item.coverUrl ? 'has-poster' : ''}`}
+                          <TabsTrigger key={key} value={key}>
+                            <Icon aria-hidden="true" />
+                            {key === 'all' ? t('Todos') : categories[key]}
+                            <span className="tab-count">{count}</span>
+                          </TabsTrigger>
+                        );
+                      },
+                    )}
+                  </TabsList>
+                </div>
+                <TabsContent value={category}>
+                  <section
+                    className="collection-section"
+                    aria-labelledby="collection-title"
+                  >
+                    {view === 'completed' && (
+                      <div className="history-mode">
+                        <Button
+                          variant={historyMode ? 'default' : 'outline'}
+                          onClick={() => {
+                            setHistoryMode(true);
+                            if (category === 'game' || category === 'book')
+                              setCategory('all');
+                          }}
+                        >
+                          {t('Últimos assistidos')}
+                        </Button>
+                        <Button
+                          variant={!historyMode ? 'default' : 'outline'}
+                          onClick={() => setHistoryMode(false)}
+                        >
+                          {t('Títulos concluídos')}
+                        </Button>
+                      </div>
+                    )}
+                    {view === 'all' && (
+                      <div className="collection-density">
+                        <label htmlFor="collection-density">
+                          {t(' Exibição ')}
+                        </label>
+                        <NativeSelect
+                          id="collection-density"
+                          value={density}
+                          onChange={(event) =>
+                            changeDensity(event.target.value)
+                          }
+                        >
+                          <option value="compact">{t(' Enxuto ')}</option>
+                          <option value="details">
+                            {t(' Mais informações ')}
+                          </option>
+                        </NativeSelect>
+                      </div>
+                    )}
+                    <div className="collection-toolbar">
+                      <div>
+                        <h2 id="collection-title">
+                          {category === 'all'
+                            ? t(
+                                view === 'completed' && historyMode
+                                  ? 'Últimos assistidos'
+                                  : view === 'coming-soon'
+                                    ? 'Em breve'
+                                    : 'Seu acompanhamento',
+                              )
+                            : categories[category]}
+                          <span>{visible.length}</span>
+                        </h2>
+                      </div>
+                      <div className="collection-search">
+                        <Search aria-hidden="true" />
+                        <Input
+                          aria-label={t('Buscar na sua coleção')}
+                          placeholder={t('Buscar título ou produtora…')}
+                          value={search}
+                          onChange={(event) => setSearch(event.target.value)}
+                        />
+                      </div>
+                    </div>
+                    {(notice || error) && (
+                      <div className="home-error" role="alert">
+                        {notice || error}
+                        {error && (
+                          <>
+                            <Button
+                              variant="outline"
+                              onClick={() => {
+                                setLoading(true);
+                                setReload(reload + 1);
+                              }}
                             >
-                              <ReleaseBadge item={item} />
-                              <Icon aria-hidden="true" />
-                              {item.coverUrl && (
-                                <img
-                                  className="library-poster"
-                                  src={item.coverUrl}
-                                  alt={t('Capa de {0}', item.title)}
-                                  loading="lazy"
-                                  referrerPolicy="no-referrer"
-                                  onError={(event) => {
-                                    event.currentTarget.style.display = 'none';
-                                  }}
-                                />
-                              )}
-                              <span>{categories[item.kind]}</span>
+                              {t(' Tentar novamente ')}
+                            </Button>
+                            <Button variant="link" onClick={onExpired}>
+                              {t(' Voltar ao login ')}
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    )}
+                    {loading ? (
+                      <PageLoading label={t('Carregando sua coleção…')} />
+                    ) : error && !items.length ? null : visible.length ? (
+                      <div
+                        className={`item-grid${compactCards ? ' compact-cards' : ''}`}
+                      >
+                        {visible.map((item) => {
+                          const Icon = icons[item.kind];
+                          const minimalCover = compactCards;
+                          return (
+                            <article
+                              key={item.id}
+                              aria-label={item.title}
+                              title={minimalCover ? item.title : undefined}
+                              className={`library-card ${item.kind}`}
+                            >
                               <div
-                                className="collection-kind-badge"
-                                title={categories[item.kind]}
+                                className={`item-cover ${item.coverUrl ? 'has-poster' : ''}`}
                               >
+                                <ReleaseBadge item={item} />
                                 <Icon aria-hidden="true" />
-                                <span className="sr-only">
-                                  {categories[item.kind]}
-                                </span>
-                              </div>
-                              <button
-                                type="button"
-                                className="open-title-details"
-                                aria-label={t(
-                                  'Ver detalhes de {0}',
-                                  item.title,
+                                {item.coverUrl && (
+                                  <img
+                                    className="library-poster"
+                                    src={item.coverUrl}
+                                    alt={t('Capa de {0}', item.title)}
+                                    loading="lazy"
+                                    referrerPolicy="no-referrer"
+                                    onError={(event) => {
+                                      event.currentTarget.style.display =
+                                        'none';
+                                    }}
+                                  />
                                 )}
-                                onClick={() => setDetailId(item.id)}
-                              />
-                              <Button
-                                className="edit-item"
-                                variant="ghost"
-                                size="icon"
-                                aria-label={t('Editar {0}', item.title)}
-                                onClick={() => edit(item)}
-                              >
-                                <Pencil aria-hidden="true" />
-                              </Button>
-                              <QuickActions
-                                iconOnly
-                                owned={item}
-                                changed={updateItem}
-                                edit={edit}
-                                onExpired={onExpired}
-                              />
-                              {/* A faixa indica somente o estado de leitura; não inventa percentual sem páginas registradas. */}
-                              {item.kind === 'book' &&
-                                item.status === 'active' && (
-                                  <div className="book-reading-marker">
-                                    <strong>{statusNames.book.active}</strong>
-                                  </div>
-                                )}
-                              {item.kind === 'series' &&
-                                item.episodeProgress?.initialized &&
-                                item.episodeProgress.total > 0 && (
-                                  <div className="series-cover-progress">
-                                    <div className="series-cover-progress-label">
-                                      <strong>
-                                        {Math.min(
-                                          100,
-                                          Math.round(
-                                            (item.episodeProgress.watched /
-                                              item.episodeProgress.total) *
-                                              100,
-                                          ),
-                                        )}
-                                        {t(' % assistido ')}
-                                      </strong>
-                                      <small>
-                                        {Math.max(
-                                          0,
-                                          item.episodeProgress.total -
-                                            item.episodeProgress.watched,
-                                        )}{' '}
-                                        {t(' episódios restantes ')}
-                                      </small>
-                                    </div>
-                                    <progress
-                                      value={Math.min(
-                                        item.episodeProgress.watched,
-                                        item.episodeProgress.total,
-                                      )}
-                                      max={item.episodeProgress.total}
-                                      aria-label={t(
-                                        'Progresso de {0}',
-                                        item.title,
-                                      )}
-                                      aria-valuetext={t(
-                                        '{0} de {1} episódios assistidos',
-                                        item.episodeProgress.watched,
-                                        item.episodeProgress.total,
-                                      )}
-                                    />
-                                  </div>
-                                )}
-                            </div>
-                            <div
-                              className={`item-info ${minimalCover && item.coverUrl ? 'cover-only-info' : ''}`}
-                            >
-                              <div
-                                className={
-                                  minimalCover && item.coverUrl
-                                    ? 'sr-only'
-                                    : undefined
-                                }
-                              >
-                                <span className={`item-status ${item.status}`}>
-                                  <span />
-                                  {item.kind === 'series' &&
-                                  item.caughtUp &&
-                                  item.status !== 'completed'
-                                    ? t('Em dia')
-                                    : statusNames[item.kind][item.status]}
-                                </span>
-                                <h3>{item.title}</h3>
-                                {view === 'completed' && historyMode && (
-                                  <WatchedWhen item={item} />
-                                )}
-                                <OriginalTitle
-                                  title={item.title}
-                                  originalTitle={item.originalTitle}
-                                />
-                              </div>
-                              {item.kind === 'series' && (
-                                <SeriesResume
-                                  item={item}
-                                  compact={compactCards}
-                                  edit={edit}
-                                  onProgress={() =>
-                                    setReload((value) => value + 1)
-                                  }
-                                  onExpired={onExpired}
-                                />
-                              )}
-                              {!compactCards && item.completedOn && (
-                                <small className="completion-summary">
-                                  {item.kind === 'movie'
-                                    ? t('Assistido')
-                                    : t(
-                                        item.kind === 'book'
-                                          ? 'Lido'
-                                          : 'Concluído',
-                                      )}{' '}
-                                  {t(' em ')} {dateLabel(item.completedOn)}
-                                  {item.stars ? ` · ${item.stars} ★` : ''}
-                                </small>
-                              )}
-                              {!compactCards && item.year && (
-                                <small className="catalog-year">
-                                  {item.year}
-                                </small>
-                              )}
-                              {!compactCards && item.sourceUrl && (
-                                <a
-                                  className="catalog-source"
-                                  href={item.sourceUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
+                                <span>{categories[item.kind]}</span>
+                                <div
+                                  className="collection-kind-badge"
+                                  title={categories[item.kind]}
                                 >
-                                  {item.kind === 'book'
-                                    ? 'Google Books'
-                                    : item.catalogId?.startsWith('tmdb:')
-                                      ? 'TMDB'
-                                      : 'IGDB'}{' '}
-                                  ↗
-                                </a>
-                              )}
-                              {!compactCards && item.notes && (
-                                <p>{item.notes}</p>
-                              )}
-                              {!compactCards && (
+                                  <Icon aria-hidden="true" />
+                                  <span className="sr-only">
+                                    {categories[item.kind]}
+                                  </span>
+                                </div>
+                                <button
+                                  type="button"
+                                  className="open-title-details"
+                                  aria-label={t(
+                                    'Ver detalhes de {0}',
+                                    item.title,
+                                  )}
+                                  onClick={() => setDetailId(item.id)}
+                                />
+                                <Button
+                                  className="edit-item"
+                                  variant="ghost"
+                                  size="icon"
+                                  aria-label={t('Editar {0}', item.title)}
+                                  onClick={() => edit(item)}
+                                >
+                                  <Pencil aria-hidden="true" />
+                                </Button>
                                 <QuickActions
-                                  compact={compactCards}
+                                  iconOnly
                                   owned={item}
                                   changed={updateItem}
                                   edit={edit}
                                   onExpired={onExpired}
                                 />
-                              )}
-                            </div>
-                          </article>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div className="collection-empty">
-                      <span className="empty-icon">
-                        <Library aria-hidden="true" />
-                      </span>
-                      <h3>
-                        {items.length
-                          ? t('Nenhum título por aqui.')
-                          : t('Toda coleção começa com uma história.')}
-                      </h3>
-                      <p>
-                        {items.length
-                          ? t(
-                              'Experimente outra busca ou adicione um título a esta seleção.',
-                            )
-                          : t(
-                              'Salve aquele filme, a série da vez, seu próximo jogo ou livro.',
-                            )}
-                      </p>
-                      <Button
-                        className="home-primary"
-                        onClick={() => edit(null)}
-                      >
-                        <Plus aria-hidden="true" />
-                        {items.length
-                          ? t('Adicionar título')
-                          : t('Adicionar meu primeiro título')}
-                      </Button>
-                      <div className="empty-types">
-                        <Film />
-                        <Tv />
-                        <Gamepad2 />
+                                {/* Sem páginas registradas, mostramos um selo de estado,
+                                    nunca uma barra que possa sugerir leitura concluída. */}
+                                {item.kind === 'book' &&
+                                  item.status === 'active' && (
+                                    <div className="book-reading-marker">
+                                      <strong>
+                                        <BookOpen aria-hidden="true" />
+                                        {statusNames.book.active}
+                                      </strong>
+                                    </div>
+                                  )}
+                                {item.kind === 'series' &&
+                                  item.episodeProgress?.initialized &&
+                                  item.episodeProgress.total > 0 && (
+                                    <div className="series-cover-progress">
+                                      <div className="series-cover-progress-label">
+                                        <strong>
+                                          {Math.min(
+                                            100,
+                                            Math.round(
+                                              (item.episodeProgress.watched /
+                                                item.episodeProgress.total) *
+                                                100,
+                                            ),
+                                          )}
+                                          {t(' % assistido ')}
+                                        </strong>
+                                        <small>
+                                          {Math.max(
+                                            0,
+                                            item.episodeProgress.total -
+                                              item.episodeProgress.watched,
+                                          )}{' '}
+                                          {t(' episódios restantes ')}
+                                        </small>
+                                      </div>
+                                      <progress
+                                        value={Math.min(
+                                          item.episodeProgress.watched,
+                                          item.episodeProgress.total,
+                                        )}
+                                        max={item.episodeProgress.total}
+                                        aria-label={t(
+                                          'Progresso de {0}',
+                                          item.title,
+                                        )}
+                                        aria-valuetext={t(
+                                          '{0} de {1} episódios assistidos',
+                                          item.episodeProgress.watched,
+                                          item.episodeProgress.total,
+                                        )}
+                                      />
+                                    </div>
+                                  )}
+                              </div>
+                              <div
+                                className={`item-info ${minimalCover && item.coverUrl ? 'cover-only-info' : ''}`}
+                              >
+                                <div
+                                  className={
+                                    minimalCover && item.coverUrl
+                                      ? 'sr-only'
+                                      : undefined
+                                  }
+                                >
+                                  <span
+                                    className={`item-status ${item.status}`}
+                                  >
+                                    <span />
+                                    {item.kind === 'series' &&
+                                    item.caughtUp &&
+                                    item.status !== 'completed'
+                                      ? t('Em dia')
+                                      : statusNames[item.kind][item.status]}
+                                  </span>
+                                  <h3>{item.title}</h3>
+                                  {view === 'completed' && historyMode && (
+                                    <WatchedWhen item={item} />
+                                  )}
+                                  <OriginalTitle
+                                    title={item.title}
+                                    originalTitle={item.originalTitle}
+                                  />
+                                </div>
+                                {item.kind === 'series' && (
+                                  <SeriesResume
+                                    item={item}
+                                    compact={compactCards}
+                                    edit={edit}
+                                    onProgress={() =>
+                                      setReload((value) => value + 1)
+                                    }
+                                    onExpired={onExpired}
+                                  />
+                                )}
+                                {!compactCards && item.completedOn && (
+                                  <small className="completion-summary">
+                                    {item.kind === 'movie'
+                                      ? t('Assistido')
+                                      : t(
+                                          item.kind === 'book'
+                                            ? 'Lido'
+                                            : 'Concluído',
+                                        )}{' '}
+                                    {t(' em ')} {dateLabel(item.completedOn)}
+                                    {item.stars ? ` · ${item.stars} ★` : ''}
+                                  </small>
+                                )}
+                                {!compactCards && item.year && (
+                                  <small className="catalog-year">
+                                    {item.year}
+                                  </small>
+                                )}
+                                {!compactCards && item.sourceUrl && (
+                                  <a
+                                    className="catalog-source"
+                                    href={item.sourceUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    {item.kind === 'book'
+                                      ? 'Google Books'
+                                      : item.catalogId?.startsWith('tmdb:')
+                                        ? 'TMDB'
+                                        : 'IGDB'}{' '}
+                                    ↗
+                                  </a>
+                                )}
+                                {!compactCards && item.notes && (
+                                  <p>{item.notes}</p>
+                                )}
+                                {!compactCards && (
+                                  <QuickActions
+                                    compact={compactCards}
+                                    owned={item}
+                                    changed={updateItem}
+                                    edit={edit}
+                                    onExpired={onExpired}
+                                  />
+                                )}
+                              </div>
+                            </article>
+                          );
+                        })}
                       </div>
-                    </div>
-                  )}
-                </section>
-              </TabsContent>
-            </Tabs>
-          )}
+                    ) : (
+                      <div className="collection-empty">
+                        <span className="empty-icon">
+                          <Library aria-hidden="true" />
+                        </span>
+                        <h3>
+                          {items.length
+                            ? t('Nenhum título por aqui.')
+                            : t('Toda coleção começa com uma história.')}
+                        </h3>
+                        <p>
+                          {items.length
+                            ? t(
+                                'Experimente outra busca ou adicione um título a esta seleção.',
+                              )
+                            : t(
+                                'Salve aquele filme, a série da vez, seu próximo jogo ou livro.',
+                              )}
+                        </p>
+                        <Button
+                          className="home-primary"
+                          onClick={() => edit(null)}
+                        >
+                          <Plus aria-hidden="true" />
+                          {items.length
+                            ? t('Adicionar título')
+                            : t('Adicionar meu primeiro título')}
+                        </Button>
+                        <div className="empty-types">
+                          <Film />
+                          <Tv />
+                          <Gamepad2 />
+                        </div>
+                      </div>
+                    )}
+                  </section>
+                </TabsContent>
+              </Tabs>
+            )}
+          </PageBoundary>
           <footer className="home-footer">
             {t(' Sua coleção. Seu ritmo. ')}
             <span>NextPlay</span>
@@ -1396,8 +1437,10 @@ function Home({
 }
 export default function HomeWithReviews(props: Parameters<typeof Home>[0]) {
   return (
-    <ReviewProvider>
-      <Home {...props} />
-    </ReviewProvider>
+    <AchievementProvider key={props.user.id} onExpired={props.onExpired}>
+      <ReviewProvider>
+        <Home {...props} />
+      </ReviewProvider>
+    </AchievementProvider>
   );
 }

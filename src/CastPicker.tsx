@@ -9,7 +9,9 @@ import {
   CarouselNext,
 } from '@/components/ui/carousel';
 import { t } from './i18n';
-export type CastTarget = { itemId: string; season?: number; episode?: number };
+export type CastTarget =
+  | { itemId: string; catalogId?: never; season?: number; episode?: number }
+  | { catalogId: string; itemId?: never; season?: never; episode?: never };
 type Character = {
   id: string;
   actor: string;
@@ -38,17 +40,23 @@ export default function CastPicker({
   const [error, setError] = useState(false);
   const [retry, setRetry] = useState(0);
   const itemId = target?.itemId,
+    catalogId = target?.catalogId,
     season = target?.season,
     episode = target?.episode;
   useEffect(() => {
-    if (!itemId) return;
+    if (!itemId && !catalogId) return;
     const controller = new AbortController();
     const query = new URLSearchParams();
     if (season !== undefined && episode !== undefined) {
       query.set('season', String(season));
       query.set('episode', String(episode));
     }
-    void fetch(`/api/library/${encodeURIComponent(itemId)}/cast?${query}`, {
+    // Na prévia, o elenco vem da referência pública, sem criar um acompanhamento provisório.
+    if (!itemId && catalogId) query.set('catalogId', catalogId);
+    const path = itemId
+      ? `/api/library/${encodeURIComponent(itemId)}/cast`
+      : '/api/catalog/cast';
+    void fetch(`${path}?${query}`, {
       credentials: 'same-origin',
       signal: AbortSignal.any([controller.signal, AbortSignal.timeout(20000)]),
     })
@@ -65,7 +73,7 @@ export default function CastPicker({
         if (!controller.signal.aborted) setBusy(false);
       });
     return () => controller.abort();
-  }, [itemId, season, episode, retry]);
+  }, [itemId, catalogId, season, episode, retry]);
   return (
     <fieldset className="cast-picker">
       <legend>

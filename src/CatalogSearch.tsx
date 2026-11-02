@@ -40,6 +40,8 @@ export interface CatalogTitle {
   isbn?: string;
   publisher?: string;
   language?: string;
+  runtime?: number | null;
+  productionCompanies?: { id: number; name: string; logoUrl?: string | null }[];
 }
 function releaseTime(item: CatalogTitle) {
   const date = item.releaseDate ? Date.parse(item.releaseDate) : NaN;
@@ -208,7 +210,10 @@ function MediaCatalogSearch({
               ? [...data.results].sort(
                   (a, b) => releaseTime(b) - releaseTime(a),
                 )
-              : shuffleSuggestions(data.results),
+              : // Filmes/séries já vêm por afinidade e popularidade do TMDB.
+                kind === 'movie' || kind === 'series'
+                ? data.results
+                : shuffleSuggestions(data.results),
             nextPage: data.nextPage ?? null,
           };
         }

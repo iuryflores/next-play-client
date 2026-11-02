@@ -1,10 +1,11 @@
 import PageLoading from './PageLoading';
+import ThemePicker from './ThemePicker';
+import PageBoundary from './PageBoundary';
 import PasswordRecovery from './PasswordRecovery';
 import EmailConfirmation from './EmailConfirmation';
 import { t } from './i18n';
-import { useEffect, useState, type SubmitEvent } from 'react';
+import { lazy, useEffect, useState, type SubmitEvent } from 'react';
 import { ApiError, authRequest, type AuthUser } from './auth';
-import Home from './Home';
 import { language, rememberLanguage, validLanguage } from './i18n';
 import {
   ArrowRight,
@@ -23,26 +24,49 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
+// A biblioteca e as telas internas só são baixadas quando existe uma sessão.
+const Home = lazy(() => import('./Home'));
+
 type LoginMethod = 'email' | 'phone';
 
 export default function LoginPage() {
   // O segredo fica apenas na memória após remover o fragmento da barra de endereço.
-  const [resetToken, setResetToken] = useState(() => new URLSearchParams(window.location.hash.slice(1)).get('reset-password') || '');
-  const [recovering, setRecovering] = useState(() => window.location.hash.startsWith('#reset-password='));
-  const [verificationToken, setVerificationToken] = useState(() => new URLSearchParams(window.location.hash.slice(1)).get('verify-email') || '');
-  const [verifyingEmail, setVerifyingEmail] = useState(() => window.location.hash.startsWith('#verify-email='));
+  const [resetToken, setResetToken] = useState(
+    () =>
+      new URLSearchParams(window.location.hash.slice(1)).get(
+        'reset-password',
+      ) || '',
+  );
+  const [recovering, setRecovering] = useState(() =>
+    window.location.hash.startsWith('#reset-password='),
+  );
+  const [verificationToken, setVerificationToken] = useState(
+    () =>
+      new URLSearchParams(window.location.hash.slice(1)).get('verify-email') ||
+      '',
+  );
+  const [verifyingEmail, setVerifyingEmail] = useState(() =>
+    window.location.hash.startsWith('#verify-email='),
+  );
   const [pendingEmail, setPendingEmail] = useState('');
   const [method, setMethod] = useState<LoginMethod>('email');
   const [showPassword, setShowPassword] = useState(false);
   const [notice, setNotice] = useState('');
   const [user, setUser] = useState<AuthUser | null>(null);
   const [busy, setBusy] = useState(false);
-  const [checking, setChecking] = useState(true);
+  // Links de recuperação/confirmação abrem seu fluxo diretamente, sem outra renderização de sessão.
+  const [checking, setChecking] = useState(
+    () => !recovering && !verifyingEmail,
+  );
   const [registering, setRegistering] = useState(false);
-  const [canRegister, setCanRegister] = useState(true);
+  // O login pode aparecer antes dos provedores; cadastro só é oferecido após confirmação da API.
+  const [canRegister, setCanRegister] = useState(false);
   function acceptUser(value: AuthUser) {
     if (value.requiresVerification) {
-      setUser(null); setPendingEmail(value.email); setVerifyingEmail(true); return;
+      setUser(null);
+      setPendingEmail(value.email);
+      setVerifyingEmail(true);
+      return;
     }
     const selected = validLanguage(value.language);
     if (selected !== language) {
@@ -55,17 +79,24 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (recovering || verifyingEmail) {
-      window.history.replaceState(null, '', window.location.pathname + window.location.search);
-      setChecking(false);
+      window.history.replaceState(
+        null,
+        '',
+        window.location.pathname + window.location.search,
+      );
       return;
     }
     let active = true;
     async function restore() {
+      // As formas de cadastro não precisam atrasar a consulta da sessão existente.
+      void authRequest<{ registration: boolean }>('providers')
+        .then((providers) => {
+          if (active) setCanRegister(providers.registration);
+        })
+        .catch(() => {
+          /* Uma falha nos provedores não impede entrar por e-mail. */
+        });
       try {
-        const providers = await authRequest<{ registration: boolean }>(
-          'providers',
-        );
-        if (active) setCanRegister(providers.registration);
         const result = await authRequest<{ user: AuthUser }>('me');
         if (active) acceptUser(result.user);
       } catch (error) {
@@ -104,14 +135,19 @@ export default function LoginPage() {
       if (method === 'phone')
         await authRequest('phone/start', { phone: data.get('phone') });
       else {
-        const result = await authRequest<{ user?: AuthUser; requiresVerification?: boolean }>(
-          registering ? 'register' : 'login',
-          { email: data.get('email'), password: data.get('password') },
-        );
+        const result = await authRequest<{
+          user?: AuthUser;
+          requiresVerification?: boolean;
+        }>(registering ? 'register' : 'login', {
+          email: data.get('email'),
+          password: data.get('password'),
+        });
         form.reset();
         setShowPassword(false);
         if (result.requiresVerification) {
-          setPendingEmail(String(data.get('email') || '')); setVerifyingEmail(true);
+          const emailValue = data.get('email');
+          setPendingEmail(typeof emailValue === 'string' ? emailValue : '');
+          setVerifyingEmail(true);
         } else if (result.user) acceptUser(result.user);
       }
     } catch (error) {
@@ -153,23 +189,47 @@ export default function LoginPage() {
     }
   }
 
-  if (verifyingEmail) return <EmailConfirmation token={verificationToken} initialEmail={pendingEmail} back={() => { setVerificationToken(''); setVerifyingEmail(false); setRegistering(false); setNotice(''); }} />;
-  if (recovering) return <PasswordRecovery token={resetToken} back={() => { setResetToken(''); setRecovering(false); setNotice(''); }} />;
+  if (verifyingEmail)
+    return (
+      <EmailConfirmation
+        token={verificationToken}
+        initialEmail={pendingEmail}
+        back={() => {
+          setVerificationToken('');
+          setVerifyingEmail(false);
+          setRegistering(false);
+          setNotice('');
+        }}
+      />
+    );
+  if (recovering)
+    return (
+      <PasswordRecovery
+        token={resetToken}
+        back={() => {
+          setResetToken('');
+          setRecovering(false);
+          setNotice('');
+        }}
+      />
+    );
   if (checking)
     return <PageLoading fullScreen label={t('Preparando o NextPlay…')} />;
   if (user)
     return (
-      <Home
-        user={user}
-        onUserChanged={acceptUser}
-        logout={logout}
-        busy={busy}
-        notice={notice}
-        onExpired={() => {
-          setUser(null);
-          setNotice(t('Entre novamente para acessar sua coleção.'));
-        }}
-      />
+      <PageBoundary fullScreen>
+        <Home
+          user={user}
+          onUserChanged={acceptUser}
+          logout={logout}
+          busy={busy}
+          notice={notice}
+          onExpired={() => {
+            setUser(null);
+            setNotice(t('Entre novamente para acessar sua coleção.'));
+          }}
+        />
+      </PageBoundary>
     );
 
   return (
@@ -401,10 +461,28 @@ export default function LoginPage() {
               </Button>
             </form>
             {method === 'email' && !registering && (
-              <Button variant="link" className="register-toggle" disabled={busy || checking} onClick={() => setRecovering(true)}>{t('Esqueci minha senha')}</Button>
+              <Button
+                variant="link"
+                className="register-toggle"
+                disabled={busy || checking}
+                onClick={() => setRecovering(true)}
+              >
+                {t('Esqueci minha senha')}
+              </Button>
             )}
             {method === 'email' && !registering && (
-              <Button variant="link" className="register-toggle" disabled={busy || checking} onClick={() => { setPendingEmail(''); setVerificationToken(''); setVerifyingEmail(true); }}>{t('Reenviar confirmação')}</Button>
+              <Button
+                variant="link"
+                className="register-toggle"
+                disabled={busy || checking}
+                onClick={() => {
+                  setPendingEmail('');
+                  setVerificationToken('');
+                  setVerifyingEmail(true);
+                }}
+              >
+                {t('Reenviar confirmação')}
+              </Button>
             )}
             {method === 'email' && canRegister && (
               <Button
@@ -430,6 +508,7 @@ export default function LoginPage() {
           </div>
         </div>
         <footer className="login-footer">
+          <ThemePicker />
           {t(' Qual é o seu próximo play? ')}
           <span>NextPlay © {new Date().getFullYear()}</span>
           <small className="development-credit">

@@ -1,3 +1,4 @@
+import { achievementActivity } from './achievement-client';
 import { t } from './i18n';
 import { notifySaved } from './notifications';
 import { ApiError } from './auth';
@@ -35,6 +36,7 @@ export async function request(
     importing === 'unwatch-many'
   )
     notifySaved(t('Progresso salvo.'));
+  if (method !== 'GET') achievementActivity();
   return data as EpisodeData;
 }
 export async function resume(

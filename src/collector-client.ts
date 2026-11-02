@@ -1,3 +1,4 @@
+import { achievementActivity } from './achievement-client';
 import { ApiError } from './auth';
 import { t } from './i18n';
 import type { Kind } from './library';
@@ -51,7 +52,10 @@ export async function collectorRequest<T>(
         : {}),
     },
   );
-  if (response.status === 204) return undefined as T;
+  if (response.status === 204) {
+    if (method !== 'GET') achievementActivity();
+    return undefined as T;
+  }
   const data = await response.json().catch(() => null);
   if (!response.ok || !data)
     throw new ApiError(
@@ -60,5 +64,6 @@ export async function collectorRequest<T>(
         ? data.message
         : t('Não foi possível acessar sua coleção.'),
     );
+  if (method !== 'GET') achievementActivity();
   return data as T;
 }

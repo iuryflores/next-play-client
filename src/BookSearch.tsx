@@ -242,7 +242,7 @@ export default function BookSearch({
           request.mode === 'suggestions'
             ? personalized
               ? 'Sugestões por título, autor e editora dos seus livros'
-              : 'Sugestões de livros em português'
+              : 'Sugestões de livros no idioma do seu perfil'
             : request.mode === 'idle'
               ? field === 'isbn'
                 ? 'Digite um ISBN completo para buscar automaticamente.'

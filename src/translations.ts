@@ -1,5 +1,60 @@
 // Portuguese source messages with English and Spanish equivalents.
 const rows = `
+Assistir ao seu primeiro filme.|Watch your first movie.|Ver tu primera película.
+Assistir a {0} episódios diferentes no mesmo dia.|Watch {0} different episodes on the same day.|Ver {0} episodios diferentes el mismo día.
+Concluir uma temporada regular.|Finish a regular season.|Completar una temporada regular.
+Assistir a {0} filmes diferentes.|Watch {0} different movies.|Ver {0} películas diferentes.
+Ler {0} livros.|Read {0} books.|Leer {0} libros.
+Ver todas as metas|View all milestones|Ver todas las metas
+Conquistas|Achievements|Logros
+SUA JORNADA|YOUR JOURNEY|TU VIAJE
+Cada história deixa uma marca. Celebre as suas.|Every story leaves a mark. Celebrate yours.|Cada historia deja una huella. Celebra las tuyas.
+Seu título no perfil|Your profile title|Tu título en el perfil
+Desbloqueie uma conquista e escolha um título para exibir.|Unlock an achievement and choose a title to display.|Desbloquea un logro y elige un título para mostrar.
+Remover título|Remove title|Quitar título
+Não foi possível carregar suas conquistas.|Your achievements could not be loaded.|No se pudieron cargar tus logros.
+Não foi possível salvar seu título.|Your title could not be saved.|No se pudo guardar tu título.
+Não foi possível confirmar a celebração. Tente novamente.|The celebration could not be confirmed. Try again.|No se pudo confirmar la celebración. Inténtalo de nuevo.
+Conquista desbloqueada!|Achievement unlocked!|¡Logro desbloqueado!
+Primeiro play|First play|Primer play
+Estreante|Newcomer|Principiante
+Concluir seu primeiro filme.|Finish your first movie.|Completa tu primera película.
+Só mais um episódio|Just one more episode|Solo un episodio más
+Maratonista|Binge watcher|Maratonista
+Registrar {0} episódios diferentes individualmente no mesmo dia.|Log {0} different episodes individually on the same day.|Registra {0} episodios diferentes individualmente el mismo día.
+Temporada encerrada|Season complete|Temporada terminada
+Caçador de temporadas|Season collector|Cazador de temporadas
+Concluir uma temporada importada, sem contar especiais.|Finish an imported season, excluding specials.|Completa una temporada importada, sin contar especiales.
+Cinéfilo|Film buff|Cinéfilo
+Concluir {0} filmes diferentes.|Finish {0} different movies.|Completa {0} películas diferentes.
+Devorador de páginas|Bookworm|Devorador de páginas
+Concluir a leitura de {0} livros.|Finish reading {0} books.|Termina de leer {0} libros.
+Colecionador|Collector|Coleccionista
+Possuir {0} itens na Minha Coleção.|Own {0} items in My Collection.|Posee {0} elementos en Mi Colección.
+Novo título: {0}|New title: {0}|Nuevo título: {0}
+{0} conquistas para celebrar|{0} achievements to celebrate|{0} logros para celebrar
+Mais uma história para sua jornada.|Another story for your journey.|Una historia más para tu viaje.
+Próxima conquista|Next achievement|Siguiente logro
+Continuar|Continue|Continuar
+Voltar ao app|Back to app|Volver a la aplicación
+{0} conquistas desbloqueadas|{0} achievements unlocked|{0} logros desbloqueados
+Próxima meta|Next milestone|Siguiente meta
+Todas as metas conquistadas|All milestones achieved|Todas las metas alcanzadas
+Metas de {0}|Milestones for {0}|Metas de {0}
+Conquistado em {0}|Achieved on {0}|Conseguido el {0}
+Meta: {0}|Goal: {0}|Meta: {0}
+Título em uso|Current title|Título en uso
+Usar título: {0}|Use title: {0}|Usar título: {0}
+Seu próximo título está a caminho.|Your next title is on its way.|Tu próximo título está en camino.
+Maratonas contam marcações individuais novas no mesmo dia, no fuso do navegador. Lotes e registros antigos não contam. Posse e leitura são independentes. Conquistas desbloqueadas permanecem com você.|Marathons count new individual episode logs on the same day, in your browser's time zone. Bulk and legacy logs do not count. Ownership and reading are independent. Unlocked achievements stay with you.|Los maratones cuentan registros individuales nuevos del mismo día, en la zona horaria del navegador. Los lotes y registros antiguos no cuentan. Posesión y lectura son independientes. Los logros desbloqueados permanecen contigo.
+Populares nos seus gêneros: {0}|Popular in your genres: {0}|Populares en tus géneros: {0}
+Não foi possível abrir esta tela.|This page could not be opened.|No se pudo abrir esta pantalla.
+Recarregar aplicativo|Reload app|Recargar aplicación
+Aparência|Appearance|Apariencia
+Usar tema do dispositivo|Use device theme|Usar tema del dispositivo
+Claro|Light|Claro
+Escuro|Dark|Oscuro
+Aplicado imediatamente e salvo neste navegador.|Applied immediately and saved in this browser.|Se aplica inmediatamente y se guarda en este navegador.
 Minha Coleção|My Collection|Mi Colección
 Adicionar item|Add item|Añadir elemento
 Adicionar item à coleção|Add an item to your collection|Añadir un elemento a tu colección
@@ -47,6 +102,7 @@ Escolher esta obra|Choose this title|Elegir esta obra
 Adicionar cópia|Add copy|Añadir copia
 Adicionar livro|Add book|Añadir libro
 Sugestões de livros em português|Book suggestions in Portuguese|Sugerencias de libros en portugués
+Sugestões de livros no idioma do seu perfil|Book suggestions in your profile language|Sugerencias de libros en el idioma de tu perfil
 Sugestões baseadas nos gêneros e editoras da sua coleção|Suggestions based on genres and publishers in your collection|Sugerencias basadas en géneros y editoriales de tu colección
 Sugestões por título, autor e editora da sua coleção|Suggestions by title, author and publisher from your collection|Sugerencias por título, autor y editorial de tu colección
 Digite um ISBN completo para buscar automaticamente.|Enter a complete ISBN to search automatically.|Escribe un ISBN completo para buscar automáticamente.
@@ -67,6 +123,16 @@ Escolher esta edição|Choose this edition|Elegir esta edición
 Nenhum livro encontrado. Tente outro termo ou cadastre manualmente.|No books found. Try another search or enter manually.|No se encontraron libros. Prueba otra búsqueda o regístralo manualmente.
 Cadastrar livro manualmente|Enter book manually|Registrar libro manualmente
 Não foi possível consultar o Google Books.|Could not search Google Books.|No se pudo consultar Google Books.
+Não foi possível consultar o Google Books. Tente novamente em instantes.|Could not search Google Books. Try again shortly.|No se pudo consultar Google Books. Inténtalo de nuevo en unos instantes.
+Nenhuma sugestão nova de livros para suas preferências no momento.|No new book suggestions for your preferences right now.|No hay nuevas sugerencias de libros para tus preferencias por ahora.
+Conheça este título antes de adicionar ao acompanhamento.|Learn about this title before adding it to your tracking list.|Conoce este título antes de añadirlo al seguimiento.
+Não foi possível carregar os detalhes completos.|Could not load the complete details.|No se pudieron cargar los detalles completos.
+Este filme já está marcado como assistido. Abra a avaliação para editar.|This movie is already marked as watched. Open its review to edit it.|Esta película ya está marcada como vista. Abre la valoración para editarla.
+Voltar aos detalhes|Back to details|Volver a los detalles
+Adicionar como assistido|Add as watched|Añadir como vista
+Ver detalhes de {0}|View details for {0}|Ver detalles de {0}
+Ver na fonte|View at source|Ver en la fuente
+Carregando detalhes…|Loading details…|Cargando detalles…
 O Google Books não respondeu. Tente novamente ou cadastre manualmente.|Google Books did not respond. Try again or enter manually.|Google Books no respondió. Inténtalo de nuevo o regístralo manualmente.
 Adicionar cópia à coleção|Add a copy to your collection|Añadir una copia a tu colección
 Voltar à minha coleção|Back to owned collection|Volver a la colección propia
@@ -112,6 +178,9 @@ Não foi possível remover a cópia.|Could not remove the copy.|No se pudo elimi
 Seu acompanhamento|Your progress|Tu seguimiento
 Voltar ao acompanhamento|Back to progress|Volver al seguimiento
 Adicionar ao acompanhamento|Add to progress|Añadir al seguimiento
+Adicionar|Add|Añadir
+Adicionado|Added|Añadido
+Novas sugestões|New suggestions|Nuevas sugerencias
 ← Meu acompanhamento|← My progress|← Mi seguimiento
 Remover do acompanhamento|Remove from progress|Eliminar del seguimiento
 Restaurar ao acompanhamento|Restore to progress|Restaurar al seguimiento
@@ -791,6 +860,23 @@ Salvar idioma|Save language|Guardar idioma
 Idioma salvo na sua conta.|Language saved to your account.|Idioma guardado en tu cuenta.
 Textos e títulos seguem o idioma escolhido, quando houver tradução no catálogo. Suas anotações e comentários permanecem como foram escritos.|Text and titles use your chosen language when a catalog translation exists. Your notes and comments stay as written.|Los textos y títulos usan tu idioma cuando existe una traducción en el catálogo. Tus notas y comentarios se conservan como fueron escritos.
 Não foi possível alterar o idioma.|Could not change language.|No se pudo cambiar el idioma.
+Nível {0} de {1}|Level {0} of {1}|Nivel {0} de {1}
+Concluir {0} temporadas regulares diferentes.|Complete {0} different regular seasons.|Completa {0} temporadas regulares diferentes.
+Até o último episódio|Until the last episode|Hasta el último episodio
+Mestre dos finais|Master of finales|Maestro de los finales
+Marcar {0} séries diferentes como concluídas.|Mark {0} different series as completed.|Marca {0} series diferentes como completadas.
+Universo em episódios|A universe of episodes|Un universo de episodios
+Viajante de episódios|Episode voyager|Viajero de episodios
+Assistir a {0} episódios regulares diferentes.|Watch {0} different regular episodes.|Mira {0} episodios regulares diferentes.
+De volta aos clássicos|Back to the classics|De vuelta a los clásicos
+Guardião dos clássicos|Keeper of the classics|Guardián de los clásicos
+Assistir a {0} filmes diferentes lançados antes de 2000.|Watch {0} different movies released before 2000.|Mira {0} películas diferentes estrenadas antes de 2000.
+Na cadeira do crítico|In the critic’s chair|En la silla del crítico
+Crítico de cinema|Film critic|Crítico de cine
+Dar de 1 a 5 estrelas a {0} filmes diferentes já assistidos.|Rate {0} different watched movies from 1 to 5 stars.|Califica de 1 a 5 estrellas {0} películas diferentes ya vistas.
+Hoje tem final|Today is finale day|Hoy hay final
+Do piloto ao final|From pilot to finale|Del piloto al final
+Assistir a todos os episódios de uma temporada regular no mesmo dia, com marcações individuais.|Watch every episode of a regular season on the same day, with individual logs.|Mira todos los episodios de una temporada regular el mismo día, con registros individuales.
 `;
 export const translations: Record<string, [string, string]> =
   Object.fromEntries(
