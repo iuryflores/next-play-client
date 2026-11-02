@@ -3057,3 +3057,31 @@ button.cast-card:focus-visible {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
 }
+.game-playing-marker {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  pointer-events: none;
+  padding: 30px 12px 12px;
+  background: linear-gradient(transparent, #100b19eb 55%);
+  color: #fff;
+}
+.game-playing-marker strong {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #a8d7ff;
+}
+.game-playing-marker strong svg {
+  width: 15px;
+  height: 15px;
+}
+.game-playing-marker small {
+  display: block;
+  margin-top: 3px;
+  color: #eee7f5;
+  font-size: 12px;
+}

@@ -1243,6 +1243,25 @@ function Home({
                                       </strong>
                                     </div>
                                   )}
+                                {/* O tempo é informado pelo usuário; não representa percentual de conclusão. */}
+                                {item.kind === 'game' && (
+                                  <div className="game-playing-marker">
+                                    <strong>
+                                      <Gamepad2 aria-hidden="true" />
+                                      {statusNames.game[item.status]}
+                                    </strong>
+                                    <small>
+                                      {Math.floor(
+                                        (item.playtimeMinutes || 0) / 60,
+                                      )}
+                                      h
+                                      {String(
+                                        (item.playtimeMinutes || 0) % 60,
+                                      ).padStart(2, '0')}
+                                      min {t('jogadas')}
+                                    </small>
+                                  </div>
+                                )}
                                 {item.kind === 'series' &&
                                   item.episodeProgress?.initialized &&
                                   item.episodeProgress.total > 0 && (

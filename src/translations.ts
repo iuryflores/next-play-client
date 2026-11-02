@@ -936,6 +936,7 @@ Mostrar menos|Show less|Mostrar menos
 Horas|Hours|Horas
 Minutos|Minutes|Minutos
 Exemplo: 4 horas e 50 minutos = 4h50min.|Example: 4 hours and 50 minutes = 4h50min.|Ejemplo: 4 horas y 50 minutos = 4h50min.
+jogadas|played|jugadas
 `;
 export const translations: Record<string, [string, string]> =
   Object.fromEntries(
