@@ -937,6 +937,21 @@ Horas|Hours|Horas
 Minutos|Minutes|Minutos
 Exemplo: 4 horas e 50 minutos = 4h50min.|Example: 4 hours and 50 minutes = 4h50min.|Ejemplo: 4 horas y 50 minutos = 4h50min.
 jogadas|played|jugadas
+Primeiro jogo zerado|First game completed|Primer juego completado
+Primeira vitória|First victory|Primera victoria
+Concluir seu primeiro jogo.|Complete your first game.|Completa tu primer juego.
+Até os créditos|Roll the credits|Hasta los créditos
+Mestre dos créditos|Credits master|Maestro de los créditos
+Concluir {0} jogos diferentes.|Complete {0} different games.|Completa {0} juegos diferentes.
+Tempo de aventura|Adventure time|Tiempo de aventura
+Aventureiro|Adventurer|Aventurero
+Acumular {0} horas jogadas no total.|Accumulate {0} total hours played.|Acumula {0} horas jugadas en total.
+Explorador de plataformas|Platform explorer|Explorador de plataformas
+Multiplataforma|Multiplatform|Multiplataforma
+Jogar em {0} plataformas diferentes.|Play on {0} different platforms.|Juega en {0} plataformas diferentes.
+{0} de 5 estrelas|{0} of 5 stars|{0} de 5 estrellas
+Maratonas diárias e variedade de plataformas têm metas fixas, sem níveis infinitos. Só mais um episódio termina em 10 episódios no mesmo dia. As demais regras de ciclos valem para conquistas acumulativas.|Daily marathons and platform variety have fixed targets without infinite levels. Just one more episode ends at 10 episodes on the same day. Cycle rules apply to cumulative achievements.|Las maratones diarias y la variedad de plataformas tienen metas fijas sin niveles infinitos. Solo un episodio más termina en 10 episodios el mismo día. Las reglas de ciclos se aplican a los logros acumulativos.
+Cada estrela vale {0} horas jogadas. Cinco estrelas completam um nível.|Each star is worth {0} hours played. Five stars complete one level.|Cada estrella vale {0} horas jugadas. Cinco estrellas completan un nivel.
 `;
 export const translations: Record<string, [string, string]> =
   Object.fromEntries(

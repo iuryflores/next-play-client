@@ -55,6 +55,11 @@ export default function Achievements() {
         <summary>{t('Como funcionam os níveis e as estrelas?')}</summary>
         <p>
           {t(
+            'Maratonas diárias e variedade de plataformas têm metas fixas, sem níveis infinitos. Só mais um episódio termina em 10 episódios no mesmo dia. As demais regras de ciclos valem para conquistas acumulativas.',
+          )}
+        </p>
+        <p>
+          {t(
             'As estrelas mostram o progresso do ciclo atual. Ao completar cinco estrelas, você ganha um nível. O nível indica quantas vezes você completou esse ciclo.',
           )}
         </p>
@@ -118,7 +123,8 @@ export default function Achievements() {
             )}
           </p>
           <div className="achievement-grid">
-            {orderedGroups.map(([family, levels]) => {
+            {orderedGroups.map(([family, history]) => {
+              const levels = history.filter((item) => !item.legacy);
               const earned = levels.filter((item) => item.unlockedAt).at(-1),
                 next = levels.find((item) => !item.unlockedAt),
                 display = next || earned!;
@@ -154,12 +160,15 @@ export default function Achievements() {
                     total={display.levels}
                     progressionLevel={display.progressionLevel}
                     cycleStars={display.cycleStars}
+                    progressionMode={display.progressionMode}
                   />
                   <p>{t(display.description, target)}</p>
-                  {display.levels > 1 && (
+                  {display.progressionMode === 'continuous' && (
                     <p>
                       {t(
-                        'Cada estrela vale {0} registros. Cinco estrelas completam um nível.',
+                        display.metric === 'gameHours'
+                          ? 'Cada estrela vale {0} horas jogadas. Cinco estrelas completam um nível.'
+                          : 'Cada estrela vale {0} registros. Cinco estrelas completam um nível.',
                         levels.at(-1)!.target,
                       )}
                     </p>
@@ -174,7 +183,11 @@ export default function Achievements() {
                           ? earned
                             ? 'Conquistado'
                             : 'Próxima meta'
-                          : 'Próximo nível',
+                          : display.progressionMode === 'finite'
+                            ? display.cycleStars === 5
+                              ? 'Todas as metas conquistadas'
+                              : 'Próxima meta'
+                            : 'Próximo nível',
                       )}
                     </span>
                     <strong>
@@ -191,10 +204,20 @@ export default function Achievements() {
                       className="achievement-levels"
                       aria-label={t('Metas de {0}', t(display.name))}
                     >
-                      {Array.from({ length: 5 }, (_, index) => {
-                        const milestone =
-                          (cycleIndex * 5 + index + 1) * starTarget;
-                        const reached = display.cycleStars >= index + 1;
+                      {(display.progressionMode === 'finite'
+                        ? levels.map((item) => item.target)
+                        : Array.from(
+                            { length: 5 },
+                            (_, index) =>
+                              (cycleIndex * 5 + index + 1) * starTarget,
+                          )
+                      ).map((milestone, index) => {
+                        const reached =
+                          display.progressionMode === 'finite'
+                            ? Boolean(levels[index].unlockedAt) ||
+                              display.cycleStars >=
+                                ((index + 1) / levels.length) * 5
+                            : display.cycleStars >= index + 1;
                         return (
                           <span
                             key={milestone}
@@ -213,7 +236,7 @@ export default function Achievements() {
                     </div>
                   )}
                   {earned && (
-                    <AchievementEvidence item={earned} history={levels} />
+                    <AchievementEvidence item={earned} history={history} />
                   )}
                   {earned ? (
                     <Button

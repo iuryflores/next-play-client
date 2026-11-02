@@ -45,6 +45,7 @@ type FriendsData = {
       levels: number;
       progressionLevel: number;
       cycleStars: number;
+      progressionMode: 'single' | 'finite' | 'continuous';
     } | null;
   }[];
 };
@@ -264,6 +265,7 @@ export default function Friends({
                                 row.achievement.progressionLevel
                               }
                               cycleStars={row.achievement.cycleStars}
+                              progressionMode={row.achievement.progressionMode}
                             />
                           </div>
                         )}

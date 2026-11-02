@@ -41,6 +41,10 @@ const icons: Record<string, string> = {
   heart: '❤️',
   'actor-fan': '🌟',
   'character-fan': '🎭',
+  'first-game': '🎮',
+  'game-credits': '🏆',
+  'game-time': '⏱️',
+  'game-platforms': '🕹️',
 };
 export function AchievementIcon({ family }: { family: string }) {
   return (
@@ -76,6 +80,7 @@ export function AchievementTitle() {
         total={selected.levels}
         progressionLevel={selected.progressionLevel}
         cycleStars={selected.cycleStars}
+        progressionMode={selected.progressionMode}
       />
     </span>
   ) : null;
@@ -262,6 +267,7 @@ export default function AchievementProvider({
                 total={current.levels}
                 progressionLevel={current.progressionLevel}
                 cycleStars={current.cycleStars}
+                progressionMode={current.progressionMode}
               />
               <DialogDescription>
                 {t(current.description, current.target)}

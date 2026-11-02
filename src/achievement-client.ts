@@ -11,6 +11,8 @@ export interface Achievement {
   levels: number;
   progressionLevel: number;
   cycleStars: number;
+  progressionMode: 'single' | 'finite' | 'continuous';
+  legacy?: boolean;
   nextLevelTarget: number;
   current: number;
   unlockedAt: string | null;
