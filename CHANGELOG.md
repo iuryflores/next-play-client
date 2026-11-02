@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.0](https://github.com/iuryflores/next-play-client/compare/v0.14.0...v0.15.0) (2026-11-02)
+
+
+### Features
+
+* permite reassistir e aprimora sugestões e desafios ([e2c8ff7](https://github.com/iuryflores/next-play-client/commit/e2c8ff7be6071834b6c50b307a94a64aafa55325))
+
 ## [0.14.0](https://github.com/iuryflores/next-play-client/compare/v0.13.0...v0.14.0) (2026-11-02)
 
 
