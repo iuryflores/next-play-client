@@ -41,6 +41,7 @@ export interface LibraryItem {
   updatedAt: string;
   genres?: string[];
   platform?: string;
+  playtimeMinutes?: number;
   catalogId?: string;
   coverUrl?: string;
   year?: string;

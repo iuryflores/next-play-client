@@ -345,7 +345,14 @@ function Home({
           favoriteCharacter: data.get('favoriteCharacter') || '',
           favoriteCastId: data.get('favoriteCastId') || '',
           notes: data.get('notes'),
-          ...(kind === 'game' ? { platform: data.get('platform') || '' } : {}),
+          ...(kind === 'game'
+            ? {
+                platform: data.get('platform') || '',
+                playtimeMinutes: Math.round(
+                  Number(data.get('playtimeHours') || 0) * 60,
+                ),
+              }
+            : {}),
           ...(kind === 'book' && (selectedTitle || editing?.catalogId)
             ? {}
             : {
@@ -590,6 +597,24 @@ function Home({
                   </option>
                 ))}
               </datalist>
+              <label htmlFor="game-playtime">{t('Horas jogadas')}</label>
+              <Input
+                id="game-playtime"
+                name="playtimeHours"
+                type="number"
+                min="0"
+                max="100000"
+                step="any"
+                // Três casas preservam os minutos salvos ao reabrir e salvar o formulário.
+                defaultValue={
+                  Number(((editing?.playtimeMinutes || 0) / 60).toFixed(3))
+                }
+              />
+              <small>
+                {t(
+                  'Informe o total acumulado. O tempo é mantido ao mudar o status do jogo.',
+                )}
+              </small>
             </div>
           )}
           <CompletionFields

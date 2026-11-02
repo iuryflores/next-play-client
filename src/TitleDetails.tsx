@@ -204,6 +204,13 @@ export default function TitleDetails({
                 {t('Plataforma')}: {item.platform || t('Não informada')}
               </span>
             )}
+            {item.kind === 'game' && (
+              <span>
+                {t('Tempo jogado')}:{' '}
+                {Math.floor((item.playtimeMinutes || 0) / 60)}h{' '}
+                {(item.playtimeMinutes || 0) % 60}min
+              </span>
+            )}
             {item.genres?.map((genre) => (
               <span key={genre}>{genreLabel(genre)}</span>
             ))}

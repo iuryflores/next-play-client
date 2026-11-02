@@ -910,6 +910,9 @@ Todos os usuários|All users|Todos los usuarios
 Ranking geral|Overall ranking|Clasificación general
 Usuários no ranking|Ranking users|Usuarios de la clasificación
 Usuário|User|Usuario
+Horas jogadas|Hours played|Horas jugadas
+Tempo jogado|Play time|Tiempo jugado
+Informe o total acumulado. O tempo é mantido ao mudar o status do jogo.|Enter the accumulated total. Time is kept when changing the game's status.|Introduce el total acumulado. El tiempo se conserva al cambiar el estado del juego.
 `;
 export const translations: Record<string, [string, string]> =
   Object.fromEntries(
