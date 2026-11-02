@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.8.0](https://github.com/iuryflores/next-play-client/compare/v0.7.1...v0.8.0) (2026-11-02)
+
+
+### Features
+
+* amplia estatísticas de jogos com tempo por jogo e plataforma ([a0838b0](https://github.com/iuryflores/next-play-client/commit/a0838b05e52ba61e683f1cb476f94823a70f8d7d))
+
+
+### Bug Fixes
+
+* preserva navegação e filtros na URL ([e810ed0](https://github.com/iuryflores/next-play-client/commit/e810ed0711314af956d3247476f6185ae5523b72))
+
 ## [0.7.1](https://github.com/iuryflores/next-play-client/compare/v0.7.0...v0.7.1) (2026-11-02)
 
 
