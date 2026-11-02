@@ -16,15 +16,9 @@ import QuickActions from './QuickActions';
 
 import { feelings } from './Review';
 import CollectionActions from './CollectionActions';
+import BackButton from './BackButton';
 import CastPicker from './CastPicker';
-import {
-  Clock3,
-  Pencil,
-  Film,
-  BookOpen,
-  ArrowLeft,
-  CircleCheck,
-} from 'lucide-react';
+import { Clock3, Pencil, Film, BookOpen, CircleCheck } from 'lucide-react';
 import './title-details.css';
 
 export default function TitleDetails({
@@ -53,10 +47,7 @@ export default function TitleDetails({
   return (
     <section className="title-details" aria-labelledby="title-details-heading">
       <div className="details-topbar">
-        <Button variant="ghost" onClick={back}>
-          <ArrowLeft aria-hidden="true" />
-          {t('Voltar ao acompanhamento')}
-        </Button>
+        <BackButton onClick={back} />
       </div>
       {(item.kind === 'movie' || item.kind === 'series') && (
         <RottenTomatoes

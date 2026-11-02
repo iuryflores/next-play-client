@@ -920,6 +920,7 @@ Salvo na sua conta e aplicado ao entrar em qualquer dispositivo.|Saved to your a
 Entre na sua conta para salvar a aparência. Antes de entrar, a escolha vale apenas nesta sessão.|Sign in to save your appearance. Before signing in, your choice applies only to this session.|Inicia sesión para guardar la apariencia. Antes de entrar, tu elección solo se aplica a esta sesión.
 Não foi possível salvar a aparência. Tente novamente.|Could not save appearance. Try again.|No se pudo guardar la apariencia. Inténtalo de nuevo.
 Não foi possível salvar a exibição. Tente novamente.|Could not save the display preference. Try again.|No se pudo guardar la preferencia de visualización. Inténtalo de nuevo.
+Voltar|Back|Volver
 `;
 export const translations: Record<string, [string, string]> =
   Object.fromEntries(

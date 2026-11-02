@@ -1,3 +1,4 @@
+import BackButton from './BackButton';
 import {
   useEffect,
   useEffectEvent,
@@ -282,17 +283,13 @@ export default function ExploreTitleDetails({
               />
             </fieldset>
             <div className="item-form-actions">
-              <Button
-                type="button"
-                variant="outline"
+              <BackButton
                 disabled={saving}
                 onClick={() => {
                   setCompleting(false);
                   setSaveError('');
                 }}
-              >
-                {t('Voltar aos detalhes')}
-              </Button>
+              />
               <Button className="home-primary" type="submit" disabled={saving}>
                 {t(saving ? 'Salvando…' : 'Salvar como assistido')}
               </Button>

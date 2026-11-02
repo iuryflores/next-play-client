@@ -1,3 +1,4 @@
+import BackButton from './BackButton';
 import { useEffect, useEffectEvent, useState, type SubmitEvent } from 'react';
 import {
   BookOpen,
@@ -305,9 +306,7 @@ export default function Collector({
       </p>
       {picking ? (
         <div className="add-title-page">
-          <Button variant="ghost" onClick={() => setPicking(false)}>
-            {t('Voltar à minha coleção')}
-          </Button>
+          <BackButton onClick={() => setPicking(false)} />
           <Button
             variant="outline"
             onClick={() => openForm(undefined, false, pickerKind)}
