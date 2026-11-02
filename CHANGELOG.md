@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/iuryflores/next-play-client/compare/v0.12.0...v0.13.0) (2026-11-02)
+
+
+### Features
+
+* integra notificações, XP e atalhos de acompanhamento ([d4d373b](https://github.com/iuryflores/next-play-client/commit/d4d373beb89fba473cf6c4e93f0d6f134d89bd05))
+
 ## [0.12.0](https://github.com/iuryflores/next-play-client/compare/v0.11.0...v0.12.0) (2026-11-02)
 
 
