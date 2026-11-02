@@ -33,6 +33,10 @@ export default function useHomeRoute() {
   ) =>
     setRoute((previous) => ({
       ...previous,
+      // Sair de Jogos limpa o filtro específico, sem afetar outras mídias.
+      ...(key === 'category' && value !== 'game'
+        ? { platform: undefined }
+        : {}),
       [key]:
         typeof value === 'function'
           ? (value as (current: HomeRoute[K]) => HomeRoute[K])(previous[key])

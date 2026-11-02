@@ -1,3 +1,4 @@
+import WatchDateField from './WatchDateField';
 import { t } from './i18n';
 import { useState } from 'react';
 import { ReviewFields } from './Review';
@@ -5,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
 import {
   statusNames,
+  priorityLabels,
+  type Priority,
   type Kind,
   type Status,
   type LibraryItem,
@@ -45,6 +48,27 @@ export default function CompletionFields({
             </option>
           ))}
       </NativeSelect>
+      {status === 'planned' && (
+        <>
+          <label htmlFor="item-priority">
+            {t('Prioridade em Para depois')}
+          </label>
+          <NativeSelect
+            id="item-priority"
+            name="priority"
+            defaultValue={item?.priority || 'none'}
+          >
+            {(Object.keys(priorityLabels) as Priority[]).map((priority) => (
+              <option key={priority} value={priority}>
+                {t(priorityLabels[priority])}
+              </option>
+            ))}
+          </NativeSelect>
+          <small>
+            {t('Prioridades mais altas aparecem primeiro em Para depois.')}
+          </small>
+        </>
+      )}
       {item?.status === 'completed' && status !== 'completed' && (
         <small>
           {t(
@@ -62,22 +86,28 @@ export default function CompletionFields({
       {status === 'completed' && (
         <fieldset className="completion-review">
           <legend>{t(' Sua experiência ')}</legend>
-          <label htmlFor="completed-on">
-            {kind === 'book'
-              ? t('Lido em')
-              : kind === 'movie'
-                ? t('Assistido em')
-                : t('Concluído em')}
-          </label>
-          <Input
-            type="date"
-            lang="pt-BR"
-            id="completed-on"
-            name="completedOn"
-            defaultValue={item?.completedOn || today()}
-            max={today()}
-            required
-          />
+          {kind === 'movie' ? (
+            <WatchDateField
+              withDate
+              initialUnknown={item?.watchedDateUnknown}
+              initialDate={item?.completedOn}
+            />
+          ) : (
+            <>
+              <label htmlFor="completed-on">
+                {kind === 'book' ? t('Lido em') : t('Concluído em')}
+              </label>
+              <Input
+                type="date"
+                lang="pt-BR"
+                id="completed-on"
+                name="completedOn"
+                defaultValue={item?.completedOn || today()}
+                max={today()}
+                required
+              />
+            </>
+          )}
           <ReviewFields
             showCharacter={kind !== 'book'}
             initial={item || undefined}

@@ -1,0 +1,20 @@
+.game-addons { margin: 24px 0; padding: 20px; border: 1px solid var(--border); border-radius: 14px; background: var(--card); }
+.title-details .game-addons h2 { margin: 0 0 8px; font-size: 18px; }
+.title-details .game-addons-note, .title-details .game-addons-source { font-size: 12px; color: var(--muted-foreground); }
+.game-addons-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 14px; margin: 18px 0; }
+.game-addon-card { display: flex; gap: 14px; padding: 12px; border: 1px solid var(--border); border-radius: 12px; min-width: 0; align-items: start; }
+.game-addon-cover { width: 80px; aspect-ratio: 9 / 13; position: relative; flex-shrink: 0; display: grid; place-items: center; background: var(--muted); border-radius: 8px; overflow: hidden; }
+.game-addon-cover img { width: 100%; height: 100%; object-fit: cover; }
+.game-addon-info { min-width: 0; display: flex; flex-direction: column; gap: 8px; align-items: start; }
+.title-details .game-addon-info h3 { font-size: 14px; margin: 0; overflow-wrap: anywhere; }
+.game-addon-type { color: var(--primary); font-size: 10px; }
+.game-addon-info small { font-size: 11px; }
+.game-addon-info button { white-space: normal; height: auto; min-height: 32px; font-size: 11px; }
+.game-addons-source a { color: var(--primary); }
+@media (max-width: 480px) { .game-addons { padding: 14px; } .game-addon-cover { width: 64px; } }
+
+.game-family-time { margin: 24px 0; padding: 20px; border: 1px solid var(--border); border-radius: 14px; }
+.game-family-time > div { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 10px 0; font-size: 13px; }
+.game-family-time button { background: transparent; border: 0; color: var(--primary); text-align: left; cursor: pointer; }
+.game-family-time strong { white-space: nowrap; }
+.game-family-total { border-top: 1px solid var(--border); margin-top: 8px; }

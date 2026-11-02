@@ -4,7 +4,34 @@ type CollectionItem = ReleaseInfo & {
   status: string;
   archived?: boolean;
   caughtUp?: boolean;
+  inProgress?: boolean;
+  episodeProgress?: { watched: number };
 };
+
+export function priorityOrder(
+  a: { priority?: string },
+  b: { priority?: string },
+) {
+  const weight = (value?: string) =>
+    value === 'high' ? 3 : value === 'medium' ? 2 : value === 'low' ? 1 : 0;
+  // Só Para depois usa este comparador; os demais critérios desempatarão na mesma prioridade.
+  return weight(b.priority) - weight(a.priority);
+}
+
+export function backlogOrder(
+  a: { priority?: string; releaseDate?: string; year?: string },
+  b: { priority?: string; releaseDate?: string; year?: string },
+) {
+  const released = (item: typeof a) => {
+    const date = Date.parse(item.releaseDate || '');
+    if (Number.isFinite(date)) return date;
+    return /^\d{4}$/.test(item.year || '')
+      ? Date.parse(`${item.year}-01-01`)
+      : Number.MIN_SAFE_INTEGER;
+  };
+  // Prioridade primeiro; dentro do grupo, lançamentos mais recentes. Sem data fica ao final.
+  return priorityOrder(a, b) || released(b) - released(a);
+}
 
 export function activityTime(item: {
   lastWatchedAt?: string;
@@ -75,7 +102,15 @@ export function matchesView(item: CollectionItem, view: string) {
     (item.kind === 'series' && item.caughtUp === true);
   if (view === 'completed') return finished;
   const upcoming = !finished && Boolean(upcomingRelease(item));
-  if (view === 'coming-soon') return upcoming;
+  // Séries já iniciadas aparecem em Suas séries, sem repetir o mesmo título entre novidades.
+  if (view === 'coming-soon')
+    return (
+      upcoming &&
+      !(
+        item.kind === 'series' &&
+        (item.inProgress || (item.episodeProgress?.watched || 0) > 0)
+      )
+    );
   if (view === 'all') return !finished && !upcoming;
   if (view === 'planned' && upcoming) return false;
   return item.status === view;

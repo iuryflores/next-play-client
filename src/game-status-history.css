@@ -1,0 +1,10 @@
+.game-status-history { margin: 24px 0; padding: 20px; border: 1px solid var(--border); border-radius: 14px; background: var(--card); }
+.title-details .game-status-history h2 { margin: 0 0 8px; font-size: 18px; }
+.title-details .game-status-note { font-size: 12px; color: var(--muted-foreground); }
+.game-status-events { list-style: none; margin: 20px 0; padding: 0 0 0 7px; }
+.game-status-events li { position: relative; display: grid; gap: 5px; padding: 0 0 20px 22px; border-left: 1px solid var(--border); }
+.game-status-events li:last-child { padding-bottom: 0; }
+.game-status-events li::before { content: ''; position: absolute; left: -4px; top: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--primary); }
+.game-status-events strong { font-size: 13px; font-weight: 600; }
+.game-status-events small, .game-status-events time, .game-status-events span { font-size: 11px; color: var(--muted-foreground); }
+@media (max-width: 480px) { .game-status-history { padding: 14px; } }

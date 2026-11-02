@@ -1,5 +1,98 @@
 // Portuguese source messages with English and Spanish equivalents.
 const rows = `
+Desafios pessoais|Personal challenges|Desafíos personales
+Defina sua meta e acompanhe suas conclusões no período escolhido.|Set your goal and track completions in the chosen period.|Define tu meta y sigue tus finalizaciones en el período elegido.
+Atualizar desafios|Refresh challenges|Actualizar desafíos
+Novo desafio|New challenge|Nuevo desafío
+Contam títulos concluídos com data informada, incluindo arquivados. Jogos principais e expansões independentes contam; DLCs dependentes identificadas não somam jogos extras.|Completed titles with a known date count, including archived titles. Main games and standalone expansions count; identified dependent DLCs do not add extra games.|Cuentan los títulos terminados con fecha conocida, incluidos los archivados. Cuentan los juegos principales y las expansiones independientes; los DLC dependientes identificados no suman juegos extra.
+Carregando desafios…|Loading challenges…|Cargando desafíos…
+Qual será seu próximo desafio?|What will your next challenge be?|¿Cuál será tu próximo desafío?
+Crie uma meta, como concluir 10 jogos ou assistir a 50 filmes neste ano.|Create a goal, such as finishing 10 games or watching 50 movies this year.|Crea una meta, como terminar 10 juegos o ver 50 películas este año.
+Não foi possível carregar os desafios.|Challenges could not be loaded.|No se pudieron cargar los desafíos.
+Não foi possível salvar o desafio.|The challenge could not be saved.|No se pudo guardar el desafío.
+Não foi possível carregar mais desafios.|More challenges could not be loaded.|No se pudieron cargar más desafíos.
+Agendado|Scheduled|Programado
+Prazo encerrado|Period ended|Plazo finalizado
+Encerrado|Closed|Cerrado
+Meta atingida|Goal reached|Meta alcanzada
+Excluir desafio {0}|Delete challenge {0}|Eliminar desafío {0}
+Progresso do desafio {0}|Progress for challenge {0}|Progreso del desafío {0}
+Últimas conclusões que contaram|Latest completions that counted|Últimas finalizaciones que contaron
+Progresso salvo ao encerrar em {0}.|Progress saved when closed on {0}.|Progreso guardado al cerrar el {0}.
+Encerrar desafio|Close challenge|Cerrar desafío
+Ver mais desafios|View more challenges|Ver más desafíos
+As conclusões já registradas no período também contam. O progresso pode mudar até você encerrar o desafio.|Completions already recorded within the period also count. Progress may change until you close the challenge.|También cuentan las finalizaciones ya registradas dentro del período. El progreso puede cambiar hasta que cierres el desafío.
+Nome do desafio|Challenge name|Nombre del desafío
+Ex.: concluir 10 jogos este ano|E.g. finish 10 games this year|Ej.: terminar 10 juegos este año
+O que você quer concluir?|What do you want to finish?|¿Qué quieres terminar?
+Término|End date|Fin
+Criar desafio|Create challenge|Crear desafío
+Encerrar este desafio?|Close this challenge?|¿Cerrar este desafío?
+Excluir este desafio?|Delete this challenge?|¿Eliminar este desafío?
+O progresso atual ficará salvo e não poderá ser reaberto. Seus títulos permanecem iguais.|Current progress will be saved and the challenge cannot be reopened. Your titles remain unchanged.|Se guardará el progreso actual y el desafío no podrá reabrirse. Tus títulos no cambian.
+Somente este desafio será excluído. Seus títulos e históricos serão preservados.|Only this challenge will be deleted. Your titles and histories will be preserved.|Solo se eliminará este desafío. Tus títulos e historiales se conservarán.
+Excluir desafio|Delete challenge|Eliminar desafío
+Histórico de status|Status history|Historial de estados
+As datas indicam quando cada alteração foi registrada no app.|Dates show when each change was recorded in the app.|Las fechas indican cuándo se registró cada cambio en la aplicación.
+Adicionado ao acompanhamento|Added to tracking|Añadido al seguimiento
+Retomou o acompanhamento|Resumed tracking|Retomó el seguimiento
+Concluiu o jogo|Finished the game|Terminó el juego
+Voltou para Para depois|Moved back to backlog|Volvió a Para después
+Voltou a jogar|Started playing again|Volvió a jugar
+Começou a jogar|Started playing|Empezó a jugar
+Ao registrar uma sessão de jogo|When recording a game session|Al registrar una sesión de juego
+Ao atualizar as horas jogadas|When updating playtime|Al actualizar las horas jugadas
+Ainda não há alterações de status registradas para este jogo.|No status changes have been recorded for this game yet.|Aún no se han registrado cambios de estado para este juego.
+Alterações anteriores a este histórico não estão disponíveis; nenhuma data antiga foi presumida.|Changes before this history are unavailable; no past dates were assumed.|Los cambios anteriores a este historial no están disponibles; no se supuso ninguna fecha antigua.
+Não foi possível carregar o histórico de status.|Status history could not be loaded.|No se pudo cargar el historial de estados.
+Não foi possível carregar mais alterações. Tente novamente.|More changes could not be loaded. Try again.|No se pudieron cargar más cambios. Inténtalo de nuevo.
+Ver alterações anteriores|View earlier changes|Ver cambios anteriores
+Ver jogo principal|View main game|Ver juego principal
+no total com DLCs|total including DLCs|en total con DLC
+Onde você jogou?|Which part did you play?|¿Qué parte jugaste?
+Jogo principal|Main game|Juego principal
+As horas serão registradas somente na parte selecionada.|Hours will be recorded only for the selected part.|Las horas se registrarán solo en la parte seleccionada.
+Tempo por conteúdo|Time by content|Tiempo por contenido
+Total com DLCs e expansões|Total including DLCs and expansions|Total con DLC y expansiones
+Expansões e DLCs|Expansions and DLCs|Expansiones y DLC
+Acompanhe cada conteúdo separadamente do jogo principal.|Track each add-on separately from the main game.|Sigue cada contenido por separado del juego principal.
+Carregando conteúdos adicionais…|Loading add-ons…|Cargando contenidos adicionales…
+Não foi possível carregar expansões e DLCs.|Expansions and DLCs could not be loaded.|No se pudieron cargar las expansiones y los DLC.
+Nenhuma expansão ou DLC informada pela IGDB para este jogo.|IGDB lists no expansions or DLCs for this game.|IGDB no indica expansiones ni DLC para este juego.
+Conteúdos adicionais indisponíveis para jogos sem vínculo com a IGDB.|Add-ons unavailable for games without an IGDB link.|Contenidos adicionales no disponibles para juegos sin vínculo con IGDB.
+Não foi possível adicionar o conteúdo. Tente novamente.|The add-on could not be added. Try again.|No se pudo añadir el contenido. Inténtalo de nuevo.
+Não foi possível carregar mais conteúdos. Tente novamente.|More add-ons could not be loaded. Try again.|No se pudieron cargar más contenidos. Inténtalo de nuevo.
+Ver mais conteúdos|View more add-ons|Ver más contenidos
+DLC|DLC|DLC
+Expansão|Expansion|Expansión
+Expansão independente|Standalone expansion|Expansión independiente
+Adicionar a Para depois|Add to backlog|Añadir a Para después
+Ver acompanhamento|View tracking|Ver seguimiento
+Tempo para terminar|Time to finish|Tiempo para terminar
+História principal|Main story|Historia principal
+História + extras|Story + extras|Historia + extras
+100% completo|100% completion|100% completo
+Objetivo no jogo|Game objective|Objetivo en el juego
+Não foi possível consultar a estimativa da IGDB.|The IGDB estimate could not be loaded.|No se pudo consultar la estimación de IGDB.
+Consultando estimativa…|Loading estimate…|Consultando estimación…
+A IGDB ainda não tem estimativa para este jogo.|IGDB does not have an estimate for this game yet.|IGDB aún no tiene una estimación para este juego.
+Estimativa indisponível para jogos sem vínculo com a IGDB.|Estimate unavailable for games without an IGDB link.|Estimación no disponible para juegos sin vínculo con IGDB.
+Estimativa indisponível para este objetivo.|Estimate unavailable for this objective.|Estimación no disponible para este objetivo.
+Seu tempo jogado já atingiu a média deste objetivo.|Your playtime has already reached the average for this objective.|Tu tiempo jugado ya alcanzó el promedio para este objetivo.
+Restante estimado: cerca de {0}|Estimated remaining: about {0}|Tiempo restante estimado: alrededor de {0}
+Média da comunidade; seu ritmo pode variar. Horas jogadas não representam progresso da história.|Community average; your pace may vary. Hours played do not represent story progress.|Promedio de la comunidad; tu ritmo puede variar. Las horas jugadas no representan el progreso de la historia.
+Fonte: IGDB|Source: IGDB|Fuente: IGDB
+{0} contribuições|{0} contributions|{0} contribuciones
+Próximo: T{0} E{1}|Next: S{0} E{1}|Siguiente: T{0} E{1}
+Todas as plataformas|All platforms|Todas las plataformas
+Plataforma selecionada sem jogos nesta lista|Selected platform has no games in this list|La plataforma seleccionada no tiene juegos en esta lista
+Limpar filtro|Clear filter|Limpiar filtro
+Não sei a data|I don't know the date|No sé la fecha
+Data desconhecida|Unknown date|Fecha desconocida
+Assistido · data desconhecida|Watched · unknown date|Visto · fecha desconocida
+Data em que assistiu|Date watched|Fecha en que lo viste
+Conta como assistido, sem atribuir uma data ao consumo.|Counts as watched, without assigning a viewing date.|Cuenta como visto, sin asignar una fecha de visualización.
+Atualize sua avaliação e informe se não souber a data em que assistiu.|Update your review and indicate if you don't know when you watched it.|Actualiza tu valoración e indica si no sabes cuándo lo viste.
 Assistir ao seu primeiro filme.|Watch your first movie.|Ver tu primera película.
 Assistir a {0} episódios diferentes no mesmo dia.|Watch {0} different episodes on the same day.|Ver {0} episodios diferentes el mismo día.
 Concluir uma temporada regular.|Finish a regular season.|Completar una temporada regular.
@@ -999,6 +1092,41 @@ Não foi possível carregar seu nível.|Could not load your level.|No se pudo ca
 Livros concluídos|Books completed|Libros terminados
 Conquistas desbloqueadas|Achievements unlocked|Logros desbloqueados
 Livros lidos e jogos concluídos contam títulos distintos, incluindo arquivados. O XP mostra o total já reconhecido no perfil; a posição continua pelo tempo em séries.|Books read and games completed count distinct titles, including archived ones. XP shows the total already credited to the profile; positions still follow time spent on series.|Los libros leídos y juegos terminados cuentan títulos distintos, incluidos los archivados. El XP muestra el total ya reconocido en el perfil; la posición sigue el tiempo en series.
+Opções de {0}|Options for {0}|Opciones de {0}
+Editar título|Edit title|Editar título
+O título volta às listas com o progresso preservado.|The title returns to your lists with its progress preserved.|El título vuelve a tus listas con el progreso conservado.
+Oculta das listas sem apagar seu progresso. Você pode restaurar em Arquivados.|Hides it from your lists without deleting progress. You can restore it from Archived.|Lo oculta de tus listas sin borrar el progreso. Puedes restaurarlo desde Archivados.
+Tempo de jogo|Playtime|Tiempo de juego
+Última vez jogado|Last played|Última vez jugado
+Registrar sessão|Log session|Registrar sesión
+Histórico de sessões|Session history|Historial de sesiones
+Editar sessão|Edit session|Editar sesión
+Dia em que jogou|Day you played|Día en que jugaste
+Informar total após jogar|Enter total after playing|Indicar total después de jugar
+Só a diferença para o total atual será registrada nesta sessão.|Only the difference from the current total will be logged in this session.|Solo la diferencia con el total actual se registrará en esta sesión.
+Salvar sessão|Save session|Guardar sesión
+Saldo anterior sem data|Previous balance without a date|Saldo anterior sin fecha
+Horas antigas permanecem aqui, sem inventar os dias em que você jogou. Corrigir o saldo não cria uma sessão.|Previous hours stay here without inventing days you played. Correcting the balance does not create a session.|Las horas antiguas permanecen aquí sin inventar los días en que jugaste. Corregir el saldo no crea una sesión.
+Corrigir saldo anterior|Correct previous balance|Corregir saldo anterior
+Nenhuma sessão registrada. As horas antigas continuam no saldo anterior.|No sessions logged. Previous hours remain in the previous balance.|No hay sesiones registradas. Las horas antiguas permanecen en el saldo anterior.
+Editar sessão de {0}|Edit session from {0}|Editar sesión del {0}
+Excluir sessão de {0}|Delete session from {0}|Eliminar sesión del {0}
+Excluir esta sessão e descontar sua duração do total?|Delete this session and subtract its duration from the total?|¿Eliminar esta sesión y descontar su duración del total?
+Excluir sessão|Delete session|Eliminar sesión
+Ver mais sessões|View more sessions|Ver más sesiones
+Não foi possível carregar as sessões.|Could not load sessions.|No se pudieron cargar las sesiones.
+Suas séries|Your series|Tus series
+Novos títulos|New titles|Nuevos títulos
+Episódios das suas séries e novos títulos que você está esperando, em um só lugar.|Episodes from your series and new titles you are waiting for, in one place.|Episodios de tus series y nuevos títulos que esperas, en un solo lugar.
+Obras da sua lista que ainda serão lançadas, ordenadas pela estreia mais próxima. Datas não anunciadas ficam ao final.|Upcoming titles from your list, sorted by the nearest release date. Unannounced dates appear last.|Próximos títulos de tu lista, ordenados por el estreno más cercano. Las fechas sin anunciar aparecen al final.
+Sem prioridade|No priority|Sin prioridad
+Alta|High|Alta
+Média|Medium|Media
+Baixa|Low|Baja
+Prioridade em Para depois|Backlog priority|Prioridad en Para después
+Prioridades mais altas aparecem primeiro em Para depois.|Higher priorities appear first in your backlog.|Las prioridades más altas aparecen primero en Para después.
+Prioridade {0}|{0} priority|Prioridad {0}
+Sobre a série|About the series|Sobre la serie
 `;
 export const translations: Record<string, [string, string]> =
   Object.fromEntries(

@@ -21,10 +21,12 @@ export default function Incoming({
   items,
   open,
   onExpired,
+  compact = false,
 }: {
   items: LibraryItem[];
   open: (id: string) => void;
   onExpired: () => void;
+  compact?: boolean;
 }) {
   const [releases, setReleases] = useState<Record<string, Release | 'error'>>(
     {},
@@ -83,9 +85,12 @@ export default function Incoming({
     return release && (release === 'error' || !release.ended);
   });
   return (
-    <section className="incoming-page">
+    <section
+      className={`incoming-page${compact ? ' incoming-compact' : ''}`}
+      aria-label={t('Suas séries')}
+    >
       <header className="collection-toolbar">
-        <h2>{t('Episódios')}</h2>
+        <h2>{t('Suas séries')}</h2>
         <IconAction
           variant="outline"
           onClick={() => {

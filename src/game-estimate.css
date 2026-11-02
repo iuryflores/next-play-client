@@ -1,0 +1,12 @@
+.game-estimate { margin: 24px 0; padding: 20px; border: 1px solid var(--border); border-radius: 14px; background: var(--card); }
+.title-details .game-estimate h2 { margin: 0 0 14px; font-size: 16px; color: var(--foreground); }
+.game-estimate-modes { border: 0; padding: 0; margin: 0; min-width: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.game-estimate-modes button { display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: transparent; text-align: left; cursor: pointer; min-width: 0; }
+.game-estimate-modes button[aria-pressed='true'] { border-color: var(--primary); background: color-mix(in srgb, var(--primary) 10%, transparent); }
+.game-estimate-modes button:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+.game-estimate-modes span { font-size: 11px; color: var(--muted-foreground); }
+.game-estimate-modes strong { font-size: 14px; color: var(--foreground); }
+.title-details .game-estimate-remaining { font-size: 14px; font-weight: 600; }
+.title-details .game-estimate-note, .title-details .game-estimate-source { font-size: 11px; color: var(--muted-foreground); }
+.game-estimate-source a { color: var(--primary); }
+@media (max-width: 480px) { .game-estimate { padding: 14px; } .game-estimate-modes { grid-template-columns: 1fr; } .game-estimate-modes button { flex-direction: row; align-items: center; justify-content: space-between; } }

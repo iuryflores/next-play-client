@@ -114,8 +114,9 @@ export default function QuickActions({
             kind: owned.kind,
             status: 'completed',
             notes: owned.notes,
-            completedOn:
-              owned.status === 'completed'
+            completedOn: review?.watchedDateUnknown
+              ? undefined
+              : owned.status === 'completed'
                 ? owned.completedOn ||
                   owned.completedAt?.slice(0, 10) ||
                   today()

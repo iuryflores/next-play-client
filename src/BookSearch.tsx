@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
 import { ApiError } from './auth';
 import PageLoading from './PageLoading';
+import useSuggestionScroll from './useSuggestionScroll';
 import { categories, type Kind } from './library';
 import type { CatalogTitle } from './CatalogSearch';
 import { t } from './i18n';
@@ -61,6 +62,19 @@ export default function BookSearch({
   const [busy, setBusy] = useState(true);
   const [error, setError] = useState('');
   const [nextPage, setNextPage] = useState<number | null>(null);
+  function more() {
+    if (busy || nextPage === null) return;
+    setBusy(true);
+    setError('');
+    setRequest((current) => ({ ...current, automatic: false, page: nextPage }));
+  }
+  const suggestionEnd = useSuggestionScroll({
+    enabled: nextPage !== null,
+    loading: busy,
+    blocked: Boolean(error),
+    resetKey: JSON.stringify([request.mode, request.q, request.field, context]),
+    loadMore: more,
+  });
   const [searched, setSearched] = useState(false);
   const [personalized, setPersonalized] = useState(false);
   const expired = useEffectEvent(onExpired);
@@ -322,21 +336,13 @@ export default function BookSearch({
         </p>
       )}
       {nextPage !== null && (
-        <div className="catalog-more-actions">
+        <div className="catalog-more-actions" ref={suggestionEnd}>
           <Button
             variant="outline"
             className="catalog-more-button"
             aria-busy={busy}
             disabled={busy}
-            onClick={() => {
-              setBusy(true);
-              setError('');
-              setRequest((current) => ({
-                ...current,
-                automatic: false,
-                page: nextPage,
-              }));
-            }}
+            onClick={more}
           >
             {t(busy ? 'Carregando resultados…' : 'Ver mais resultados')}
             {busy ? (

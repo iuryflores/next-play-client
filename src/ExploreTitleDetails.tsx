@@ -1,15 +1,14 @@
+import WatchDateField from './WatchDateField';
 import BackButton from './BackButton';
 import {
   useEffect,
   useEffectEvent,
-  useId,
   useRef,
   useState,
   type SubmitEvent,
 } from 'react';
 import { BookOpen, Film } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   Dialog,
   DialogContent,
@@ -60,7 +59,7 @@ export default function ExploreTitleDetails({
   const [retry, setRetry] = useState(0);
   const pending = useRef(false);
   const heading = useRef<HTMLHeadingElement>(null);
-  const dateId = useId();
+
   const expired = useEffectEvent(onExpired);
   const owned = latestOwned || findOwned(items, title);
   useEffect(() => {
@@ -138,7 +137,13 @@ export default function ExploreTitleDetails({
         title: current?.title || title.title,
         kind: 'movie',
         status: 'completed',
-        completedOn: typeof completedOn === 'string' ? completedOn : today(),
+        watchedDateUnknown: form.get('watchedDateUnknown') === 'true',
+        completedOn:
+          form.get('watchedDateUnknown') === 'true'
+            ? undefined
+            : typeof completedOn === 'string'
+              ? completedOn
+              : today(),
         stars: Number(form.get('stars') || 0),
         feeling: typeof feeling === 'string' ? feeling : '',
         // Nome e referência do elenco permitem validar e preservar também o voto do ator.
@@ -260,14 +265,10 @@ export default function ExploreTitleDetails({
         )}
         {completing ? (
           <form className="item-form" onSubmit={(event) => void save(event)}>
-            <label htmlFor={dateId}>{t('Assistido em')}</label>
-            <Input
-              id={dateId}
-              type="date"
-              name="completedOn"
-              defaultValue={today()}
-              max={today()}
-              required
+            <WatchDateField
+              withDate
+              initialUnknown={owned?.watchedDateUnknown}
+              initialDate={owned?.completedOn}
               disabled={saving}
             />
             <fieldset disabled={saving}>

@@ -28,8 +28,7 @@ export default function CollectionActions({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   async function run(remove: boolean) {
-    if (busy || (!remove && !item.archived && item.status === 'completed'))
-      return;
+    if (busy) return;
     setBusy(true);
     setError('');
     try {
@@ -64,10 +63,13 @@ export default function CollectionActions({
       {item.archived && <p>{t('Arquivado')}</p>}
       <div className="title-details-actions">
         <IconAction
+          className="archive-title-action"
           icon={item.archived ? ArchiveRestore : Archive}
-          label={t(item.archived ? 'Restaurar ao acompanhamento' : 'Arquivar título')}
+          label={t(
+            item.archived ? 'Restaurar ao acompanhamento' : 'Arquivar título',
+          )}
           variant="ghost"
-          disabled={busy || (!item.archived && item.status === 'completed')}
+          disabled={busy}
           onClick={() => void run(false)}
         />
         <IconAction

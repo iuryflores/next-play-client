@@ -1,4 +1,5 @@
 import PageLoading from './PageLoading';
+import useSuggestionScroll from './useSuggestionScroll';
 import { t } from './i18n';
 import ReleaseBadge from './ReleaseBadge';
 import OriginalTitle from './OriginalTitle';
@@ -155,6 +156,23 @@ function MediaCatalogSearch({
     page: 1,
   });
   const [nextPage, setNextPage] = useState<number | null>(null);
+  function more() {
+    if (busy || nextPage === null) return;
+    setBusy(true);
+    setError('');
+    setRequest((current) => ({
+      ...current,
+      page: nextPage,
+      revision: current.revision + 1,
+    }));
+  }
+  const suggestionEnd = useSuggestionScroll({
+    enabled: nextPage !== null,
+    loading: busy,
+    blocked: Boolean(error),
+    resetKey: JSON.stringify([kind, platform, request.term]),
+    loadMore: more,
+  });
   const expired = useEffectEvent(onExpired);
   const buffer = useRef<SuggestionBuffer<CatalogTitle>>({
     pending: [],
@@ -506,21 +524,14 @@ function MediaCatalogSearch({
           </p>
         )}
       {nextPage !== null && (
-        <div className="catalog-more-actions">
+        <div className="catalog-more-actions" ref={suggestionEnd}>
           <Button
             type="button"
             variant="outline"
             className="catalog-more-button"
             aria-busy={busy}
             disabled={busy}
-            onClick={() => {
-              setBusy(true);
-              setRequest((current) => ({
-                ...current,
-                page: nextPage,
-                revision: current.revision + 1,
-              }));
-            }}
+            onClick={more}
           >
             {busy
               ? t(

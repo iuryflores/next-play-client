@@ -8,7 +8,10 @@ export const watchedTime = (item: LibraryItem) => {
   return Number.isFinite(value) ? value : 0;
 };
 export const hasWatched = (item: LibraryItem) =>
-  ['movie', 'series'].includes(item.kind) && watchedTime(item) > 0;
+  ['movie', 'series'].includes(item.kind) &&
+  (watchedTime(item) > 0 ||
+    item.status === 'completed' ||
+    (item.episodeProgress?.watched || 0) > 0);
 export function WatchedWhen({ item }: { item: LibraryItem }) {
   return (
     <small className="watched-when">
@@ -19,7 +22,9 @@ export function WatchedWhen({ item }: { item: LibraryItem }) {
             item.lastWatchedEpisode.episode,
           ) + ' · '
         : ''}
-      {dateLabel(item.lastWatchedAt || '')}
+      {item.lastWatchedAt
+        ? dateLabel(item.lastWatchedAt)
+        : t('Data desconhecida')}
     </small>
   );
 }
@@ -37,8 +42,13 @@ export default function RecentWatched({
   const listRef = useRef<HTMLDivElement>(null);
   const listId = useId();
   const recent = items
-    .filter((item) => !item.archived && hasWatched(item))
-    .sort((a, b) => watchedTime(b) - watchedTime(a) || a.id.localeCompare(b.id));
+    // Sem data conhecida, o consumo pertence ao histórico, não à faixa de recentes.
+    .filter(
+      (item) => !item.archived && hasWatched(item) && watchedTime(item) > 0,
+    )
+    .sort(
+      (a, b) => watchedTime(b) - watchedTime(a) || a.id.localeCompare(b.id),
+    );
   const hasRecent = recent.length > 0;
   useLayoutEffect(() => {
     const list = listRef.current;
@@ -83,20 +93,27 @@ export default function RecentWatched({
         aria-hidden={!expanded}
       >
         <div className="recent-watched-reveal-inner">
-          <div className="recent-watched-list" ref={listRef} style={{ gridTemplateColumns: `repeat(${capacity}, minmax(0, 1fr))` }}>
+          <div
+            className="recent-watched-list"
+            ref={listRef}
+            style={{
+              gridTemplateColumns: `repeat(${capacity}, minmax(0, 1fr))`,
+            }}
+          >
             {recent.slice(0, capacity).map((item) => (
               <button
                 key={item.id}
                 onClick={() => open(item.id)}
                 className="recent-watched-card"
+                aria-label={t('Ver detalhes de {0}', item.title)}
+                title={item.title}
               >
                 <span className="recent-cover-frame">
                   {item.coverUrl && (
                     <img src={item.coverUrl} alt="" loading="lazy" />
                   )}
+                  <WatchedWhen item={item} />
                 </span>
-                <strong>{item.title}</strong>
-                <WatchedWhen item={item} />
               </button>
             ))}
           </div>

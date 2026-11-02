@@ -348,8 +348,12 @@ export default function Stats({
     .filter((item) => item.status === 'completed')
     .sort(
       (a, b) =>
-        (Date.parse(b.completedOn || b.completedAt || '') || 0) -
-        (Date.parse(a.completedOn || a.completedAt || '') || 0),
+        (Date.parse(
+          b.completedOn || (b.watchedDateUnknown ? '' : b.completedAt) || '',
+        ) || 0) -
+        (Date.parse(
+          a.completedOn || (a.watchedDateUnknown ? '' : a.completedAt) || '',
+        ) || 0),
     )
     .slice(0, 5);
   const cards =
@@ -648,9 +652,17 @@ export default function Stats({
                     <article key={item.id}>
                       <strong>{item.title}</strong>
                       <span>
-                        {item.completedOn || item.completedAt
-                          ? dateLabel(item.completedOn || item.completedAt!)
-                          : '—'}
+                        {item.completedOn ||
+                        (item.watchedDateUnknown ? undefined : item.completedAt)
+                          ? dateLabel(
+                              item.completedOn ||
+                                (item.watchedDateUnknown
+                                  ? undefined
+                                  : item.completedAt)!,
+                            )
+                          : item.watchedDateUnknown
+                            ? t('Data desconhecida')
+                            : '—'}
                       </span>
                     </article>
                   ))

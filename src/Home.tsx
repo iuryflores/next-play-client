@@ -1,7 +1,14 @@
+import { groupGames } from './game-groups';
+import {
+  matchesPlatform,
+  platformOptions,
+  missingPlatform,
+} from './game-platform-filter';
 import useHomeRoute from './useHomeRoute';
 import ThemePicker from './ThemePicker';
 import NotificationBell from './NotificationBell';
 import GameTimeAction from './GameTimeAction';
+import TitleCardActions from './TitleCardActions';
 import UserLevelProvider, { UserLevelBadge } from './UserLevel';
 import PageLoading from './PageLoading';
 import PageBoundary from './PageBoundary';
@@ -32,12 +39,12 @@ import {
 import {
   BookOpen,
   Trophy,
+  Flag,
   Film,
   Tv,
   Gamepad2,
   LayoutGrid,
   Bookmark,
-  CalendarDays,
   CalendarClock,
   CheckCheck,
   Plus,
@@ -74,7 +81,13 @@ import MobileNavigation from './MobileNavigation';
 import './mobile.css';
 import QuickActions from './QuickActions';
 import CompletionFields from './CompletionFields';
-import { matchesView, overviewOrder, gameOrder } from './collection-view';
+import {
+  matchesView,
+  overviewOrder,
+  gameOrder,
+  backlogOrder,
+} from './collection-view';
+import { priorityLabels } from './library';
 import type { CatalogTitle } from './CatalogSearch';
 
 // Cada tela tem seu próprio arquivo de produção; voltar a ela reutiliza o módulo baixado.
@@ -87,6 +100,7 @@ const TitleDetails = lazy(() => import('./TitleDetails'));
 const Explore = lazy(() => import('./Explore'));
 const CatalogSearch = lazy(() => import('./CatalogSearch'));
 const Achievements = lazy(() => import('./Achievements'));
+const Challenges = lazy(() => import('./Challenges'));
 
 const icons = { movie: Film, series: Tv, game: Gamepad2, book: BookOpen };
 const views = [
@@ -113,7 +127,7 @@ function Home({
 }) {
   const [items, setItems] = useState<LibraryItem[]>([]);
   const { route, set: setRouteField } = useHomeRoute();
-  const { view, detailId, category, historyMode } = route;
+  const { view, detailId, category, historyMode, platform } = route;
   const setDetailId = (value: string | null) =>
     setRouteField('detailId', value);
   const setView = (value: typeof view) => setRouteField('view', value);
@@ -131,8 +145,15 @@ function Home({
   useEffect(() => {
     setDensity(user.collectionDensity || 'compact');
   }, [user.collectionDensity]);
-  // Para depois, concluídos e histórico usam a mesma preferência da conta em todas as categorias.
-  const supportsDensity = view === 'all' || view === 'completed' || view === 'planned';
+  // Todas as listas de acompanhamento compartilham a densidade salva na conta.
+  const supportsDensity = [
+    'all',
+    'completed',
+    'planned',
+    'coming-soon',
+    'active',
+    'archived',
+  ].includes(view);
   const compactCards = supportsDensity && density === 'compact';
   async function changeDensity(value: string) {
     if (savingDensity) return;
@@ -244,9 +265,15 @@ function Home({
       document.title = t('Entrar · NextPlay');
     };
   }, [reload]);
-  const visible = items.filter(
+  // As opções refletem a lista atual, sem encolher ao pesquisar ou escolher uma plataforma.
+  const cardItems = groupGames(items);
+  const gamePlatforms = platformOptions(
+    cardItems.filter((item) => matchesCollection(item, view)),
+  );
+  const visible = cardItems.filter(
     (item) =>
       (category === 'all' || item.kind === category) &&
+      (category !== 'game' || matchesPlatform(item, platform)) &&
       matchesCollection(item, view) &&
       [
         item.title,
@@ -276,8 +303,11 @@ function Home({
     };
     visible.sort(
       (a, b) =>
+        (view === 'planned' ? backlogOrder(a, b) : 0) ||
         (view === 'coming-soon' ? releaseTime(a) - releaseTime(b) : 0) ||
-        (category === 'game' && view !== 'coming-soon' ? gameOrder(a, b) : 0) ||
+        (category === 'game' && view !== 'coming-soon' && view !== 'planned'
+          ? gameOrder(a, b)
+          : 0) ||
         (view === 'completed' && historyMode
           ? watchedTime(b) - watchedTime(a)
           : 0) ||
@@ -288,6 +318,7 @@ function Home({
     );
   }
   function edit(item: LibraryItem | null) {
+    if (item) item = items.find((original) => original.id === item!.id) || item;
     setSelectedTitle(null);
     setCatalogMode(!item);
     setEditing(item);
@@ -310,6 +341,13 @@ function Home({
   }
   function updateItem(item: LibraryItem, keepExplore = false) {
     const previous = items.find((entry) => entry.id === item.id);
+    // Itens legados podem receber o vínculo pela leitura agrupada antes de ele existir no documento.
+    if (
+      item.kind === 'game' &&
+      item.parentGameCatalogId === undefined &&
+      previous?.parentGameCatalogId
+    )
+      item = { ...item, parentGameCatalogId: previous.parentGameCatalogId };
     if (item.kind === 'series' && !keepExplore) setReload((value) => value + 1);
     setItems((current) => [
       item,
@@ -338,6 +376,9 @@ function Home({
           title: data.get('title'),
           kind,
           status: data.get('status'),
+          ...(data.has('watchedDateUnknown')
+            ? { watchedDateUnknown: data.get('watchedDateUnknown') === 'true' }
+            : {}),
           ...(data.get('completedOn')
             ? { completedOn: data.get('completedOn') }
             : {}),
@@ -346,6 +387,7 @@ function Home({
           favoriteCharacter: data.get('favoriteCharacter') || '',
           favoriteCastId: data.get('favoriteCastId') || '',
           notes: data.get('notes'),
+          ...(data.has('priority') ? { priority: data.get('priority') } : {}),
           ...(kind === 'game'
             ? {
                 platform: data.get('platform') || '',
@@ -640,19 +682,9 @@ function Home({
             kind={kind}
             initialStatus={
               editing?.status ||
-              (view === 'all' ||
-              view === 'explore' ||
-              view === 'add' ||
-              view === 'stats' ||
-              view === 'acervo' ||
-              view === 'incoming' ||
-              view === 'coming-soon' ||
-              view === 'friends' ||
-              view === 'archived' ||
-              view === 'account' ||
-              view === 'achievements'
-                ? 'planned'
-                : view)
+              (view === 'active' || view === 'completed' || view === 'planned'
+                ? view
+                : 'planned')
             }
           />
         </section>
@@ -714,12 +746,20 @@ function Home({
             afterNavigate?.();
             setDetailId(null);
             setHistoryMode(false);
+            if (id === 'coming-soon') {
+              setCategory('all');
+              setSearch('');
+            }
             setView(id);
           }}
         >
           <Icon aria-hidden="true" />
           {label}
-          <span>{items.filter((item) => matchesView(item, id)).length}</span>
+          {id !== 'coming-soon' && (
+            <span>
+              {cardItems.filter((item) => matchesView(item, id)).length}
+            </span>
+          )}
         </button>
       ))}
       <button
@@ -748,16 +788,16 @@ function Home({
         {t('Conquistas')}
       </button>
       <button
-        className={view === 'incoming' ? 'selected' : ''}
-        aria-current={view === 'incoming' ? 'page' : undefined}
+        className={view === 'challenges' ? 'selected' : ''}
+        aria-current={view === 'challenges' ? 'page' : undefined}
         onClick={() => {
           afterNavigate?.();
           setDetailId(null);
-          setView('incoming');
+          setView('challenges');
         }}
       >
-        <CalendarDays aria-hidden="true" />
-        {t('Próximas estreias')}
+        <Flag aria-hidden="true" />
+        {t('Desafios pessoais')}
       </button>
       <button
         className={view === 'explore' ? 'selected' : ''}
@@ -913,6 +953,7 @@ function Home({
             {!detailItem &&
               view !== 'account' &&
               view !== 'achievements' &&
+              view !== 'challenges' &&
               view !== 'acervo' &&
               view !== 'incoming' &&
               view !== 'friends' && (
@@ -937,7 +978,11 @@ function Home({
                         ? t(
                             'Sugestões da nossa coleção de títulos, inspiradas no que você curte.',
                           )
-                        : t('Para assistir, jogar ou ler. No seu tempo.')}
+                        : view === 'coming-soon'
+                          ? t(
+                              'Episódios das suas séries e novos títulos que você está esperando, em um só lugar.',
+                            )
+                          : t('Para assistir, jogar ou ler. No seu tempo.')}
                     </p>
                   </div>
                   <Button
@@ -957,7 +1002,9 @@ function Home({
                   </Button>
                 </section>
               )}
-            {view === 'achievements' ? (
+            {view === 'challenges' ? (
+              <Challenges onExpired={onExpired} />
+            ) : view === 'achievements' ? (
               <Achievements />
             ) : view === 'acervo' ? (
               <Collector
@@ -987,6 +1034,8 @@ function Home({
               />
             ) : detailItem ? (
               <TitleDetails
+                items={items}
+                openTitle={setDetailId}
                 item={detailItem}
                 back={() => setDetailId(null)}
                 edit={edit}
@@ -1000,12 +1049,6 @@ function Home({
                   );
                   setDetailId(null);
                 }}
-              />
-            ) : view === 'incoming' ? (
-              <Incoming
-                items={items}
-                open={setDetailId}
-                onExpired={onExpired}
               />
             ) : view === 'stats' ? (
               <Stats items={items} onExpired={onExpired} />
@@ -1070,7 +1113,7 @@ function Home({
                     {(['all', 'movie', 'series', 'game', 'book'] as const).map(
                       (key) => {
                         const Icon = key === 'all' ? Library : icons[key];
-                        const count = items.filter(
+                        const count = cardItems.filter(
                           (item) =>
                             (key === 'all' || item.kind === key) &&
                             matchesCollection(item, view),
@@ -1079,7 +1122,9 @@ function Home({
                           <TabsTrigger key={key} value={key}>
                             <Icon aria-hidden="true" />
                             {key === 'all' ? t('Todos') : categories[key]}
-                            <span className="tab-count">{count}</span>
+                            {view !== 'coming-soon' && (
+                              <span className="tab-count">{count}</span>
+                            )}
                           </TabsTrigger>
                         );
                       },
@@ -1087,6 +1132,34 @@ function Home({
                   </TabsList>
                 </div>
                 <TabsContent value={category}>
+                  {supportsDensity && (
+                    <div className="collection-density">
+                      <label htmlFor="collection-density">
+                        {t(' Exibição ')}
+                      </label>
+                      <NativeSelect
+                        id="collection-density"
+                        value={density}
+                        disabled={savingDensity}
+                        onChange={(event) => changeDensity(event.target.value)}
+                      >
+                        <option value="compact">{t(' Enxuto ')}</option>
+                        <option value="details">
+                          {t(' Mais informações ')}
+                        </option>
+                      </NativeSelect>
+                    </div>
+                  )}
+                  {view === 'coming-soon' &&
+                    !loading &&
+                    (category === 'all' || category === 'series') && (
+                      <Incoming
+                        compact={compactCards}
+                        items={items}
+                        open={setDetailId}
+                        onExpired={onExpired}
+                      />
+                    )}
                   <section
                     className="collection-section"
                     aria-labelledby="collection-title"
@@ -1111,40 +1184,27 @@ function Home({
                         </Button>
                       </div>
                     )}
-                    {supportsDensity && (
-                      <div className="collection-density">
-                        <label htmlFor="collection-density">
-                          {t(' Exibição ')}
-                        </label>
-                        <NativeSelect
-                          id="collection-density"
-                          value={density}
-                          disabled={savingDensity}
-                          onChange={(event) =>
-                            changeDensity(event.target.value)
-                          }
-                        >
-                          <option value="compact">{t(' Enxuto ')}</option>
-                          <option value="details">
-                            {t(' Mais informações ')}
-                          </option>
-                        </NativeSelect>
-                      </div>
-                    )}
                     <div className="collection-toolbar">
                       <div>
                         <h2 id="collection-title">
-                          {category === 'all'
-                            ? t(
-                                view === 'completed' && historyMode
-                                  ? 'Últimos assistidos'
-                                  : view === 'coming-soon'
-                                    ? 'Em breve'
+                          {view === 'coming-soon'
+                            ? t('Novos títulos')
+                            : category === 'all'
+                              ? t(
+                                  view === 'completed' && historyMode
+                                    ? 'Últimos assistidos'
                                     : 'Seu acompanhamento',
-                              )
-                            : categories[category]}
+                                )
+                              : categories[category]}
                           <span>{visible.length}</span>
                         </h2>
+                        {view === 'coming-soon' && (
+                          <p className="coming-soon-note">
+                            {t(
+                              'Obras da sua lista que ainda serão lançadas, ordenadas pela estreia mais próxima. Datas não anunciadas ficam ao final.',
+                            )}
+                          </p>
+                        )}
                       </div>
                       <div className="collection-search">
                         <Search aria-hidden="true" />
@@ -1156,6 +1216,51 @@ function Home({
                         />
                       </div>
                     </div>
+                    {category === 'game' && (
+                      <div className="game-platform-filter">
+                        <label htmlFor="game-platform-filter">
+                          {t('Plataforma')}
+                        </label>
+                        <NativeSelect
+                          id="game-platform-filter"
+                          value={platform || ''}
+                          onChange={(event) =>
+                            setRouteField(
+                              'platform',
+                              event.target.value || undefined,
+                            )
+                          }
+                        >
+                          <option value="">{t('Todas as plataformas')}</option>
+                          {platform &&
+                            !gamePlatforms.some(
+                              (option) => option.key === platform,
+                            ) && (
+                              <option value={platform}>
+                                {t(
+                                  'Plataforma selecionada sem jogos nesta lista',
+                                )}
+                              </option>
+                            )}
+                          {gamePlatforms.map((option) => (
+                            <option key={option.key} value={option.key}>
+                              {option.key === missingPlatform
+                                ? t('Não informada')
+                                : option.name}{' '}
+                              ({option.count})
+                            </option>
+                          ))}
+                        </NativeSelect>
+                        {platform && (
+                          <Button
+                            variant="ghost"
+                            onClick={() => setRouteField('platform', undefined)}
+                          >
+                            {t('Limpar filtro')}
+                          </Button>
+                        )}
+                      </div>
+                    )}
                     {(notice || error) && (
                       <div className="home-error" role="alert">
                         {notice || error}
@@ -1184,6 +1289,8 @@ function Home({
                         className={`item-grid${compactCards ? ' compact-cards' : ''}`}
                       >
                         {visible.map((item) => {
+                          const original =
+                            items.find((value) => value.id === item.id) || item;
                           const Icon = icons[item.kind];
                           const minimalCover = compactCards;
                           return (
@@ -1230,95 +1337,137 @@ function Home({
                                   )}
                                   onClick={() => setDetailId(item.id)}
                                 />
-                                <Button
-                                  className="edit-item"
-                                  variant="ghost"
-                                  size="icon"
-                                  aria-label={t('Editar {0}', item.title)}
-                                  onClick={() => edit(item)}
-                                >
-                                  <Pencil aria-hidden="true" />
-                                </Button>
+                                <TitleCardActions
+                                  item={original}
+                                  edit={edit}
+                                  changed={updateItem}
+                                  onExpired={onExpired}
+                                  onError={setError}
+                                />
                                 <QuickActions
                                   iconOnly
-                                  owned={item}
+                                  owned={original}
                                   changed={updateItem}
                                   edit={edit}
                                   onExpired={onExpired}
                                 />
-                                {/* Sem páginas registradas, mostramos um selo de estado,
+                                <div className="cover-bottom-content">
+                                  {item.priority &&
+                                    item.priority !== 'none' && (
+                                      <span
+                                        className="backlog-priority"
+                                        data-priority={item.priority}
+                                      >
+                                        {t(
+                                          'Prioridade {0}',
+                                          t(priorityLabels[item.priority]),
+                                        )}
+                                      </span>
+                                    )}
+                                  {/* Sem páginas registradas, mostramos um selo de estado,
                                     nunca uma barra que possa sugerir leitura concluída. */}
-                                {item.kind === 'book' &&
-                                  item.status === 'active' && (
-                                    <div className="book-reading-marker">
-                                      <strong>
-                                        <BookOpen aria-hidden="true" />
-                                        {statusNames.book.active}
-                                      </strong>
-                                    </div>
-                                  )}
-                                {/* O tempo é informado pelo usuário; não representa percentual de conclusão. */}
-                                {item.kind === 'game' && (
-                                  <div className="game-playing-marker">
-                                    <strong>
-                                      <Gamepad2 aria-hidden="true" />
-                                      {statusNames.game[item.status]}
-                                    </strong>
-                                    <small>
-                                      {Math.floor(
-                                        (item.playtimeMinutes || 0) / 60,
-                                      )}
-                                      h
-                                      {String(
-                                        (item.playtimeMinutes || 0) % 60,
-                                      ).padStart(2, '0')}
-                                      min {t('jogadas')}
-                                    </small>
-                                  </div>
-                                )}
-                                {item.kind === 'series' &&
-                                  item.episodeProgress?.initialized &&
-                                  item.episodeProgress.total > 0 && (
-                                    <div className="series-cover-progress">
-                                      <div className="series-cover-progress-label">
+                                  {item.kind === 'book' &&
+                                    item.status === 'active' && (
+                                      <div className="book-reading-marker">
                                         <strong>
-                                          {Math.min(
-                                            100,
-                                            Math.round(
-                                              (item.episodeProgress.watched /
-                                                item.episodeProgress.total) *
-                                                100,
-                                            ),
-                                          )}
-                                          {t(' % assistido ')}
+                                          <BookOpen aria-hidden="true" />
+                                          {statusNames.book.active}
                                         </strong>
-                                        <small>
-                                          {Math.max(
-                                            0,
-                                            item.episodeProgress.total -
-                                              item.episodeProgress.watched,
-                                          )}{' '}
-                                          {t(' episódios restantes ')}
-                                        </small>
                                       </div>
-                                      <progress
-                                        value={Math.min(
-                                          item.episodeProgress.watched,
-                                          item.episodeProgress.total,
+                                    )}
+                                  {/* O tempo é informado pelo usuário; não representa percentual de conclusão. */}
+                                  {item.kind === 'game' && (
+                                    <div className="game-playing-marker">
+                                      <strong>
+                                        <Gamepad2 aria-hidden="true" />
+                                        {statusNames.game[item.status]}
+                                      </strong>
+                                      <small>
+                                        {Math.floor(
+                                          (item.playtimeMinutes || 0) / 60,
                                         )}
-                                        max={item.episodeProgress.total}
-                                        aria-label={t(
-                                          'Progresso de {0}',
-                                          item.title,
+                                        h
+                                        {String(
+                                          (item.playtimeMinutes || 0) % 60,
+                                        ).padStart(2, '0')}
+                                        min{' '}
+                                        {t(
+                                          item.gameParts
+                                            ? 'no total com DLCs'
+                                            : 'jogadas',
                                         )}
-                                        aria-valuetext={t(
-                                          '{0} de {1} episódios assistidos',
-                                          item.episodeProgress.watched,
-                                          item.episodeProgress.total,
-                                        )}
-                                      />
+                                      </small>
+                                      {item.lastPlayedOn && (
+                                        <small>
+                                          {t('Última vez jogado')}:{' '}
+                                          {dateLabel(item.lastPlayedOn)}
+                                        </small>
+                                      )}
                                     </div>
                                   )}
+                                  {item.kind === 'series' &&
+                                    item.episodeProgress?.initialized &&
+                                    item.episodeProgress.total > 0 && (
+                                      <div className="series-cover-progress">
+                                        {/* Usa o próximo pendente salvo, sem deduzir episódio pelo percentual. */}
+                                        {view === 'all' &&
+                                          item.episodeProgress.next?.episode !=
+                                            null && (
+                                            <div
+                                              className="series-current-episode"
+                                              title={
+                                                item.episodeProgress.next.name
+                                              }
+                                            >
+                                              {t(
+                                                'Próximo: T{0} E{1}',
+                                                item.episodeProgress.next
+                                                  .season,
+                                                item.episodeProgress.next
+                                                  .episode,
+                                              )}
+                                            </div>
+                                          )}
+                                        <div className="series-cover-progress-label">
+                                          <strong>
+                                            {Math.min(
+                                              100,
+                                              Math.round(
+                                                (item.episodeProgress.watched /
+                                                  item.episodeProgress.total) *
+                                                  100,
+                                              ),
+                                            )}
+                                            {t(' % assistido ')}
+                                          </strong>
+                                          <small>
+                                            {Math.max(
+                                              0,
+                                              item.episodeProgress.total -
+                                                item.episodeProgress.watched,
+                                            )}{' '}
+                                            {t(' episódios restantes ')}
+                                          </small>
+                                        </div>
+                                        <progress
+                                          value={Math.min(
+                                            item.episodeProgress.watched,
+                                            item.episodeProgress.total,
+                                          )}
+                                          max={item.episodeProgress.total}
+                                          aria-label={t(
+                                            'Progresso de {0}',
+                                            item.title,
+                                          )}
+                                          aria-valuetext={t(
+                                            '{0} de {1} episódios assistidos',
+                                            item.episodeProgress.watched,
+                                            item.episodeProgress.total,
+                                          )}
+                                        />
+                                      </div>
+                                    )}
+                                </div>
                               </div>
                               <div
                                 className={`item-info ${minimalCover && item.coverUrl ? 'cover-only-info' : ''}`}
@@ -1351,7 +1500,8 @@ function Home({
                                 </div>
                                 {item.kind === 'game' && (
                                   <GameTimeAction
-                                    item={item}
+                                    item={original}
+                                    parts={item.gameParts}
                                     changed={updateItem}
                                     onExpired={onExpired}
                                   />
@@ -1406,7 +1556,7 @@ function Home({
                                 {!compactCards && (
                                   <QuickActions
                                     compact={compactCards}
-                                    owned={item}
+                                    owned={original}
                                     changed={updateItem}
                                     edit={edit}
                                     onExpired={onExpired}

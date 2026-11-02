@@ -4,6 +4,7 @@ import { homePaths, homeRouteUrl, readHomeRoute } from '../src/home-route.ts';
 
 test('cada tela mantém endereço próprio e pode ser restaurada após refresh', () => {
   for (const [view, path] of Object.entries(homePaths)) {
+    if (view === 'incoming') continue;
     const route = { view, detailId: null, category: 'all', historyMode: false };
     assert.equal(homeRouteUrl(route), path);
     assert.deepEqual(
@@ -11,6 +12,21 @@ test('cada tela mantém endereço próprio e pode ser restaurada após refresh',
       route,
     );
   }
+});
+
+test('link antigo de estreias abre Em breve e preserva filtros e título selecionado', () => {
+  const id = 'a'.repeat(24);
+  const route = readHomeRoute(
+    new URL(`https://nextplay.example/estreias?categoria=series&titulo=${id}`),
+  );
+  assert.equal(route.view, 'coming-soon');
+  assert.equal(route.category, 'series');
+  assert.equal(route.detailId, id);
+  assert.equal(homeRouteUrl(route), `/em-breve?categoria=series&titulo=${id}`);
+  assert.equal(
+    homeRouteUrl({ ...route, view: 'incoming' }),
+    `/em-breve?categoria=series&titulo=${id}`,
+  );
 });
 
 test('detalhes, categoria e histórico sobrevivem à releitura da URL e ao voltar', () => {
@@ -64,4 +80,17 @@ test('endereços e filtros inválidos retornam valores seguros sem interferir no
       historyMode: false,
     }).includes('private-token'),
   );
+});
+
+
+test('plataforma de jogos sobrevive ao refresh e à abertura dos detalhes, sem filtrar outras mídias', () => {
+  const route = { view: 'all', category: 'game', historyMode: false, detailId: null, platform: 'platform:playstation 5' };
+  const url = homeRouteUrl(route);
+  assert.deepEqual(readHomeRoute(new URL(url, 'https://nextplay.example')), route);
+  const details = { ...route, detailId: 'b'.repeat(24) };
+  assert.deepEqual(readHomeRoute(new URL(homeRouteUrl(details), 'https://nextplay.example')), details);
+  assert.ok(!homeRouteUrl({ ...route, category: 'movie' }).includes('plataforma'));
+  assert.equal(readHomeRoute(new URL('https://nextplay.example/biblioteca?categoria=movie&plataforma=platform:pc')).platform, undefined);
+  assert.equal(readHomeRoute(new URL('https://nextplay.example/biblioteca?categoria=game&plataforma=invalid')).platform, undefined);
+  assert.equal(readHomeRoute(new URL('https://nextplay.example/biblioteca?categoria=game&plataforma=missing')).platform, 'missing');
 });

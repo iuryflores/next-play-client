@@ -335,7 +335,7 @@ export default function Explore({
         3,
       );
       // Páginas repetidas ou filtradas não podem disparar uma cadeia de consultas
-      // automáticas. O botão permite continuar explicitamente a partir do cursor salvo.
+      // automáticas. A próxima rolagem retoma a partir do cursor salvo.
       if (!controller.signal.aborted && !batch.results.length && batch.hasMore)
         setAutoPaused((current) => ({ ...current, [section.kind]: true }));
       if (!controller.signal.aborted)
@@ -408,6 +408,19 @@ export default function Explore({
     const section = sections.find((value) => value.kind === kind);
     if (section) void loadMore(section, true);
   });
+  const continueAfterScroll = useEffectEvent(() => {
+    // Uma página sem títulos novos pausa só até a próxima rolagem, sem exigir clique.
+    if (!preview && !moreRequest.current && autoPaused[filter])
+      setAutoPaused((current) => ({ ...current, [filter]: false }));
+  });
+  useEffect(() => {
+    window.addEventListener('scroll', continueAfterScroll, {
+      capture: true,
+      passive: true,
+    });
+    return () =>
+      window.removeEventListener('scroll', continueAfterScroll, true);
+  }, []);
   useEffect(() => {
     if (
       loading ||
@@ -424,7 +437,7 @@ export default function Explore({
             loadVisibleEnd((entry.target as HTMLElement).dataset.kind as Kind);
         }
       },
-      { rootMargin: '0px 0px 120px 0px' },
+      { rootMargin: '0px 0px 400px 0px' },
     );
     for (const section of sections) {
       if (

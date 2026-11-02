@@ -1,3 +1,4 @@
+import WatchDateField from './WatchDateField';
 import { RefreshCw } from 'lucide-react';
 import IconAction from './IconAction';
 import PageLoading from './PageLoading';
@@ -56,6 +57,7 @@ export default function Episodes({
   const [confirmation, setConfirmation] = useState<
     'through' | 'season' | 'series' | null
   >(null);
+  const batchDateForm = useRef<HTMLFormElement>(null);
   const [retry, setRetry] = useState(0);
   const expired = useEffectEvent(onExpired);
   const progressUpdated = useEffectEvent(onProgress);
@@ -106,6 +108,7 @@ export default function Episodes({
     try {
       const watch = body as {
         watched?: boolean;
+        watchedDateUnknown?: boolean;
         scope?: string;
         season?: number;
         episode?: number;
@@ -127,8 +130,10 @@ export default function Episodes({
           reviewed,
           { itemId, season: watch.season, episode: watch.episode },
           item,
-          Boolean(reviewed?.watchedAt),
-          reviewed,
+          Boolean(reviewed?.watched || reviewed?.watchedAt),
+          reviewed && watch.watchedDateUnknown !== undefined
+            ? { ...reviewed, watchedDateUnknown: watch.watchedDateUnknown }
+            : reviewed,
         );
         if (!review || !mounted.current) return;
         body = { ...body, ...review };
@@ -141,6 +146,15 @@ export default function Episodes({
         importing === 'unwatch-many';
       if (!mounted.current) return;
       setData(result);
+      // O salvamento já está confirmado. A volta ao acompanhamento não depende
+      // de importar a próxima temporada; os cards carregam esse detalhe depois.
+      returnAfterSave =
+        (method === 'PATCH' && watch.watched === true) ||
+        importing === 'watch-many';
+      if (returnAfterSave && onWatched) {
+        setSelection(nextEpisode(result));
+        return;
+      }
       if (target !== undefined) {
         const season = result.seasons.find((value) => value.number === target);
         setSelection({
@@ -154,8 +168,6 @@ export default function Episodes({
           setSelection(nextEpisode(result));
         }
       }
-      // Assistir volta à coleção após salvar; importar ou desmarcar mantém o acompanhamento.
-      returnAfterSave = (method === 'PATCH' && watch.watched === true) || importing === 'watch-many';
     } catch (reason) {
       if (!mounted.current) return;
       if (reason instanceof ApiError && reason.status === 401) onExpired();
@@ -184,7 +196,8 @@ export default function Episodes({
   const today = new Date().toISOString().slice(0, 10);
   const future = !!episode?.airDate && episode.airDate > today;
   const watched =
-    season?.episodes.filter((value) => value.watchedAt).length || 0;
+    season?.episodes.filter((value) => value.watched || value.watchedAt)
+      .length || 0;
   async function confirmUnwatch() {
     if (!unwatch || busy || pending.current) return;
     const target = unwatch;
@@ -323,12 +336,18 @@ export default function Episodes({
             {episode.runtime ? ` · ${episode.runtime} min` : ''}
           </small>
           <p>{episode.overview || t('Sinopse não disponível no catálogo.')}</p>
-          {episode.watchedAt && (
+          {(episode.watched || episode.watchedAt) && (
             <p>
-              {t(' Assistido em ')} {dateLabel(episode.watchedAt)}
+              {episode.watchedDateUnknown ? (
+                t('Assistido · data desconhecida')
+              ) : (
+                <>
+                  {t(' Assistido em ')} {dateLabel(episode.watchedAt!)}
+                </>
+              )}
             </p>
           )}
-          {episode.watchedAt && (
+          {(episode.watched || episode.watchedAt) && (
             <div>
               <p>
                 {episode.stars ? `${episode.stars}/5 ★` : t('Sem nota')}
@@ -365,10 +384,12 @@ export default function Episodes({
           <Button
             type="button"
             className="home-primary"
-            disabled={busy || (future && !episode.watchedAt)}
+            disabled={
+              busy || (future && !(episode.watched || episode.watchedAt))
+            }
             onClick={() => {
               if (
-                !episode.watchedAt &&
+                !(episode.watched || episode.watchedAt) &&
                 data &&
                 hasEarlierUnwatched(data, {
                   season: season.number,
@@ -380,11 +401,11 @@ export default function Episodes({
                 void run('PATCH', {
                   season: season.number,
                   episode: episode.number,
-                  watched: !episode.watchedAt,
+                  watched: !(episode.watched || episode.watchedAt),
                 });
             }}
           >
-            {episode.watchedAt
+            {episode.watched || episode.watchedAt
               ? t('Marcar como não assistido')
               : future
                 ? t('Aguardando estreia')
@@ -455,7 +476,7 @@ export default function Episodes({
                   value.name,
                 )}
                 type="button"
-                className={`episode-row ${value.watchedAt ? 'watched' : ''}`}
+                className={`episode-row ${value.watched || value.watchedAt ? 'watched' : ''}`}
                 key={value.number}
                 disabled={busy}
                 aria-pressed={value.number === episode?.number}
@@ -468,7 +489,9 @@ export default function Episodes({
                     E{String(value.number).padStart(2, '0')} · {value.name}
                   </strong>
                   <small>
-                    {value.watchedAt ? t('Assistido ✓') : t('Pendente')}
+                    {value.watched || value.watchedAt
+                      ? t('Assistido ✓')
+                      : t('Pendente')}
                   </small>
                 </span>
               </button>
@@ -641,6 +664,12 @@ export default function Episodes({
                   'Todos os episódios já lançados desta seleção serão marcados como assistidos e somados às estatísticas. Marcações existentes serão preservadas.',
                 )}
           </DialogDescription>
+          <form
+            ref={batchDateForm}
+            onSubmit={(event) => event.preventDefault()}
+          >
+            <WatchDateField key={String(confirmation)} />
+          </form>
           {confirmation === 'season' && (
             <form
               ref={seasonVoteForm}
@@ -700,6 +729,11 @@ export default function Episodes({
                     'POST',
                     {
                       scope,
+                      watchedDateUnknown: batchDateForm.current
+                        ? new FormData(batchDateForm.current).get(
+                            'watchedDateUnknown',
+                          ) === 'true'
+                        : false,
                       ...(favoriteCharacter
                         ? {
                             favoriteCharacter,

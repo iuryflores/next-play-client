@@ -4,6 +4,13 @@ import { ApiError } from './auth';
 import { achievementActivity } from './achievement-client';
 export type Kind = 'movie' | 'series' | 'game' | 'book';
 export type Status = 'planned' | 'active' | 'completed';
+export type Priority = 'none' | 'high' | 'medium' | 'low';
+export const priorityLabels: Record<Priority, string> = {
+  none: 'Sem prioridade',
+  high: 'Alta',
+  medium: 'Média',
+  low: 'Baixa',
+};
 export interface LibraryItem {
   id: string;
   title: string;
@@ -14,6 +21,7 @@ export interface LibraryItem {
   language?: string;
   kind: Kind;
   status: Status;
+  priority?: Priority;
   inProgress?: boolean;
   caughtUp?: boolean;
   lastWatchedAt?: string;
@@ -31,6 +39,7 @@ export interface LibraryItem {
       airDate?: string;
     } | null;
   };
+  watchedDateUnknown?: boolean;
   completedOn?: string;
   completedAt?: string;
   episodesCompletedAt?: string;
@@ -40,8 +49,10 @@ export interface LibraryItem {
   favoriteCastId?: string;
   updatedAt: string;
   genres?: string[];
+  parentGameCatalogId?: string;
   platform?: string;
   playtimeMinutes?: number;
+  lastPlayedOn?: string | null;
   catalogId?: string;
   coverUrl?: string;
   year?: string;
@@ -81,11 +92,13 @@ export async function libraryRequest<T>(
   id = '',
   body?: object,
   action?:
+    | 'priority'
     | 'playtime'
     | 'archive'
     | 'upcoming'
     | 'runtime'
     | 'production-companies'
+    | 'game-estimate'
     | 'directors'
     | 'trailer',
   visitId?: string,
@@ -125,7 +138,10 @@ export async function libraryRequest<T>(
       achievementActivity();
     if (
       method !== 'GET' &&
-      (!action || action === 'archive' || action === 'playtime')
+      (!action ||
+        action === 'archive' ||
+        action === 'playtime' ||
+        action === 'priority')
     )
       notifySaved(
         t(method === 'DELETE' ? 'Removido da coleção.' : 'Alterações salvas.'),

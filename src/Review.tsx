@@ -1,3 +1,4 @@
+import WatchDateField from './WatchDateField';
 import { t, genreLabel, dateLabel } from './i18n';
 import type { Episode } from './episode-navigation';
 import type { LibraryItem } from './library';
@@ -35,6 +36,7 @@ export const feelings: Record<string, string> = {
   disliked: t('🙁 Não gostei'),
 };
 export type ReviewValue = {
+  watchedDateUnknown?: boolean;
   stars: number;
   feeling: string;
   favoriteCharacter: string;
@@ -170,7 +172,7 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
             {!target?.item && !target?.episode && target?.title}
             {target?.editing
               ? t(
-                  'Atualize sua avaliação. A data em que você assistiu será mantida.',
+                  'Atualize sua avaliação e informe se não souber a data em que assistiu.',
                 )
               : target?.item || target?.episode
                 ? t('Avalie antes de confirmar como assistido.')
@@ -198,6 +200,12 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
                 const character = data.get('favoriteCharacter');
                 const castId = data.get('favoriteCastId');
                 finish({
+                  ...(data.has('watchedDateUnknown')
+                    ? {
+                        watchedDateUnknown:
+                          data.get('watchedDateUnknown') === 'true',
+                      }
+                    : {}),
                   stars: Number(data.get('stars') || 0),
                   feeling: typeof feeling === 'string' ? feeling : '',
                   favoriteCastId: typeof castId === 'string' ? castId : '',
@@ -206,6 +214,14 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
                 });
               }}
             >
+              {(target.episode || target.item?.kind === 'movie') && (
+                <WatchDateField
+                  initialUnknown={
+                    target.episode?.watchedDateUnknown ??
+                    target.item?.watchedDateUnknown
+                  }
+                />
+              )}
               <ReviewFields
                 initial={target.initial}
                 target={target.castTarget}

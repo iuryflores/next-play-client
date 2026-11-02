@@ -6,6 +6,8 @@ export type Episode = {
   stillUrl?: string;
   runtime?: number | null;
   watchedAt: string | null;
+  watched?: boolean;
+  watchedDateUnknown?: boolean;
   stars?: number;
   feeling?: string;
   favoriteCharacter?: string;
@@ -28,7 +30,10 @@ export function nextEpisode(data: EpisodeData): EpisodeSelection | null {
     if (!season.loaded) return { season: season.number, episode: null };
     const episode = [...season.episodes]
       .sort((a, b) => a.number - b.number)
-      .find((episode) => !episode.watchedAt);
+      .find(
+        (episode) =>
+          !(episode.watched || episode.watchedAt || episode.watchedDateUnknown),
+      );
     if (episode) return { season: season.number, episode: episode.number };
   }
   return null;
@@ -48,7 +53,7 @@ export function hasEarlierUnwatched(
     return season.episodes.some(
       (episode) =>
         (season.number < target.season || episode.number < target.episode) &&
-        !episode.watchedAt,
+        !(episode.watched || episode.watchedAt || episode.watchedDateUnknown),
     );
   });
 }

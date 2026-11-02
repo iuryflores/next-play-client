@@ -26,3 +26,13 @@ assert.equal(hasEarlierUnwatched(data,{season:1,episode:3}),true);
 assert.equal(hasEarlierUnwatched({...data,seasons:[season(1,[],false),season(2,[ep(1)])]},{season:2,episode:1}),true);
 assert.equal(hasEarlierUnwatched(data,{season:0,episode:1}),false);
 });
+
+
+test('episódios assistidos sem data não reaparecem como pendentes', () => {
+  const unknown = { ...ep(1), watched: true, watchedDateUnknown: true };
+  const data = { supported: true, seasons: [season(1, [unknown, ep(2)])] };
+  assert.deepEqual(nextEpisode(data), { season: 1, episode: 2 });
+  assert.equal(hasEarlierUnwatched(data, { season: 1, episode: 2 }), false);
+  data.seasons[0].episodes[1] = { ...ep(2), watched: true, watchedDateUnknown: true };
+  assert.equal(nextEpisode(data), null);
+});

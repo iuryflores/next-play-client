@@ -29,7 +29,7 @@
 .details-status-actions > .details-watched-banner { flex: 1; min-width: 0; min-height: 52px; margin: 0; padding: 12px 16px; }
 .title-details-hero .details-title-icons,
 .title-details-hero .title-details-actions { display: flex; align-items: center; gap: 4px; margin: 0; }
-.title-details-hero .details-top-actions button { width: 36px; height: 36px; border: 0; box-shadow: none; }
+.title-details-hero .details-top-actions button:not(.archive-title-action) { width: 36px; height: 36px; border: 0; box-shadow: none; }
 .title-details-hero .details-top-actions button svg { width: 18px; height: 18px; }
 .title-details-hero .details-top-actions button:disabled { opacity: 0.35; }
 .details-artwork {
@@ -517,3 +517,62 @@
 .rt-footer > .rt-query-date { margin: 0; }
 .rt-footer > .rt-correct-match { font-size: 0.75rem; font-weight: 400; min-height: 28px; height: auto; margin: 0; padding: 4px 0; color: var(--ink-muted, #b7a9c9); gap: 5px; }
 .rt-correct-match svg { width: 12px; height: 12px; }
+/* Ações secundárias usam somente ícones, com alvos de clique e espaçamento consistentes. */
+.title-details-hero .details-top-actions { gap: 4px; max-width: 100%; }
+.title-details-hero .details-title-icons,
+.title-details-hero .title-details-actions { gap: 4px; padding: 0; border: 0; border-radius: 0; background: transparent; }
+.title-details-hero .details-top-actions button { border-radius: 8px; background: transparent; }
+.title-details-hero .details-top-actions button:hover:not(:disabled) { background: var(--muted); }
+.title-details-hero .details-top-actions .archive-title-action { width: 36px; height: 36px; flex: 0 0 36px; padding: 0; border: 0; border-radius: 8px; color: var(--foreground); box-shadow: none; }
+.title-details-hero .archive-title-action svg { flex-shrink: 0; }
+.title-details-hero .archive-title-action:hover { background: var(--muted); }
+.title-details-hero .details-top-actions .remove-item { flex-shrink: 0; border-radius: 8px; color: var(--destructive); }
+.title-details-hero .details-top-actions .remove-item:hover { background: color-mix(in srgb, var(--destructive) 10%, transparent); }
+/* A margem antiga das ações do formulário não se aplica à barra de ícones do cabeçalho. */
+.title-details-hero .details-top-actions .title-details-actions,
+.title-details-hero .details-top-actions .details-title-icons {
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+.title-details-hero .details-top-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 36px;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+}
+.title-details-hero .details-top-actions button svg {
+  display: block;
+  flex-shrink: 0;
+}
+/* A série em andamento abre no episódio; informações gerais ocupam a coluna lateral. */
+.series-follow-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 300px); grid-template-areas: 'episode summary' 'extras summary'; gap: 24px; align-items: start; }
+.series-episode-focus { grid-area: episode; min-width: 0; outline: none; }
+.series-follow-layout > .title-details-hero { grid-area: summary; display: flex; flex-direction: column; gap: 16px; padding: 20px; margin: 0; border-radius: 18px; min-width: 0; }
+.series-follow-layout .details-artwork { width: 92px; }
+.series-follow-layout .title-details-poster { border-radius: 10px; }
+.series-follow-layout .details-intro { min-width: 0; width: 100%; }
+.series-follow-layout .details-intro h1 { font-size: 22px; line-height: 1.25; letter-spacing: -.5px; }
+.series-follow-layout .details-meta { font-size: 11px; }
+.series-follow-layout .details-genre-tags { gap: 5px; margin-block: 12px; }
+.series-follow-layout .details-genre-tags > span { font-size: 10px; padding: 4px 7px; }
+.series-follow-layout > .details-content-grid { grid-area: extras; display: block; min-width: 0; }
+.series-follow-layout .episodes-panel { margin: 0; border-color: color-mix(in srgb, var(--primary) 35%, var(--border)); }
+.series-follow-layout .episodes-panel > h3 { font-size: 22px; letter-spacing: -.5px; }
+.series-follow-layout .episode-detail > h4 { font-size: clamp(22px, 3vw, 30px); line-height: 1.25; }
+.series-information { border-top: 1px solid var(--border); margin-top: 18px; padding-top: 14px; }
+.series-information > summary { cursor: pointer; font-size: 12px; color: var(--primary); }
+.series-information .details-synopsis p { font-size: 12px; line-height: 1.7; }
+@media (max-width: 1000px) {
+  .series-follow-layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'episode' 'summary' 'extras'; gap: 20px; }
+  .series-follow-layout > .title-details-hero { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 16px; padding: 16px; }
+  .series-follow-layout .details-artwork { width: 72px; }
+  .series-follow-layout .details-intro h1 { font-size: 20px; }
+}
+.series-follow-layout .details-trailer-cast { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; width: 100%; border-top: 1px solid var(--border); padding-top: 18px; }
+.series-follow-layout .details-trailer-cast .trailer-heading,
+.series-follow-layout .details-trailer-cast .cast-picker > legend { font-size: 13px; }
+@media (max-width: 1000px) { .series-follow-layout > .title-details-hero > .details-trailer-cast { grid-column: 1 / -1; } }
