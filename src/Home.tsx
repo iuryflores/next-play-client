@@ -343,9 +343,10 @@ function Home({
           ...(kind === 'game'
             ? {
                 platform: data.get('platform') || '',
-                playtimeMinutes: Math.round(
-                  Number(data.get('playtimeHours') || 0) * 60,
-                ),
+                // O banco mantém minutos inteiros para preservar o tempo exato entre edições.
+                playtimeMinutes:
+                  Number(data.get('playtimeHours') || 0) * 60 +
+                  Number(data.get('playtimeMinutes') || 0),
               }
             : {}),
           ...(kind === 'book' && (selectedTitle || editing?.catalogId)
@@ -592,20 +593,36 @@ function Home({
                   </option>
                 ))}
               </datalist>
-              <label htmlFor="game-playtime">{t('Horas jogadas')}</label>
-              <Input
-                id="game-playtime"
-                name="playtimeHours"
-                type="number"
-                min="0"
-                max="100000"
-                step="any"
-                // Três casas preservam os minutos salvos ao reabrir e salvar o formulário.
-                defaultValue={Number(
-                  ((editing?.playtimeMinutes || 0) / 60).toFixed(3),
-                )}
-              />
+              <div className="item-form-columns">
+                <div>
+                  <label htmlFor="game-playtime">{t('Horas')}</label>
+                  <Input
+                    id="game-playtime"
+                    name="playtimeHours"
+                    type="number"
+                    min="0"
+                    max="100000"
+                    step="1"
+                    defaultValue={Math.floor(
+                      (editing?.playtimeMinutes || 0) / 60,
+                    )}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="game-playtime-minutes">{t('Minutos')}</label>
+                  <Input
+                    id="game-playtime-minutes"
+                    name="playtimeMinutes"
+                    type="number"
+                    min="0"
+                    max="59"
+                    step="1"
+                    defaultValue={(editing?.playtimeMinutes || 0) % 60}
+                  />
+                </div>
+              </div>
               <small>
+                {t('Exemplo: 4 horas e 50 minutos = 4h50min.')}{' '}
                 {t(
                   'Informe o total acumulado. O tempo é mantido ao mudar o status do jogo.',
                 )}

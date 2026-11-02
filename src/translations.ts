@@ -933,6 +933,9 @@ Nenhum tempo jogado registrado ainda.|No play time recorded yet.|Todavía no hay
 A taxa de conclusão compara jogos concluídos com o total cadastrado, incluindo arquivados.|The completion rate compares completed games with all tracked games, including archived ones.|La tasa de finalización compara los juegos completados con el total registrado, incluidos los archivados.
 Ver todos|View all|Ver todos
 Mostrar menos|Show less|Mostrar menos
+Horas|Hours|Horas
+Minutos|Minutes|Minutos
+Exemplo: 4 horas e 50 minutos = 4h50min.|Example: 4 hours and 50 minutes = 4h50min.|Ejemplo: 4 horas y 50 minutos = 4h50min.
 `;
 export const translations: Record<string, [string, string]> =
   Object.fromEntries(
