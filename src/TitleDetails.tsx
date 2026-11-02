@@ -10,10 +10,11 @@ import { dateLabel } from './i18n';
 import ReleaseBadge from './ReleaseBadge';
 import Trailer from './Trailer';
 import RottenTomatoes from './RottenTomatoes';
+import { ShareTitleAction } from './SharedTitle';
 import MovieDirectors from './MovieDirectors';
 import IconAction from './IconAction';
 import { t } from './i18n';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { categories, statusNames, type LibraryItem } from './library';
 import OriginalTitle from './OriginalTitle';
 import Episodes from './Episodes';
@@ -53,6 +54,7 @@ export default function TitleDetails({
   onExpired: () => void;
   removed: (id: string) => void;
 }) {
+  const [communityRating, setCommunityRating] = useState<number | null>(null);
   const parentGame = item.parentGameCatalogId
     ? items.find((part) => part.catalogId === item.parentGameCatalogId)
     : undefined;
@@ -75,6 +77,8 @@ export default function TitleDetails({
   }, [item.id, followingSeries]);
   const scores = (item.kind === 'movie' || item.kind === 'series') && (
     <RottenTomatoes
+      personalStars={item.stars}
+      communityRating={communityRating}
       kind={item.kind}
       key={`rotten-tomatoes-${item.id}`}
       title={item.originalTitle || item.title}
@@ -415,7 +419,9 @@ export default function TitleDetails({
             )}
             {!followingSeries && trailerCast}
             {!followingSeries && episodePanel}
+            <ShareTitleAction itemId={item.id} onExpired={onExpired} />
             <Community
+              onRating={setCommunityRating}
               key={`community-${item.id}-${focusCommentId || 'list'}`}
               itemId={item.id}
               focusCommentId={focusCommentId}

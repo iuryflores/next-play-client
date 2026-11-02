@@ -15,6 +15,7 @@ import { ApiError } from './auth';
 import './community.css';
 
 type Comment = {
+  spoiler?: boolean;
   id: string;
   parentId: string | null;
   text: string;
@@ -116,9 +117,20 @@ function CommentCard({
         </strong>
         <time dateTime={comment.createdAt}>{dateLabel(comment.createdAt)}</time>
       </header>
-      <p>
-        {comment.deleted ? <em>{t('Comentário removido')}</em> : comment.text}
-      </p>
+      {comment.deleted ? (
+        <p>
+          <em>{t('Comentário removido')}</em>
+        </p>
+      ) : comment.spoiler !== false ? (
+        <details>
+          <summary>
+            {t('Conteúdo protegido: revelar possíveis spoilers')}
+          </summary>
+          <p>{comment.text}</p>
+        </details>
+      ) : (
+        <p>{comment.text}</p>
+      )}
       {!comment.deleted && (
         <div className="comment-actions">
           <Button
@@ -176,10 +188,12 @@ export default function Community({
   itemId,
   focusCommentId,
   onExpired,
+  onRating,
 }: {
   itemId: string;
   focusCommentId?: string;
   onExpired: () => void;
+  onRating?: (average: number | null) => void;
 }) {
   const [data, setData] = useState<CommunityData | null>(null);
   const [threads, setThreads] = useState<Record<string, Thread>>({});
@@ -187,6 +201,7 @@ export default function Community({
   const [replying, setReplying] = useState<string | null>(null);
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const [text, setText] = useState('');
+  const [spoilers, setSpoilers] = useState<Record<string, boolean>>({});
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const pending = useRef(false);
@@ -195,6 +210,9 @@ export default function Community({
   const [revision, setRevision] = useState(0);
   const [confirmDelete, setConfirmDelete] = useState('');
   const expired = useEffectEvent(onExpired);
+  const ratingChanged = useEffectEvent((average: number | null) =>
+    onRating?.(average),
+  );
   useEffect(() => {
     let active = true;
     void Promise.all([
@@ -205,6 +223,7 @@ export default function Community({
     ])
       .then(([result, thread]) => {
         if (!active) return;
+        ratingChanged(result.ratingSummary?.average ?? null);
         const incoming = thread
           ? mergeRows(result.comments, [thread.comment], true)
           : result.comments;
@@ -305,7 +324,12 @@ export default function Community({
     if (!value) return;
     const key = root?.id || 'root';
     void action(async () => {
-      const body = { text: value, clientRequestId: publicationId(key, value) };
+      const spoiler = spoilers[key] !== false;
+      const body = {
+        text: value,
+        spoiler,
+        clientRequestId: publicationId(key, JSON.stringify([value, spoiler])),
+      };
       if (root) {
         const result = await request<{ comment: Comment }>(
           itemId,
@@ -516,6 +540,19 @@ export default function Community({
                     <label htmlFor={`reply-${comment.id}`}>
                       {t('Sua resposta')}
                     </label>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={spoilers[comment.id] !== false}
+                        onChange={(event) =>
+                          setSpoilers({
+                            ...spoilers,
+                            [comment.id]: event.target.checked,
+                          })
+                        }
+                      />
+                      {t('Proteger possíveis spoilers')}
+                    </label>
                     <textarea
                       id={`reply-${comment.id}`}
                       value={drafts[comment.id] || ''}
@@ -581,6 +618,16 @@ export default function Community({
         </Button>
       )}
       <form onSubmit={(event) => post(event)} className="community-form">
+        <label>
+          <input
+            type="checkbox"
+            checked={spoilers.root !== false}
+            onChange={(event) =>
+              setSpoilers({ ...spoilers, root: event.target.checked })
+            }
+          />
+          {t('Proteger possíveis spoilers')}
+        </label>
         <label htmlFor={`public-comment-${itemId}`}>
           {t(' Comentário compartilhado ')}
         </label>

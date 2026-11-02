@@ -37,12 +37,16 @@ export default function RottenTomatoes({
   catalogId,
   kind = 'movie',
   onExpired,
+  personalStars,
+  communityRating,
 }: {
   title: string;
   year?: string;
   catalogId?: string;
   kind?: 'movie' | 'series';
   onExpired: () => void;
+  personalStars?: number;
+  communityRating?: number | null;
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState(title.slice(0, 100));
@@ -161,6 +165,14 @@ export default function RottenTomatoes({
             <>
               <dl className="rt-scores">
                 <div>
+                  <dt>{t('Sua nota')}</dt>
+                  <dd>{personalStars ? personalStars + '/5' : '—'}</dd>
+                </div>
+                <div>
+                  <dt>{t('Comunidade')}</dt>
+                  <dd>{communityRating?.toFixed(2) ?? '—'} /5</dd>
+                </div>
+                <div>
                   <dt>
                     <span className="rt-score-icon" aria-hidden="true">
                       🍅
@@ -187,6 +199,15 @@ export default function RottenTomatoes({
                   </dd>
                 </div>
               </dl>
+              {personalStars && selected.tomatometer !== null ? (
+                <p>
+                  {t(
+                    'Sua nota em escala percentual: {0}%. Diferença para a crítica: {1} pontos percentuais.',
+                    personalStars * 20,
+                    personalStars * 20 - selected.tomatometer,
+                  )}
+                </p>
+              ) : null}
               <div className="rt-footer">
                 {/^https:\/\/www\.rottentomatoes\.com\/(m|tv)\/[a-z0-9_-]+$/.test(
                   selected.url,

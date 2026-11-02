@@ -1,3 +1,44 @@
+.list-collaboration {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.list-collaboration h2 {
+  font-size: 16px;
+}
+.list-invite {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.list-invite select {
+  flex: 1;
+  min-width: min(100%, 180px);
+}
+.list-members {
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  padding: 0;
+}
+.list-members li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+.list-members small {
+  display: block;
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+.list-role {
+  color: var(--primary) !important;
+}
 .list-scopes {
   border: 0;
   padding: 0;

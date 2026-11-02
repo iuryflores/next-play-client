@@ -28,6 +28,7 @@ import './social.css';
 import './lists.css';
 
 type Entry = {
+  entryId?: string;
   sourceId?: string;
   key: string;
   title: string;
@@ -38,6 +39,14 @@ type Entry = {
 type List = {
   id: string;
   mine: boolean;
+  canEdit: boolean;
+  role: 'owner' | 'editor' | 'invited' | 'viewer';
+  friends?: { id: string; name: string }[];
+  collaborators?: {
+    id: string;
+    name: string;
+    status: 'pending' | 'accepted';
+  }[];
   name: string;
   description: string;
   visibility: 'private' | 'friends';
@@ -96,13 +105,17 @@ export default function Lists({
   onSelect: (id?: string) => void;
   onExpired: () => void;
 }) {
-  const [scope, setScope] = useState<'mine' | 'friends'>('mine');
+  const [scope, setScope] = useState<'mine' | 'friends' | 'collaborations'>(
+    'mine',
+  );
+  const [inviteId, setInviteId] = useState('');
   const [page, setPage] = useState<Page | null>(null);
   const [list, setList] = useState<List | null>(null);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [search, setSearch] = useState('');
   const [kind, setKind] = useState('all');
   const [error, setError] = useState('');
+  const [conflict, setConflict] = useState(false);
   const [busy, setBusy] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [refresh, setRefresh] = useState(0);
@@ -137,9 +150,12 @@ export default function Lists({
     if (busy) return;
     setBusy(true);
     setError('');
+    setConflict(false);
     try {
       await action();
     } catch (reason) {
+      if (reason instanceof ApiError && reason.status === 409)
+        setConflict(true);
       if (reason instanceof ApiError && reason.status === 401) onExpired();
       else
         setError(
@@ -171,7 +187,8 @@ export default function Lists({
         name: draft.name,
         description: draft.description,
         visibility: draft.visibility,
-        itemIds: draft.entries.map((entry) => entry.sourceId),
+        // Entradas compartilhadas usam seu ID público; cada novo título vem da biblioteca do editor.
+        itemIds: draft.entries.map((entry) => entry.entryId || entry.sourceId),
       };
       // A chave permanece no rascunho após timeout; reenviar não cria outra lista.
       const saved = await request<List>(
@@ -199,6 +216,22 @@ export default function Lists({
       entries[index],
     ];
     setDraft({ ...draft, entries });
+  }
+  function collaborate(
+    action: 'invite' | 'remove' | 'accept' | 'decline' | 'leave',
+    userId?: string,
+  ) {
+    if (!list) return;
+    void run(async () => {
+      const updated = await request<List>(
+        '/' + list.id + '/collaboration',
+        'PATCH',
+        { action, revision: list.revision, ...(userId ? { userId } : {}) },
+      );
+      setList(updated);
+      setInviteId('');
+      notifySaved(t('Colaboração atualizada.'));
+    });
   }
   const candidates = items
     .filter(
@@ -245,6 +278,20 @@ export default function Lists({
           {error}
         </p>
       )}
+      {conflict && (
+        <Button
+          variant="outline"
+          disabled={busy}
+          onClick={() => {
+            setDraft(null);
+            setError('');
+            setConflict(false);
+            setRefresh((value) => value + 1);
+          }}
+        >
+          {t('Descartar rascunho e atualizar lista')}
+        </Button>
+      )}
       {draft ? (
         <form className="list-editor" onSubmit={save}>
           <h2>{t(list ? 'Editar lista' : 'Criar lista')}</h2>
@@ -272,22 +319,24 @@ export default function Lists({
               }
             />
           </label>
-          <label>
-            {t('Quem pode ver')}
-            <NativeSelect
-              disabled={busy}
-              value={draft.visibility}
-              onChange={(event) =>
-                setDraft({
-                  ...draft,
-                  visibility: event.target.value as Draft['visibility'],
-                })
-              }
-            >
-              <option value="private">{t('Somente eu')}</option>
-              <option value="friends">{t('Meus amigos')}</option>
-            </NativeSelect>
-          </label>
+          {(!list || list.mine) && (
+            <label>
+              {t('Quem pode ver')}
+              <NativeSelect
+                disabled={busy}
+                value={draft.visibility}
+                onChange={(event) =>
+                  setDraft({
+                    ...draft,
+                    visibility: event.target.value as Draft['visibility'],
+                  })
+                }
+              >
+                <option value="private">{t('Somente eu')}</option>
+                <option value="friends">{t('Meus amigos')}</option>
+              </NativeSelect>
+            </label>
+          )}
           <p className="social-help">
             {t(
               'O link exige login e amizade aceita. A lista compartilha apenas os títulos escolhidos, sem notas ou progresso. Remover da biblioteca não remove da lista.',
@@ -349,7 +398,7 @@ export default function Lists({
           <p>{t('{0} de 100 títulos', draft.entries.length)}</p>
           <ol className="list-order">
             {draft.entries.map((entry, index) => (
-              <li key={entry.sourceId}>
+              <li key={entry.entryId || entry.sourceId}>
                 <span>
                   <strong>{entry.title}</strong>
                   <small>
@@ -428,12 +477,18 @@ export default function Lists({
                 </p>
               </div>
               <div className="list-actions">
+                {list.canEdit && (
+                  <Button
+                    variant="outline"
+                    disabled={busy}
+                    onClick={() => edit(list)}
+                  >
+                    <Pencil aria-hidden="true" />
+                    {t('Editar lista')}
+                  </Button>
+                )}
                 {list.mine && (
                   <>
-                    <Button variant="outline" onClick={() => edit(list)}>
-                      <Pencil aria-hidden="true" />
-                      {t('Editar lista')}
-                    </Button>
                     <Button
                       variant="ghost"
                       aria-label={t('Excluir lista')}
@@ -460,6 +515,125 @@ export default function Lists({
                 </Button>
               </div>
             </header>
+            {list.role === 'invited' && (
+              <section className="list-collaboration">
+                <h2>{t('Convite para colaborar')}</h2>
+                <p>
+                  {t(
+                    'O dono convidou você para editar esta lista. Aceite para adicionar, remover e organizar títulos.',
+                  )}
+                </p>
+                <div className="list-actions">
+                  <Button disabled={busy} onClick={() => collaborate('accept')}>
+                    {t('Aceitar convite')}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    disabled={busy}
+                    onClick={() => collaborate('decline')}
+                  >
+                    {t('Recusar convite')}
+                  </Button>
+                </div>
+              </section>
+            )}
+            {list.role === 'editor' && (
+              <section className="list-collaboration">
+                <p>
+                  {t(
+                    'Você é colaborador desta lista. Só o dono gerencia participantes, privacidade e exclusão.',
+                  )}
+                </p>
+                <Button
+                  variant="outline"
+                  disabled={busy}
+                  onClick={() => collaborate('leave')}
+                >
+                  {t('Deixar de colaborar')}
+                </Button>
+              </section>
+            )}
+            {list.mine && (
+              <section className="list-collaboration">
+                <h2>{t('Colaboradores')}</h2>
+                <p className="social-help">
+                  {t(
+                    'Convide até 20 amigos aceitos. Eles precisam aceitar para editar. Tornar a lista privada encerra os convites e as colaborações.',
+                  )}
+                </p>
+                {list.visibility !== 'friends' ? (
+                  <p>
+                    {t(
+                      'Edite a lista e escolha Meus amigos para permitir colaboração.',
+                    )}
+                  </p>
+                ) : (
+                  <>
+                    <div className="list-invite">
+                      <NativeSelect
+                        aria-label={t('Amigo para colaborar')}
+                        value={inviteId}
+                        disabled={
+                          busy || (list.collaborators?.length || 0) >= 20
+                        }
+                        onChange={(event) => setInviteId(event.target.value)}
+                      >
+                        <option value="">{t('Selecione um amigo')}</option>
+                        {list.friends
+                          ?.filter(
+                            (friend) =>
+                              !list.collaborators?.some(
+                                (member) => member.id === friend.id,
+                              ),
+                          )
+                          .map((friend) => (
+                            <option key={friend.id} value={friend.id}>
+                              {friend.name}
+                            </option>
+                          ))}
+                      </NativeSelect>
+                      <Button
+                        disabled={busy || !inviteId}
+                        onClick={() => collaborate('invite', inviteId)}
+                      >
+                        {t('Convidar para colaborar')}
+                      </Button>
+                    </div>
+                    <ul className="list-members">
+                      {list.collaborators?.map((member) => (
+                        <li key={member.id}>
+                          <span>
+                            <strong>{member.name}</strong>
+                            <small>
+                              {t(
+                                member.status === 'pending'
+                                  ? 'Convite pendente'
+                                  : 'Colaborador',
+                              )}
+                            </small>
+                          </span>
+                          <Button
+                            variant="outline"
+                            disabled={busy}
+                            aria-label={t(
+                              'Remover colaboração de {0}',
+                              member.name,
+                            )}
+                            onClick={() => collaborate('remove', member.id)}
+                          >
+                            {t(
+                              member.status === 'pending'
+                                ? 'Cancelar convite'
+                                : 'Remover colaborador',
+                            )}
+                          </Button>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </section>
+            )}
             {list.description && (
               <p className="list-description">{list.description}</p>
             )}
@@ -525,6 +699,19 @@ export default function Lists({
             >
               {t('Listas dos amigos')}
             </Button>
+            <Button
+              variant={scope === 'collaborations' ? 'default' : 'outline'}
+              aria-pressed={scope === 'collaborations'}
+              disabled={busy}
+              onClick={() => {
+                if (scope !== 'collaborations') {
+                  setPage(null);
+                  setScope('collaborations');
+                }
+              }}
+            >
+              {t('Colaborações e convites')}
+            </Button>
           </fieldset>
           {!page && !error && <PageLoading label={t('Carregando…')} />}
           {page && !page.lists.length && (
@@ -532,9 +719,11 @@ export default function Lists({
               <ListVideo aria-hidden="true" />
               <p>
                 {t(
-                  scope === 'mine'
-                    ? 'Crie sua primeira lista e compartilhe com amigos.'
-                    : 'Seus amigos ainda não compartilharam listas.',
+                  scope === 'collaborations'
+                    ? 'Você ainda não tem convites ou listas em colaboração.'
+                    : scope === 'mine'
+                      ? 'Crie sua primeira lista e compartilhe com amigos.'
+                      : 'Seus amigos ainda não compartilharam listas.',
                 )}
               </p>
             </div>
@@ -563,6 +752,15 @@ export default function Lists({
                   )}
                 </div>
                 <strong>{row.name}</strong>
+                {(row.role === 'editor' || row.role === 'invited') && (
+                  <small className="list-role">
+                    {t(
+                      row.role === 'invited'
+                        ? 'Convite para colaborar'
+                        : 'Colaborador',
+                    )}
+                  </small>
+                )}
                 <small>
                   {row.ownerName} · {t('{0} títulos', row.count)}
                 </small>

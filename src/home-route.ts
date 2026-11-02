@@ -16,6 +16,8 @@ export const homePaths = {
   friends: '/amigos',
   social: '/social',
   lists: '/listas',
+  community: '/comunidade',
+  shared: '/compartilhar',
 } as const;
 export type HomeRoute = {
   view: keyof typeof homePaths;
@@ -23,6 +25,8 @@ export type HomeRoute = {
   commentId?: string;
   profileId?: string;
   listId?: string;
+  topicId?: string;
+  sharedId?: string;
   category: 'all' | 'movie' | 'series' | 'game' | 'book';
   historyMode: boolean;
   platform?: string;
@@ -41,8 +45,16 @@ export function readHomeRoute(url: URL): HomeRoute {
   const commentId = url.searchParams.get('comentario');
   const profileId = url.searchParams.get('perfil');
   const listId = url.searchParams.get('lista');
+  const topicId = url.searchParams.get('conversa');
+  const sharedId = url.searchParams.get('obra');
   return {
     view,
+    ...(view === 'shared' && sharedId && /^[a-f0-9]{24}$/i.test(sharedId)
+      ? { sharedId }
+      : {}),
+    ...(view === 'community' && topicId && /^[a-f0-9]{24}$/i.test(topicId)
+      ? { topicId }
+      : {}),
     ...(view === 'lists' && listId && /^[a-f0-9]{24}$/i.test(listId)
       ? { listId }
       : {}),
@@ -82,6 +94,10 @@ export function homeRouteUrl(route: HomeRoute) {
   if (route.view === 'social' && route.profileId)
     query.set('perfil', route.profileId);
   if (route.view === 'lists' && route.listId) query.set('lista', route.listId);
+  if (route.view === 'community' && route.topicId)
+    query.set('conversa', route.topicId);
+  if (route.view === 'shared' && route.sharedId)
+    query.set('obra', route.sharedId);
   if (route.detailId) query.set('titulo', route.detailId);
   if (route.detailId && route.commentId)
     query.set('comentario', route.commentId);

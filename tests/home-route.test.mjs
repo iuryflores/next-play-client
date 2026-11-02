@@ -119,3 +119,12 @@ test('lista compartilhada mantém o endereço no refresh e ignora referências i
   assert.equal(readHomeRoute(new URL('https://nextplay.example/listas?lista=bad')).listId, undefined);
   assert.equal(readHomeRoute(new URL('https://nextplay.example/amigos?lista=' + route.listId)).listId, undefined);
 });
+
+test('links de conversa e obra compartilhada sobrevivem ao refresh e são específicos da tela',()=>{
+  for(const [view,field,path,param] of [['community','topicId','comunidade','conversa'],['shared','sharedId','compartilhar','obra']]){
+    const route={view,category:'all',detailId:null,historyMode:false,[field]:'e'.repeat(24)};
+    assert.deepEqual(readHomeRoute(new URL(homeRouteUrl(route),'https://nextplay.example')),route);
+    assert.equal(readHomeRoute(new URL(`https://nextplay.example/${path}?${param}=bad`))[field],undefined);
+    assert.equal(readHomeRoute(new URL(`https://nextplay.example/amigos?${param}=${route[field]}`))[field],undefined);
+  }
+});

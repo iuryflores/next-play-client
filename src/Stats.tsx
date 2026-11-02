@@ -1,4 +1,5 @@
 import { RefreshCw } from 'lucide-react';
+import Insights from './Insights';
 import GameActivity from './GameActivity';
 import { gameActivity } from './game-activity';
 import IconAction from './IconAction';
@@ -474,6 +475,7 @@ export default function Stats({
           ];
   return (
     <section className="stats-page" aria-label={t('Suas estatísticas')}>
+      <Insights items={items} onExpired={onExpired} />
       <p className="stats-note">
         {t(
           'Variação desde sua visita anterior às estatísticas. Em caso de empate, a ordem anterior é mantida.',

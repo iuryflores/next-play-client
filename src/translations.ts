@@ -1238,6 +1238,145 @@ Seus amigos ainda não compartilharam listas.|Your friends haven't shared any li
 Ver mais listas|More lists|Ver más listas
 A lista e seu link serão removidos. Os títulos continuam na sua biblioteca.|The list and its link will be removed. Titles stay in your library.|La lista y su enlace se eliminarán. Los títulos siguen en tu biblioteca.
 Lista excluída.|List deleted.|Lista eliminada.
+Colaboração atualizada.|Collaboration updated.|Colaboración actualizada.
+Convite para colaborar|Invitation to collaborate|Invitación para colaborar
+O dono convidou você para editar esta lista. Aceite para adicionar, remover e organizar títulos.|The owner invited you to edit this list. Accept to add, remove and organize titles.|El dueño te invitó a editar esta lista. Acepta para añadir, quitar y organizar títulos.
+Aceitar convite|Accept invitation|Aceptar invitación
+Recusar convite|Decline invitation|Rechazar invitación
+Você é colaborador desta lista. Só o dono gerencia participantes, privacidade e exclusão.|You collaborate on this list. Only the owner manages participants, privacy and deletion.|Colaboras en esta lista. Solo el dueño gestiona participantes, privacidad y eliminación.
+Deixar de colaborar|Stop collaborating|Dejar de colaborar
+Colaboradores|Collaborators|Colaboradores
+Convide até 20 amigos aceitos. Eles precisam aceitar para editar. Tornar a lista privada encerra os convites e as colaborações.|Invite up to 20 accepted friends. They must accept to edit. Making the list private ends invitations and collaborations.|Invita hasta 20 amigos aceptados. Deben aceptar para editar. Hacer privada la lista termina las invitaciones y colaboraciones.
+Edite a lista e escolha Meus amigos para permitir colaboração.|Edit the list and choose My friends to allow collaboration.|Edita la lista y elige Mis amigos para permitir la colaboración.
+Amigo para colaborar|Friend to collaborate|Amigo para colaborar
+Selecione um amigo|Select a friend|Selecciona un amigo
+Convidar para colaborar|Invite to collaborate|Invitar a colaborar
+Convite pendente|Pending invitation|Invitación pendiente
+Colaborador|Collaborator|Colaborador
+Remover colaboração de {0}|Remove collaboration for {0}|Quitar colaboración de {0}
+Cancelar convite|Cancel invitation|Cancelar invitación
+Remover colaborador|Remove collaborator|Quitar colaborador
+Colaborações e convites|Collaborations and invitations|Colaboraciones e invitaciones
+Você ainda não tem convites ou listas em colaboração.|You have no invitations or collaborative lists yet.|Aún no tienes invitaciones ni listas en colaboración.
+Descartar rascunho e atualizar lista|Discard draft and refresh list|Descartar borrador y actualizar lista
+Bio|Bio|Biografía
+Preferências e gostos|Preferences and tastes|Preferencias y gustos
+Meus favoritos|My favorites|Mis favoritos
+Escolha até dez títulos concluídos, na ordem que devem aparecer.|Choose up to ten completed titles in display order.|Elige hasta diez títulos terminados en el orden deseado.
+Até dez nomes, um por linha. Publicados apenas com o perfil.|Up to ten names, one per line. Only published with your profile.|Hasta diez nombres, uno por línea. Solo se publican con el perfil.
+Atores favoritos|Favorite actors|Actores favoritos
+Diretores favoritos|Favorite directors|Directores favoritos
+Autores favoritos|Favorite authors|Autores favoritos
+Compartilhar novas atividades com seguidores do meu perfil público|Share new activities with followers of my public profile|Compartir nuevas actividades con seguidores de mi perfil público
+Permitir comparação agregada de gostos com amigos|Allow aggregate taste comparisons with friends|Permitir comparación agregada de gustos con amigos
+Identificar meu perfil como crítico autodeclarado|Identify my profile as a self-declared critic|Identificar mi perfil como crítico autodeclarado
+Descobrir pessoas e críticos|Discover people and critics|Descubrir personas y críticos
+Buscar por nome|Search by name|Buscar por nombre
+Crítico autodeclarado|Self-declared critic|Crítico autodeclarado
+Seguir|Follow|Seguir
+Deixar de seguir|Unfollow|Dejar de seguir
+Comparar gostos|Compare tastes|Comparar gustos
+{0} títulos em comum · {1} notas comparáveis · concordância: {2}% · gêneros em comum: {3}%|{0} shared titles · {1} comparable ratings · agreement: {2}% · genre overlap: {3}%|{0} títulos en común · {1} notas comparables · coincidencia: {2}% · géneros compartidos: {3}%
+Meu histórico e retrospectivas|My history and retrospectives|Mi historial y retrospectivas
+Histórico, retrospectivas e comparação entre anos|History, retrospectives and year comparison|Historial, retrospectivas y comparación entre años
+As datas são de consumo, não de cadastro. Registros sem data ficam separados. Notas refletem a avaliação atual; tempos sem duração conhecida são parciais.|Dates reflect consumption, not registration. Undated records stay separate. Ratings are current; times with missing runtimes are partial.|Las fechas son de consumo, no de registro. Los registros sin fecha se separan. Las notas son actuales; los tiempos sin duración conocida son parciales.
+{0} registros sem data conhecida|{0} records with unknown dates|{0} registros sin fecha conocida
+Retrospectiva anual|Annual retrospective|Retrospectiva anual
+Seu ano em {0}|Your year in {0}|Tu año en {0}
+Revisitas|Revisits|Revisitas
+Revisita|Revisit|Revisita
+Dias ativos|Active days|Días activos
+Tempo registrado|Recorded time|Tiempo registrado
+Tempo em jogos|Gaming time|Tiempo en juegos
+Gêneros do ano|Genres of the year|Géneros del año
+Ranking pessoal do ano|Personal ranking of the year|Clasificación personal del año
+Comparação entre anos|Year comparison|Comparación entre años
+Ano|Year|Año
+Evolução dos gêneros|Genre evolution|Evolución de géneros
+Favoritos de todos os tempos|All-time favorites|Favoritos de todos los tiempos
+Linha do tempo de consumo|Consumption timeline|Cronología de consumo
+Sessão de jogo|Gaming session|Sesión de juego
+Consumido|Consumed|Consumido
+Ver mais eventos|More events|Ver más eventos
+Criadores mais consumidos|Most consumed creators|Creadores más consumidos
+{0} títulos com créditos ausentes ou parciais|{0} titles with missing or partial credits|{0} títulos con créditos ausentes o parciales
+Atualizar créditos e franquias (até dez títulos)|Update credits and franchises (up to ten titles)|Actualizar créditos y franquicias (hasta diez títulos)
+Completar créditos e franquia de um título|Complete credits and franchise for a title|Completar créditos y franquicia de un título
+Atores|Actors|Actores
+Diretores|Directors|Directores
+Autores|Authors|Autores
+Franquia|Franchise|Franquicia
+Ranking de franquias|Franchise ranking|Clasificación de franquicias
+Coleções de filmes identificadas pelo TMDB e franquias declaradas por você. Cobertura parcial até atualizar ou completar os dados; agrupamentos manuais e do catálogo permanecem separados.|Movie collections identified by TMDB and franchises declared by you. Coverage is partial until updated; manual and catalog groups stay separate.|Colecciones de películas de TMDB y franquicias declaradas por ti. Cobertura parcial hasta actualizar; agrupaciones manuales y del catálogo separadas.
+Créditos manuais são privados e declarados por você; até vinte nomes por categoria. Não comprovam identidade de homônimos. Franquias manuais podem reunir qualquer mídia.|Manual credits are private and declared by you, up to twenty names per category. They do not verify namesake identities. Manual franchises can include any media.|Los créditos manuales son privados y declarados por ti, hasta veinte nombres por categoría. No verifican identidades de homónimos. Las franquicias manuales incluyen cualquier medio.
+Sua nota e a crítica|Your rating and critics|Tu nota y la crítica
+Sua nota|Your rating|Tu nota
+Crítica|Critics|Crítica
+Diferença|Difference|Diferencia
+Notas pessoais convertidas para 0–100. Tomatometer mede aprovação da crítica, não qualidade equivalente à sua nota. As consultas inequívocas feitas nos detalhes alimentam este quadro.|Personal ratings converted to 0–100. Tomatometer measures critic approval, not equivalent quality. Unambiguous lookups in title details populate this table.|Notas personales convertidas a 0–100. Tomatometer mide aprobación crítica, no calidad equivalente. Las consultas inequívocas en los detalles alimentan esta tabla.
+Sua nota em escala percentual: {0}%. Diferença para a crítica: {1} pontos percentuais.|Your rating as a percentage: {0}%. Difference from critics: {1} percentage points.|Tu nota en porcentaje: {0}%. Diferencia con la crítica: {1} puntos porcentuales.
+Comunidade|Community|Comunidad
+Criar conversa ou votação|Create discussion or poll|Crear conversación o votación
+Discussão|Discussion|Discusión
+Teoria|Theory|Teoría
+Escolha em grupo|Group choice|Elección en grupo
+Votação de favoritos|Favorites poll|Votación de favoritos
+Duelo|Duel|Duelo
+Premiação anual|Annual awards|Premios anuales
+Tipo|Type|Tipo
+Contexto|Context|Contexto
+Geral|General|General
+Obra|Work|Obra
+Universo|Universe|Universo
+Título da biblioteca|Library title|Título de la biblioteca
+Nome do contexto|Context name|Nombre del contexto
+Usuários do app|App users|Usuarios de la aplicación
+Categoria das opções|Option category|Categoría de opciones
+Opções, uma por linha|Options, one per line|Opciones, una por línea
+Duelo usa duas opções; outras votações usam de duas a vinte.|Duels use two options; other polls use two to twenty.|Los duelos usan dos opciones; otras votaciones usan de dos a veinte.
+Premiação organizada por você, sem representar prêmio oficial do app.|Awards organized by you, not official app awards.|Premios organizados por ti, no oficiales de la aplicación.
+Publique apenas o que deseja compartilhar. Seu nome será mostrado; notas e anotações da biblioteca continuam privadas.|Only publish what you want to share. Your name is shown; library ratings and notes remain private.|Publica solo lo que deseas compartir. Se muestra tu nombre; notas y anotaciones de la biblioteca siguen privadas.
+Conteúdo protegido: revelar possíveis spoilers|Protected content: reveal possible spoilers|Contenido protegido: revelar posibles spoilers
+Votação|Poll|Votación
+Reabrir conversa|Reopen discussion|Reabrir conversación
+Encerrar conversa|Close discussion|Cerrar conversación
+Ver mais mensagens|More messages|Ver más mensajes
+Cancelar resposta|Cancel reply|Cancelar respuesta
+Mensagem|Message|Mensaje
+Proteger possíveis spoilers|Protect possible spoilers|Proteger posibles spoilers
+Publicar|Publish|Publicar
+Resposta|Reply|Respuesta
+Compartilhar com amigos|Share with friends|Compartir con amigos
+Link da obra copiado. Exige login e amizade aceita.|Title link copied. Login and accepted friendship required.|Enlace de la obra copiado. Requiere inicio de sesión y amistad aceptada.
+Não foi possível compartilhar.|Could not share.|No se pudo compartir.
+Compartilhamento privado ou não encontrado.|Share is private or not found.|Contenido compartido privado o no encontrado.
+Obra compartilhada|Shared title|Obra compartida
+Compartilhado por {0}|Shared by {0}|Compartido por {0}
+Abrir na minha biblioteca|Open in my library|Abrir en mi biblioteca
+Ações registradas no app|Actions recorded in the app|Acciones registradas en la aplicación
+Histórico iniciado nesta atualização. As datas abaixo são de registro, não de consumo. Mudanças antigas que nunca foram gravadas não são reconstruídas.|History starts with this update. Dates below are registration dates, not consumption dates. Old changes never recorded are not reconstructed.|El historial comienza en esta actualización. Las fechas son de registro, no de consumo. No se reconstruyen cambios antiguos nunca registrados.
+Buscar conversa ou contexto|Search discussion or context|Buscar conversación o contexto
+Nenhuma conversa encontrada. Crie uma discussão, teoria ou votação.|No discussions found. Create a discussion, theory or poll.|No se encontraron conversaciones. Crea una discusión, teoría o votación.
+Adicionado|Added|Añadido
+Iniciado|Started|Iniciado
+Concluído|Completed|Terminado
+Editado|Edited|Editado
+Arquivado|Archived|Archivado
+Restaurado|Restored|Restaurado
+Excluído|Deleted|Eliminado
+{0} seguidores · seguindo {1}|{0} followers · following {1}|{0} seguidores · siguiendo a {1}
+Seguidores mútuos|Mutual followers|Seguidores mutuos
+Segue você|Follows you|Te sigue
+Sessão de jogo adicionada|Gaming session added|Sesión de juego añadida
+Sessão de jogo editada|Gaming session edited|Sesión de juego editada
+Sessão de jogo excluída|Gaming session deleted|Sesión de juego eliminada
+Revisita planejada|Revisit planned|Revisita planeada
+Revisita desmarcada|Revisit unplanned|Revisita desmarcada
+Episódio atualizado|Episode updated|Episodio actualizado
+Temporada marcada como assistida|Season marked as watched|Temporada marcada como vista
+Episódios marcados como assistidos|Episodes marked as watched|Episodios marcados como vistos
+Marcação de episódios removida|Episode watch marks removed|Marcas de episodios eliminadas
+Atividade registrada|Activity recorded|Actividad registrada
 `;
 export const translations: Record<string, [string, string]> =
   Object.fromEntries(

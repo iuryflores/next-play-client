@@ -17,8 +17,17 @@ import { language, t } from './i18n';
 import { notifySaved } from './notifications';
 import PageLoading from './PageLoading';
 import './social.css';
+import './lists.css';
 
 type Settings = {
+  shareFollowers: boolean;
+  shareComparison: boolean;
+  isCritic: boolean;
+  bio: string;
+  tastes: string;
+  favoriteActors: string[];
+  favoriteDirectors: string[];
+  favoriteAuthors: string[];
   publicProfile: boolean;
   shareActivity: boolean;
   backlogAlerts: boolean;
@@ -46,6 +55,17 @@ type Activity = {
 };
 type Feed = { activities: Activity[]; nextBefore: string | null };
 type Profile = {
+  followersCount: number;
+  followingCount: number;
+  followsYou: boolean;
+  following: boolean;
+  isCritic: boolean;
+  shareComparison: boolean;
+  bio: string;
+  tastes: string;
+  favoriteActors: string[];
+  favoriteDirectors: string[];
+  favoriteAuthors: string[];
   id: string;
   mine: boolean;
   published: boolean;
@@ -133,6 +153,7 @@ export default function Social({
   onProfile,
   onOpenTitle,
   onExpired,
+  onHistory,
 }: {
   userId: string;
   items: LibraryItem[];
@@ -140,6 +161,7 @@ export default function Social({
   onProfile: (id?: string) => void;
   onOpenTitle: (id: string) => void;
   onExpired: () => void;
+  onHistory: () => void;
 }) {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [feed, setFeed] = useState<Feed | null>(null);
@@ -147,7 +169,31 @@ export default function Social({
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [revision, setRevision] = useState(0);
+  const [people, setPeople] = useState<
+    { id: string; name: string; isCritic: boolean }[]
+  >([]);
+  const [peopleQuery, setPeopleQuery] = useState('');
+  const [comparison, setComparison] = useState<{
+    commonTitles: number;
+    ratedInCommon: number;
+    ratingAgreement: number | null;
+    genreOverlap: number | null;
+  } | null>(null);
   const expired = useEffectEvent(onExpired);
+  useEffect(() => {
+    if (profileId) return;
+    const controller = new AbortController();
+    void request<{ profiles: typeof people }>(
+      '/discover',
+      undefined,
+      controller.signal,
+    )
+      .then((data) => {
+        if (!controller.signal.aborted) setPeople(data.profiles);
+      })
+      .catch(() => {});
+    return () => controller.abort();
+  }, [profileId]);
   const candidates = items
     .filter((item) => item.status === 'completed' && !item.archived)
     .sort((a, b) => a.title.localeCompare(b.title, language));
@@ -210,6 +256,23 @@ export default function Social({
       const saved = await request<Settings>('/settings', {
         ...settings,
         favoriteIds,
+        favoriteActors: [
+          ...new Set(
+            settings.favoriteActors.map((name) => name.trim()).filter(Boolean),
+          ),
+        ],
+        favoriteDirectors: [
+          ...new Set(
+            settings.favoriteDirectors
+              .map((name) => name.trim())
+              .filter(Boolean),
+          ),
+        ],
+        favoriteAuthors: [
+          ...new Set(
+            settings.favoriteAuthors.map((name) => name.trim()).filter(Boolean),
+          ),
+        ],
       });
       setSettings(saved);
       if (profileId === userId)
@@ -257,6 +320,84 @@ export default function Social({
         <details className="social-settings" open={profileId === userId}>
           <summary>{t('Compartilhamento e favoritos')}</summary>
           <form onSubmit={save}>
+            {(['shareFollowers', 'shareComparison', 'isCritic'] as const).map(
+              (field) => (
+                <label className="social-check" key={field}>
+                  <input
+                    type="checkbox"
+                    checked={settings[field]}
+                    onChange={(event) =>
+                      setSettings({
+                        ...settings,
+                        [field]: event.target.checked,
+                      })
+                    }
+                  />
+                  {t(
+                    field === 'shareFollowers'
+                      ? 'Compartilhar novas atividades com seguidores do meu perfil público'
+                      : field === 'shareComparison'
+                        ? 'Permitir comparação agregada de gostos com amigos'
+                        : 'Identificar meu perfil como crítico autodeclarado',
+                  )}
+                </label>
+              ),
+            )}
+            <label className="social-text-field">
+              {t('Bio')}
+              <textarea
+                rows={3}
+                maxLength={500}
+                value={settings.bio}
+                onChange={(event) =>
+                  setSettings({ ...settings, bio: event.target.value })
+                }
+              />
+            </label>
+            <label className="social-text-field">
+              {t('Preferências e gostos')}
+              <textarea
+                rows={3}
+                maxLength={500}
+                value={settings.tastes}
+                onChange={(event) =>
+                  setSettings({ ...settings, tastes: event.target.value })
+                }
+              />
+            </label>
+            {(
+              [
+                'favoriteActors',
+                'favoriteDirectors',
+                'favoriteAuthors',
+              ] as const
+            ).map((field) => (
+              <label className="social-text-field" key={field}>
+                {t(
+                  field === 'favoriteActors'
+                    ? 'Atores favoritos'
+                    : field === 'favoriteDirectors'
+                      ? 'Diretores favoritos'
+                      : 'Autores favoritos',
+                )}
+                <textarea
+                  rows={3}
+                  maxLength={1009}
+                  value={settings[field].join('\n')}
+                  onChange={(event) =>
+                    setSettings({
+                      ...settings,
+                      [field]: event.target.value.split('\n').slice(0, 10),
+                    })
+                  }
+                />
+                <small>
+                  {t(
+                    'Até dez nomes, um por linha. Publicados apenas com o perfil.',
+                  )}
+                </small>
+              </label>
+            ))}
             <label className="social-check">
               <input
                 type="checkbox"
@@ -307,13 +448,13 @@ export default function Social({
               {t('Avisar quando um amigo concluir algo do meu Para depois')}
             </label>
             <fieldset className="social-favorite-picker">
-              <legend>{t('Meus quatro favoritos')}</legend>
+              <legend>{t('Meus favoritos')}</legend>
               <p>
                 {t(
-                  'Escolha até quatro títulos concluídos, na ordem que devem aparecer.',
+                  'Escolha até dez títulos concluídos, na ordem que devem aparecer.',
                 )}
               </p>
-              {[0, 1, 2, 3].map((index) => (
+              {Array.from({ length: 10 }, (_, index) => index).map((index) => (
                 <label key={index}>
                   {t('Favorito {0}', index + 1)}
                   <NativeSelect
@@ -348,6 +489,47 @@ export default function Social({
       )}
       {!profileId && feed && (
         <>
+          <section className="social-settings">
+            <h2>{t('Descobrir pessoas e críticos')}</h2>
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                void run(async () =>
+                  setPeople(
+                    (
+                      await request<{ profiles: typeof people }>(
+                        '/discover?q=' + encodeURIComponent(peopleQuery),
+                      )
+                    ).profiles,
+                  ),
+                );
+              }}
+            >
+              <label>
+                {t('Buscar por nome')}
+                <input
+                  maxLength={100}
+                  value={peopleQuery}
+                  onChange={(event) => setPeopleQuery(event.target.value)}
+                />
+              </label>
+              <Button disabled={busy} type="submit">
+                {t('Buscar')}
+              </Button>
+            </form>
+            <div className="list-actions">
+              {people.map((person) => (
+                <Button
+                  key={person.id}
+                  variant="outline"
+                  onClick={() => onProfile(person.id)}
+                >
+                  {person.name}
+                  {person.isCritic ? ' · ' + t('Crítico autodeclarado') : ''}
+                </Button>
+              ))}
+            </div>
+          </section>
           <p className="social-help">
             {t(
               'Atividades compartilhadas por amigos aceitos. As datas indicam quando a ação foi registrada no app, não necessariamente o dia do consumo.',
@@ -463,6 +645,66 @@ export default function Social({
               {t('Copiar link do perfil')}
             </Button>
           </header>
+          {!profile.mine && (
+            <div className="list-actions">
+              <Button
+                disabled={busy}
+                variant="outline"
+                onClick={() =>
+                  void run(async () => {
+                    await request<{ following: boolean }>(
+                      '/profiles/' + profile.id + '/follow',
+                      { following: !profile.following },
+                    );
+                    setProfile(
+                      await request<Profile>('/profiles/' + profile.id),
+                    );
+                  })
+                }
+              >
+                {t(profile.following ? 'Deixar de seguir' : 'Seguir')}
+              </Button>
+              {settings?.shareComparison && profile.shareComparison && (
+                <Button
+                  disabled={busy}
+                  variant="outline"
+                  onClick={() =>
+                    void run(async () =>
+                      setComparison(
+                        await request('/profiles/' + profile.id + '/compare'),
+                      ),
+                    )
+                  }
+                >
+                  {t('Comparar gostos')}
+                </Button>
+              )}
+            </div>
+          )}
+          {profile.isCritic && <p>{t('Crítico autodeclarado')}</p>}
+          <p>
+            {t(
+              '{0} seguidores · seguindo {1}',
+              profile.followersCount,
+              profile.followingCount,
+            )}
+            {profile.following && profile.followsYou
+              ? ' · ' + t('Seguidores mútuos')
+              : profile.followsYou
+                ? ' · ' + t('Segue você')
+                : ''}
+          </p>
+          {comparison && (
+            <p>
+              {t(
+                '{0} títulos em comum · {1} notas comparáveis · concordância: {2}% · gêneros em comum: {3}%',
+                comparison.commonTitles,
+                comparison.ratedInCommon,
+                comparison.ratingAgreement ?? '—',
+                comparison.genreOverlap ?? '—',
+              )}
+            </p>
+          )}
           {profile.mine && !profile.published && (
             <p className="social-help">
               {t(
@@ -471,6 +713,32 @@ export default function Social({
             </p>
           )}
           <h2>{t('Favoritos em destaque')}</h2>
+          {profile.mine && (
+            <Button variant="outline" onClick={onHistory}>
+              {t('Meu histórico e retrospectivas')}
+            </Button>
+          )}
+          {profile.bio && <p className="social-bio">{profile.bio}</p>}
+          {profile.tastes && <p className="social-bio">{profile.tastes}</p>}
+          {(
+            ['favoriteActors', 'favoriteDirectors', 'favoriteAuthors'] as const
+          ).map((field) =>
+            profile[field]?.length ? (
+              <p key={field}>
+                <strong>
+                  {t(
+                    field === 'favoriteActors'
+                      ? 'Atores favoritos'
+                      : field === 'favoriteDirectors'
+                        ? 'Diretores favoritos'
+                        : 'Autores favoritos',
+                  )}
+                  :
+                </strong>{' '}
+                {profile[field].join(' · ')}
+              </p>
+            ) : null,
+          )}
           {profile.favorites.length ? (
             <div className="social-titles social-top-four">
               {profile.favorites.map((title) => (

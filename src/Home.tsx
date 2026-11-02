@@ -97,6 +97,8 @@ const Incoming = lazy(() => import('./Incoming'));
 const Friends = lazy(() => import('./Friends'));
 const Social = lazy(() => import('./Social'));
 const Lists = lazy(() => import('./Lists'));
+const CommunityHub = lazy(() => import('./CommunityHub'));
+const SharedTitle = lazy(() => import('./SharedTitle'));
 const Account = lazy(() => import('./Account'));
 const Collector = lazy(() => import('./Collector'));
 const TitleDetails = lazy(() => import('./TitleDetails'));
@@ -831,12 +833,18 @@ function Home({
       </button>
       <button
         aria-current={
-          view === 'friends' || view === 'social' || view === 'lists'
+          view === 'friends' ||
+          view === 'social' ||
+          view === 'lists' ||
+          view === 'community'
             ? 'page'
             : undefined
         }
         className={
-          view === 'friends' || view === 'social' || view === 'lists'
+          view === 'friends' ||
+          view === 'social' ||
+          view === 'lists' ||
+          view === 'community'
             ? 'selected'
             : ''
         }
@@ -895,20 +903,22 @@ function Home({
                     ? t('Conquistas')
                     : view === 'account'
                       ? t(' Minha conta ')
-                      : view === 'lists'
-                        ? t('Listas')
-                        : view === 'social'
-                          ? t('Atividades')
-                          : view === 'friends'
-                            ? t('Amigos')
-                            : view === 'stats'
-                              ? t('Suas estatísticas')
-                              : view === 'add'
-                                ? t('Adicionar título')
-                                : view === 'explore'
-                                  ? t('Explorar')
-                                  : views.find((item) => item.id === view)
-                                      ?.label}
+                      : view === 'community'
+                        ? t('Comunidade')
+                        : view === 'lists'
+                          ? t('Listas')
+                          : view === 'social'
+                            ? t('Atividades')
+                            : view === 'friends'
+                              ? t('Amigos')
+                              : view === 'stats'
+                                ? t('Suas estatísticas')
+                                : view === 'add'
+                                  ? t('Adicionar título')
+                                  : view === 'explore'
+                                    ? t('Explorar')
+                                    : views.find((item) => item.id === view)
+                                        ?.label}
           </span>
           <div className="home-topbar-actions">
             <ThemePicker compact account />
@@ -986,7 +996,9 @@ function Home({
               view !== 'incoming' &&
               view !== 'friends' &&
               view !== 'social' &&
-              view !== 'lists' && (
+              view !== 'lists' &&
+              view !== 'community' &&
+              view !== 'shared' && (
                 <section className="home-heading">
                   <div>
                     <span className="home-kicker">
@@ -1055,6 +1067,24 @@ function Home({
                 onSaved={onUserChanged}
                 onExpired={onExpired}
               />
+            ) : view === 'shared' ? (
+              <SharedTitle
+                key={route.sharedId}
+                id={route.sharedId}
+                onExpired={onExpired}
+                onOpen={(id) => {
+                  setView('all');
+                  setDetailId(id);
+                }}
+              />
+            ) : view === 'community' ? (
+              <CommunityHub
+                key={route.topicId || 'hub'}
+                topicId={route.topicId}
+                items={items}
+                onSelect={(id) => setRouteField('topicId', id)}
+                onExpired={onExpired}
+              />
             ) : view === 'lists' ? (
               <Lists
                 key={route.listId || 'lists'}
@@ -1065,6 +1095,7 @@ function Home({
               />
             ) : view === 'social' ? (
               <Social
+                onHistory={() => setView('stats')}
                 key={route.profileId || 'feed'}
                 userId={user.id}
                 items={items}
@@ -1078,6 +1109,10 @@ function Home({
               />
             ) : view === 'friends' ? (
               <Friends
+                onCommunity={() => {
+                  setDetailId(null);
+                  setView('community');
+                }}
                 onLists={() => {
                   setDetailId(null);
                   setView('lists');

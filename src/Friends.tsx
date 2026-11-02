@@ -91,12 +91,14 @@ export default function Friends({
   onNameChanged,
   onFeed,
   onLists,
+  onCommunity,
   onProfile,
 }: {
   onExpired: () => void;
   onNameChanged: (name: string) => void;
   onFeed: () => void;
   onLists: () => void;
+  onCommunity: () => void;
   onProfile: (id: string) => void;
 }) {
   const [data, setData] = useState<FriendsData | null>(null);
@@ -195,6 +197,9 @@ export default function Friends({
         {error}
       </output>
       <div className="friends-social-actions">
+        <Button variant="outline" onClick={onCommunity}>
+          {t('Comunidade')}
+        </Button>
         <Button variant="outline" onClick={onLists}>
           {t('Listas')}
         </Button>
