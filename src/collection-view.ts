@@ -20,6 +20,19 @@ export function activityTime(item: {
   );
 }
 
+export function gameOrder(
+  a: { status: string; playtimeMinutes?: number },
+  b: { status: string; playtimeMinutes?: number },
+) {
+  const minutes = (value?: number) =>
+    Number.isFinite(value) && value! > 0 ? value! : 0;
+  // O acompanhamento em andamento vem primeiro; o tempo acumulado desempata dentro de cada grupo.
+  return (
+    Number(b.status === 'active') - Number(a.status === 'active') ||
+    minutes(b.playtimeMinutes) - minutes(a.playtimeMinutes)
+  );
+}
+
 type OverviewItem = CollectionItem & {
   id: string;
   lastWatchedAt?: string;
@@ -36,13 +49,16 @@ export function overviewOrder() {
   const priority = (item: OverviewItem) =>
     item.kind === 'series' && watchedTime(item) > 0
       ? 0
-      : item.kind === 'book' && item.status === 'active' ? 1 : 2;
+      : item.kind === 'book' && item.status === 'active'
+        ? 1
+        : 2;
   const releaseTime = (item: OverviewItem) => {
     const date = Date.parse(item.releaseDate || '');
     if (Number.isFinite(date)) return date;
     // Sem data completa, o ano representa o início do ano; sem ambos, fica no fim.
     return /^\d{4}$/.test(item.year || '')
-      ? Date.parse(`${item.year}-01-01`) : -Infinity;
+      ? Date.parse(`${item.year}-01-01`)
+      : -Infinity;
   };
   return (a: OverviewItem, b: OverviewItem) =>
     priority(a) - priority(b) ||

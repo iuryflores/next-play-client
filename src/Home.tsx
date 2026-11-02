@@ -71,7 +71,7 @@ import MobileNavigation from './MobileNavigation';
 import './mobile.css';
 import QuickActions from './QuickActions';
 import CompletionFields from './CompletionFields';
-import { matchesView, overviewOrder } from './collection-view';
+import { matchesView, overviewOrder, gameOrder } from './collection-view';
 import type { CatalogTitle } from './CatalogSearch';
 
 // Cada tela tem seu próprio arquivo de produção; voltar a ela reutiliza o módulo baixado.
@@ -272,6 +272,7 @@ function Home({
     visible.sort(
       (a, b) =>
         (view === 'coming-soon' ? releaseTime(a) - releaseTime(b) : 0) ||
+        (category === 'game' && view !== 'coming-soon' ? gameOrder(a, b) : 0) ||
         (view === 'completed' && historyMode
           ? watchedTime(b) - watchedTime(a)
           : 0) ||
