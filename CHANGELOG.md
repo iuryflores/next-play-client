@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.1](https://github.com/iuryflores/next-play-client/compare/v0.10.0...v0.10.1) (2026-11-02)
+
+
+### Bug Fixes
+
+* prioriza jogos em andamento e maior tempo jogado ([42be72e](https://github.com/iuryflores/next-play-client/commit/42be72e9bf0d84fe06260a250b7b1844038c7c21))
+
 ## [0.10.0](https://github.com/iuryflores/next-play-client/compare/v0.9.0...v0.10.0) (2026-11-02)
 
 
