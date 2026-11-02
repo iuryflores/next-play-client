@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.0](https://github.com/iuryflores/next-play-client/compare/v0.16.0...v0.17.0) (2026-11-02)
+
+
+### Features
+
+* adiciona listas e atividades sociais entre amigos ([cb4c2e2](https://github.com/iuryflores/next-play-client/commit/cb4c2e26e9c7295d75d2db243a2dbf6fd98e0524))
+
 ## [0.16.0](https://github.com/iuryflores/next-play-client/compare/v0.15.0...v0.16.0) (2026-11-02)
 
 
