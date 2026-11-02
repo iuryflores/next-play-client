@@ -1,6 +1,21 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { activityTime } from '../src/collection-view.ts';
+import { activityTime, overviewOrder } from '../src/collection-view.ts';
+
+test('visão geral ordena séries por última exibição, depois leitura e lançamento completo', () => {
+  const items = [
+    { id: 'recent-activity', kind: 'movie', status: 'planned', releaseDate: '2025-01-01', updatedAt: '2026-11-02' },
+    { id: 'new-movie', kind: 'movie', status: 'planned', releaseDate: '2025-12-01' },
+    { id: 'old-series', kind: 'series', status: 'active', releaseDate: '2026-01-01', lastWatchedAt: '2026-10-01' },
+    { id: 'last-series', kind: 'series', status: 'active', releaseDate: '2020-01-01', lastWatchedAt: '2026-11-01' },
+    { id: 'reading', kind: 'book', status: 'active', year: '1990' },
+    { id: 'unknown', kind: 'movie', status: 'planned' },
+    { id: 'year-only', kind: 'movie', status: 'planned', year: '2024', releaseDate: 'invalid' },
+  ];
+  assert.deepEqual(items.sort(overviewOrder()).map((item) => item.id), [
+    'last-series', 'old-series', 'reading', 'new-movie', 'recent-activity', 'year-only', 'unknown',
+  ]);
+});
 
 test('livro em leitura cede lugar a atividades mais recentes e volta ao topo quando atualizado', () => {
   const book = {

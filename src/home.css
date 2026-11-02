@@ -115,6 +115,28 @@
 .home-main {
   min-width: 0;
 }
+/* Os acessos pessoais acompanham o cabeçalho em todas as telas da biblioteca. */
+.home-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-shrink: 0;
+}
+.home-topbar-actions .home-account {
+  position: static;
+  border: 0;
+  padding: 0;
+}
+.home-topbar-actions .theme-picker-compact {
+  margin: 0;
+  gap: 4px;
+}
+.theme-picker-compact label {
+  font-size: 11px;
+}
+.home-topbar-actions .theme-picker-compact select {
+  min-height: 36px;
+}
 .home-topbar {
   min-height: 86px;
   display: flex;
@@ -1065,7 +1087,16 @@
     padding: 26px 18px;
   }
   .home-topbar {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px 16px;
+    min-height: 64px;
+  }
+  .home-topbar > span {
     display: none;
+  }
+  .home-topbar-actions {
+    gap: 10px;
   }
   .home-heading {
     flex-direction: column;
@@ -2981,4 +3012,20 @@ button.cast-card:focus-visible {
 }
 .rank-movement.same {
   color: var(--ink-muted, #a99ab8);
+}
+.friends-scopes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.friend-achievement {
+  display: grid;
+  gap: 4px;
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 400;
+}
+.friend-achievement .achievement-stars {
+  margin: 0;
 }

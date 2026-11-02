@@ -55,6 +55,14 @@
   height: 18px;
   stroke-width: 1.5;
 }
+.achievement-star {
+  position: relative;
+  display: inline-flex;
+}
+.achievement-star > .is-lit {
+  position: absolute;
+  inset: 0;
+}
 .achievement-stars .is-lit {
   color: #aa7200;
   fill: #facc15;
@@ -478,4 +486,35 @@
   .achievements-heading h1 {
     font-size: 28px;
   }
+}
+.achievement-evidence {
+  margin: 10px 0;
+  text-align: left;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.achievement-evidence summary {
+  cursor: pointer;
+  color: var(--accent-ink);
+}
+.achievement-evidence ul {
+  max-height: 220px;
+  overflow-y: auto;
+  padding-left: 20px;
+  list-style: disc;
+}
+.achievement-guide {
+  margin: 20px 0;
+  padding: 16px 20px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  line-height: 1.6;
+}
+.achievement-guide summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.achievement-guide p {
+  margin-top: 12px;
+  color: var(--muted-foreground);
 }

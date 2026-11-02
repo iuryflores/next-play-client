@@ -24,6 +24,7 @@ import {
 import { t } from './i18n';
 import './achievements.css';
 import AchievementStars from './AchievementStars';
+import AchievementEvidence from './AchievementEvidence';
 
 const icons: Record<string, string> = {
   'first-play': '🍿',
@@ -37,6 +38,9 @@ const icons: Record<string, string> = {
   classics: '🎞️',
   critic: '🧐',
   'day-season': '🌅',
+  heart: '❤️',
+  'actor-fan': '🌟',
+  'character-fan': '🎭',
 };
 export function AchievementIcon({ family }: { family: string }) {
   return (
@@ -67,7 +71,12 @@ export function AchievementTitle() {
     <span className="achievement-profile-title" data-family={selected.family}>
       <AchievementIcon family={selected.family} />
       {t(selected.title)}
-      <AchievementStars level={selected.level} total={selected.levels} />
+      <AchievementStars
+        level={selected.level}
+        total={selected.levels}
+        progressionLevel={selected.progressionLevel}
+        cycleStars={selected.cycleStars}
+      />
     </span>
   ) : null;
 }
@@ -248,10 +257,16 @@ export default function AchievementProvider({
               <DialogTitle ref={celebrationHeading} tabIndex={-1}>
                 {t(current.name)}
               </DialogTitle>
-              <AchievementStars level={current.level} total={current.levels} />
+              <AchievementStars
+                level={current.level}
+                total={current.levels}
+                progressionLevel={current.progressionLevel}
+                cycleStars={current.cycleStars}
+              />
               <DialogDescription>
                 {t(current.description, current.target)}
               </DialogDescription>
+              <AchievementEvidence item={current} />
               <p className="achievement-earned-title">
                 {t('Novo título: {0}', t(current.title))}
               </p>

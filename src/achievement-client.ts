@@ -9,8 +9,12 @@ export interface Achievement {
   target: number;
   level: number;
   levels: number;
+  progressionLevel: number;
+  cycleStars: number;
+  nextLevelTarget: number;
   current: number;
   unlockedAt: string | null;
+  evidence: string[] | null;
 }
 export interface AchievementState {
   timeZone: string;

@@ -15,6 +15,8 @@ import {
 } from '@/components/ui/dialog';
 import { ApiError } from './auth';
 import { t, language } from './i18n';
+import { AchievementIcon } from './AchievementProvider';
+import AchievementStars from './AchievementStars';
 type Connection = {
   id: string;
   name: string;
@@ -34,6 +36,14 @@ type FriendsData = {
     incomplete: boolean;
     rank: number;
     movement?: number | null;
+    achievement: {
+      family: string;
+      title: string;
+      level: number;
+      levels: number;
+      progressionLevel: number;
+      cycleStars: number;
+    } | null;
   }[];
 };
 async function request<T>(
@@ -75,6 +85,7 @@ export default function Friends({
   onNameChanged: (name: string) => void;
 }) {
   const [data, setData] = useState<FriendsData | null>(null);
+  const [scope, setScope] = useState<'friends' | 'all'>('friends');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [code, setCode] = useState('');
@@ -84,7 +95,7 @@ export default function Friends({
   const expired = useEffectEvent(onExpired);
   useEffect(() => {
     let active = true;
-    void request<FriendsData>('', 'GET', undefined, visitId)
+    void request<FriendsData>(`?scope=${scope}`, 'GET', undefined, visitId)
       .then((result) => {
         if (active) {
           setData(result);
@@ -99,14 +110,19 @@ export default function Friends({
     return () => {
       active = false;
     };
-  }, [revision, visitId]);
+  }, [revision, visitId, scope]);
   async function action(path: string, method: string, body?: object) {
     if (busy) return;
     setBusy(true);
     setError('');
     try {
       await request(path, method, body);
-      const refreshed = await request<FriendsData>();
+      const refreshed = await request<FriendsData>(
+        `?scope=${scope}`,
+        'GET',
+        undefined,
+        visitId,
+      );
       setData(refreshed);
       onNameChanged(refreshed.name);
       if (path === '/requests') setCode('');
@@ -205,7 +221,33 @@ export default function Friends({
             </section>
           </div>
           <section className="friends-ranking">
-            <h2>{t('Ranking de amigos')}</h2>
+            <div
+              className="friends-scopes"
+              role="group"
+              aria-label={t('Usuários no ranking')}
+            >
+              {(['friends', 'all'] as const).map((option) => (
+                <Button
+                  key={option}
+                  variant={scope === option ? 'default' : 'outline'}
+                  aria-pressed={scope === option}
+                  onClick={() => {
+                    // Limpa a tabela ao trocar o escopo para não rotular o ranking anterior como global.
+                    setData(null);
+                    setError('');
+                    setScope(option);
+                  }}
+                  disabled={scope === option || busy}
+                >
+                  {t(
+                    option === 'friends' ? 'Meus amigos' : 'Todos os usuários',
+                  )}
+                </Button>
+              ))}
+            </div>
+            <h2>
+              {t(scope === 'friends' ? 'Ranking de amigos' : 'Ranking geral')}
+            </h2>
             <p>
               {t(
                 'Tempo total em séries: soma dos episódios assistidos, uma vez por episódio. Filmes e jogos ainda não entram no tempo. Empates recebem a mesma posição.',
@@ -216,7 +258,9 @@ export default function Friends({
                 <thead>
                   <tr>
                     <th scope="col">#</th>
-                    <th scope="col">{t('Amigo')}</th>
+                    <th scope="col">
+                      {t(scope === 'friends' ? 'Amigo' : 'Usuário')}
+                    </th>
                     <th scope="col">{t('Tempo em séries')}</th>
                     <th scope="col">{t('Episódios assistidos')}</th>
                   </tr>
@@ -239,6 +283,24 @@ export default function Friends({
                       <th scope="row">
                         {row.name}
                         {row.me ? ` · ${t('Você')}` : ''}
+                        {row.achievement && (
+                          <div className="friend-achievement">
+                            <span>
+                              <AchievementIcon
+                                family={row.achievement.family}
+                              />{' '}
+                              {t(row.achievement.title)}
+                            </span>
+                            <AchievementStars
+                              level={row.achievement.level}
+                              total={row.achievement.levels}
+                              progressionLevel={
+                                row.achievement.progressionLevel
+                              }
+                              cycleStars={row.achievement.cycleStars}
+                            />
+                          </div>
+                        )}
                         {row.incomplete && (
                           <small>
                             {t(

@@ -1,3 +1,4 @@
+import ThemePicker from './ThemePicker';
 import PageLoading from './PageLoading';
 import PageBoundary from './PageBoundary';
 import AchievementProvider, { AchievementTitle } from './AchievementProvider';
@@ -69,7 +70,7 @@ import MobileNavigation from './MobileNavigation';
 import './mobile.css';
 import QuickActions from './QuickActions';
 import CompletionFields from './CompletionFields';
-import { matchesView, activityTime } from './collection-view';
+import { matchesView, overviewOrder } from './collection-view';
 import type { CatalogTitle } from './CatalogSearch';
 
 // Cada tela tem seu próprio arquivo de produção; voltar a ela reutiliza o módulo baixado.
@@ -266,6 +267,7 @@ function Home({
       ),
   );
   {
+    const compareOverview = overviewOrder();
     const releaseYear = (item: LibraryItem) =>
       /^\d{4}$/.test(item.year || '') ? Number(item.year) : 0;
     const releaseTime = (item: LibraryItem) => {
@@ -278,7 +280,7 @@ function Home({
         (view === 'completed' && historyMode
           ? watchedTime(b) - watchedTime(a)
           : 0) ||
-        (view === 'all' ? activityTime(b) - activityTime(a) : 0) ||
+        (view === 'all' ? compareOverview(a, b) : 0) ||
         releaseYear(b) - releaseYear(a) ||
         a.title.localeCompare(b.title, language) ||
         a.id.localeCompare(b.id),
@@ -769,39 +771,6 @@ function Home({
             {t(' um lugar na sua vida. ')}
           </p>
         </div>
-        <div className="home-account">
-          <button
-            className="account-link"
-            onClick={() => {
-              setDetailId(null);
-              setView('account');
-            }}
-            aria-label={t(' Minha conta ')}
-            aria-current={view === 'account' ? 'page' : undefined}
-          >
-            <span className="avatar" aria-hidden="true">
-              {user.avatar ? (
-                <img src={user.avatar} alt="" />
-              ) : (
-                (user.displayName || user.email).charAt(0).toUpperCase()
-              )}
-            </span>
-            <span className="account-label">
-              <strong>{t(' Minha conta ')}</strong>
-              <small>{user.displayName || user.email}</small>
-              <AchievementTitle />
-            </span>
-          </button>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={t('Sair da conta')}
-            disabled={busy}
-            onClick={() => void logout()}
-          >
-            <LogOut aria-hidden="true" />
-          </Button>
-        </div>
       </aside>
       <MobileNavigation
         view={view}
@@ -839,9 +808,42 @@ function Home({
                               ? t('Explorar')
                               : views.find((item) => item.id === view)?.label}
           </span>
-          <span className="private-library">
-            <span /> {t(' Seu espaço pessoal ')}
-          </span>
+          <div className="home-topbar-actions">
+            <ThemePicker compact />
+            <div className="home-account">
+              <button
+                className="account-link"
+                onClick={() => {
+                  setDetailId(null);
+                  setView('account');
+                }}
+                aria-label={t(' Minha conta ')}
+                aria-current={view === 'account' ? 'page' : undefined}
+              >
+                <span className="avatar" aria-hidden="true">
+                  {user.avatar ? (
+                    <img src={user.avatar} alt="" />
+                  ) : (
+                    (user.displayName || user.email).charAt(0).toUpperCase()
+                  )}
+                </span>
+                <span className="account-label">
+                  <strong>{t(' Minha conta ')}</strong>
+                  <small>{user.displayName || user.email}</small>
+                  <AchievementTitle />
+                </span>
+              </button>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={t('Sair da conta')}
+                disabled={busy}
+                onClick={() => void logout()}
+              >
+                <LogOut aria-hidden="true" />
+              </Button>
+            </div>
+          </div>
         </header>
         <div className="home-content">
           <PageBoundary key={detailId ? 'details' : view}>

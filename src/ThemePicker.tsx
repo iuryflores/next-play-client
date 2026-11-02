@@ -1,20 +1,32 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { NativeSelect } from '@/components/ui/native-select';
-import { readTheme, rememberTheme, validTheme } from './theme';
+import { readTheme, rememberTheme, validTheme, type Theme } from './theme';
 import { t } from './i18n';
 
-export default function ThemePicker() {
+export default function ThemePicker({
+  compact = false,
+}: {
+  compact?: boolean;
+}) {
+  const id = useId();
   const [theme, setTheme] = useState(readTheme);
   useEffect(() => {
     const sync = () => setTheme(readTheme());
+    // Mantém os controles do cabeçalho e do perfil sincronizados na mesma aba.
+    const syncLocal = (event: Event) =>
+      setTheme((event as CustomEvent<Theme>).detail);
     window.addEventListener('storage', sync);
-    return () => window.removeEventListener('storage', sync);
+    window.addEventListener('nextplay:theme', syncLocal);
+    return () => {
+      window.removeEventListener('storage', sync);
+      window.removeEventListener('nextplay:theme', syncLocal);
+    };
   }, []);
   return (
-    <div className="theme-picker">
-      <label htmlFor="app-theme">{t('Aparência')}</label>
+    <div className={`theme-picker${compact ? ' theme-picker-compact' : ''}`}>
+      <label htmlFor={id}>{t('Aparência')}</label>
       <NativeSelect
-        id="app-theme"
+        id={id}
         value={theme}
         onChange={(event) => {
           const selected = validTheme(event.target.value);
@@ -26,7 +38,9 @@ export default function ThemePicker() {
         <option value="light">{t('Claro')}</option>
         <option value="dark">{t('Escuro')}</option>
       </NativeSelect>
-      <small>{t('Aplicado imediatamente e salvo neste navegador.')}</small>
+      {!compact && (
+        <small>{t('Aplicado imediatamente e salvo neste navegador.')}</small>
+      )}
     </div>
   );
 }

@@ -877,6 +877,39 @@ Dar de 1 a 5 estrelas a {0} filmes diferentes já assistidos.|Rate {0} different
 Hoje tem final|Today is finale day|Hoy hay final
 Do piloto ao final|From pilot to finale|Del piloto al final
 Assistir a todos os episódios de uma temporada regular no mesmo dia, com marcações individuais.|Watch every episode of a regular season on the same day, with individual logs.|Mira todos los episodios de una temporada regular el mismo día, con registros individuales.
+Por que ganhei?|Why did I earn this?|¿Por qué la gané?
+Itens que contaram no desbloqueio:|Items counted when unlocked:|Elementos que contaron al desbloquear:
+Os itens desta conquista não foram registrados no desbloqueio.|The items for this achievement were not recorded when it was unlocked.|Los elementos de este logro no se registraron al desbloquearlo.
+De coração|From the heart|De corazón
+Coração de fã|Fan at heart|Corazón de fan
+Fã de carteirinha|Devoted fan|Fan incondicional
+Personagem inesquecível|Unforgettable character|Personaje inolvidable
+Fã fiel|Loyal fan|Fan fiel
+Marcar Amei em {0} avaliações distintas de obras concluídas ou episódios.|Mark Loved in {0} distinct reviews of completed titles or episodes.|Marca Me encantó en {0} reseñas distintas de títulos completados o episodios.
+Escolher o mesmo ator favorito em {0} avaliações distintas de obras concluídas ou episódios.|Choose the same favorite actor in {0} distinct reviews of completed titles or episodes.|Elige al mismo actor favorito en {0} reseñas distintas de títulos completados o episodios.
+Escolher o mesmo personagem da mesma obra ou série em {0} avaliações distintas de obras concluídas ou episódios.|Choose the same character from the same title or series in {0} distinct reviews of completed titles or episodes.|Elige al mismo personaje del mismo título o serie en {0} reseñas distintas de títulos completados o episodios.
+Marcou {0} {1} vezes como personagem favorito.|Marked {0} as favorite character {1} times.|Marcaste a {0} como personaje favorito {1} veces.
+Escolheu {0} {1} vezes como ator favorito.|Chose {0} as favorite actor {1} times.|Elegiste a {0} como actor favorito {1} veces.
+Marcou Amei em {0} avaliações distintas.|Marked Loved in {0} distinct reviews.|Marcaste Me encantó en {0} reseñas distintas.
+Meta conquistada: {0}|Milestone earned: {0}|Meta alcanzada: {0}
+Nível {0}|Level {0}|Nivel {0}
+Marco {0} de {1}|Milestone {0} of {1}|Hito {0} de {1}
+Conquistado|Earned|Conseguido
+Como funcionam os níveis e as estrelas?|How do levels and stars work?|¿Cómo funcionan los niveles y las estrellas?
+As estrelas mostram o progresso do ciclo atual. Ao completar cinco estrelas, você ganha um nível. O nível indica quantas vezes você completou esse ciclo.|Stars show progress through the current cycle. Completing five stars earns one level. Your level counts how many cycles you have completed.|Las estrellas muestran el progreso del ciclo actual. Al completar cinco estrellas, ganas un nivel. El nivel indica cuántas veces completaste ese ciclo.
+Cada conquista tem sua própria meta por ciclo, igual ao maior marco inicial. Por exemplo: se o ciclo exige 50 avaliações, com 50 você chega ao nível 1; com 75, fica no nível 1 com 2,5 estrelas; com 100, chega ao nível 2.|Each achievement has its own cycle target, equal to its highest initial milestone. For example: with a target of 50 reviews, 50 earns level 1; 75 means level 1 with 2.5 stars; 100 earns level 2.|Cada logro tiene su propia meta por ciclo, igual al mayor hito inicial. Por ejemplo: si el ciclo requiere 50 reseñas, con 50 alcanzas el nivel 1; con 75, sigues en el nivel 1 con 2,5 estrellas; con 100, alcanzas el nivel 2.
+Ao fechar um ciclo, as cinco estrelas ficam preenchidas até você começar o próximo. Depois, elas voltam a mostrar o avanço do novo ciclo. Seu maior progresso fica salvo, mesmo se você remover registros.|When you finish a cycle, all five stars stay filled until you start the next one. They then show progress through the new cycle. Your highest progress is saved even if you remove records.|Al cerrar un ciclo, las cinco estrellas permanecen llenas hasta que empieces el siguiente. Después muestran el avance del nuevo ciclo. Tu mayor progreso se guarda aunque elimines registros.
+Os marcos listados são metas de desbloqueio, e não níveis. Conquistas únicas, como Primeiro play, são conquistadas uma vez e não têm níveis nem estrelas.|The listed milestones are unlock targets rather than levels. One-time achievements, such as First play, are earned once and have no levels or stars.|Los hitos listados son metas de desbloqueo, no niveles. Los logros únicos, como Primer play, se consiguen una vez y no tienen niveles ni estrellas.
+Cada estrela vale a maior meta inicial da conquista. No Cinéfilo, cada estrela vale 100 filmes: com 338 filmes, você tem 3,38 estrelas e nível 0; com 500, completa cinco estrelas e chega ao nível 1; com 1.000, chega ao nível 2.|Each star is worth the achievement's highest initial target. For Cinephile, each star is 100 movies: 338 movies means 3.38 stars and level 0; 500 completes five stars and earns level 1; 1,000 earns level 2.|Cada estrella vale la mayor meta inicial del logro. En Cinéfilo, cada estrella vale 100 películas: con 338 tienes 3,38 estrellas y nivel 0; con 500 completas cinco estrellas y alcanzas el nivel 1; con 1.000 alcanzas el nivel 2.
+Cada estrela vale {0} registros. Cinco estrelas completam um nível.|Each star is worth {0} records. Five stars complete one level.|Cada estrella vale {0} registros. Cinco estrellas completan un nivel.
+Próximo nível|Next level|Próximo nivel
+As cinco metas abaixo de cada conquista representam as estrelas do ciclo atual. O histórico dos desbloqueios anteriores fica em Por que ganhei? Conquistas únicas, como Primeiro play, não têm níveis nem estrelas.|The five targets below each achievement represent the current cycle's stars. Previous unlock history is available under Why did I earn this? One-time achievements, such as First play, have no levels or stars.|Las cinco metas debajo de cada logro representan las estrellas del ciclo actual. El historial de desbloqueos anteriores está en ¿Por qué la gané? Los logros únicos, como Primer play, no tienen niveles ni estrellas.
+O nível conta apenas ciclos completos. Em Temporada encerrada, cada estrela vale 25 temporadas: 125 completam o nível 1 e 250 completam o nível 2. Com 249, você ainda está no nível 1, com a quinta estrela do próximo ciclo quase preenchida. O número abaixo das estrelas mostra exatamente quanto falta.|Levels count only completed cycles. In Season complete, each star is worth 25 seasons: 125 completes level 1 and 250 completes level 2. At 249, you are still level 1, with the fifth star of the next cycle nearly filled. The number below the stars shows exactly how much is left.|El nivel cuenta solo ciclos completos. En Temporada terminada, cada estrella vale 25 temporadas: 125 completan el nivel 1 y 250 completan el nivel 2. Con 249, sigues en el nivel 1, con la quinta estrella del siguiente ciclo casi llena. El número debajo de las estrellas muestra exactamente cuánto falta.
+Meus amigos|My friends|Mis amigos
+Todos os usuários|All users|Todos los usuarios
+Ranking geral|Overall ranking|Clasificación general
+Usuários no ranking|Ranking users|Usuarios de la clasificación
+Usuário|User|Usuario
 `;
 export const translations: Record<string, [string, string]> =
   Object.fromEntries(
