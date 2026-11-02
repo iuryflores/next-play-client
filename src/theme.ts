@@ -1,16 +1,12 @@
 export type Theme = 'light' | 'dark' | 'system';
-export const themeKey = 'nextplay.theme';
+let selectedTheme: Theme = 'system';
 
 export function validTheme(value: unknown): Theme {
   return value === 'light' || value === 'dark' ? value : 'system';
 }
 
 export function readTheme(): Theme {
-  try {
-    return validTheme(localStorage.getItem(themeKey));
-  } catch {
-    return 'system';
-  }
+  return selectedTheme;
 }
 
 export function applyTheme(
@@ -26,31 +22,17 @@ export function applyTheme(
 }
 
 export function rememberTheme(theme: Theme) {
-  // A aparência pertence a este navegador e não depende de salvar o perfil na API.
-  try {
-    localStorage.setItem(themeKey, theme);
-  } catch {
-    // Navegação privada pode bloquear o armazenamento; a troca ainda funciona na sessão.
-  }
+  // Mantém apenas o estado da sessão; a persistência é feita na conta pela API.
+  selectedTheme = theme;
   applyTheme(theme);
   window.dispatchEvent(new CustomEvent('nextplay:theme', { detail: theme }));
 }
 
 export function initializeTheme() {
-  let selected = readTheme();
   const media = matchMedia('(prefers-color-scheme: dark)');
-  applyTheme(selected, media.matches);
+  applyTheme(readTheme(), media.matches);
   // Só acompanha o sistema enquanto o usuário não escolher um tema explícito.
   media.addEventListener('change', (event) =>
-    applyTheme(selected, event.matches),
+    applyTheme(readTheme(), event.matches),
   );
-  window.addEventListener('nextplay:theme', (event) => {
-    selected = (event as CustomEvent<Theme>).detail;
-  });
-  window.addEventListener('storage', (event) => {
-    if (event.key === themeKey || event.key === null) {
-      selected = readTheme();
-      applyTheme(selected, media.matches);
-    }
-  });
 }

@@ -56,7 +56,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
-import { ApiError, type AuthUser } from './auth';
+import { ApiError, authRequest, type AuthUser } from './auth';
 import {
   categories,
   statusNames,
@@ -126,23 +126,25 @@ function Home({
     | 'friends'
     | Status
   >('all');
-  const [density, setDensity] = useState<'compact' | 'details'>(() => {
-    try {
-      return localStorage.getItem('nextplay.collection-density') === 'details'
-        ? 'details'
-        : 'compact';
-    } catch {
-      return 'compact';
-    }
-  });
+  const [density, setDensity] = useState<'compact' | 'details'>(
+    user.collectionDensity || 'compact',
+  );
+  const [savingDensity, setSavingDensity] = useState(false);
+  useEffect(() => {
+    setDensity(user.collectionDensity || 'compact');
+  }, [user.collectionDensity]);
   const compactCards = view === 'all' && density === 'compact';
-  function changeDensity(value: string) {
+  async function changeDensity(value: string) {
+    if (savingDensity) return;
     const next = value === 'details' ? 'details' : 'compact';
-    setDensity(next);
+    setSavingDensity(true);
     try {
-      localStorage.setItem('nextplay.collection-density', next);
+      await authRequest('preferences', { collectionDensity: next });
+      setDensity(next);
     } catch {
-      /* The preference still applies for this session. */
+      setError(t('Não foi possível salvar a exibição. Tente novamente.'));
+    } finally {
+      setSavingDensity(false);
     }
   }
   const [category, setCategory] = useState<'all' | Kind>('all');
@@ -606,9 +608,9 @@ function Home({
                 max="100000"
                 step="any"
                 // Três casas preservam os minutos salvos ao reabrir e salvar o formulário.
-                defaultValue={
-                  Number(((editing?.playtimeMinutes || 0) / 60).toFixed(3))
-                }
+                defaultValue={Number(
+                  ((editing?.playtimeMinutes || 0) / 60).toFixed(3),
+                )}
               />
               <small>
                 {t(
@@ -834,7 +836,7 @@ function Home({
                               : views.find((item) => item.id === view)?.label}
           </span>
           <div className="home-topbar-actions">
-            <ThemePicker compact />
+            <ThemePicker compact account />
             <div className="home-account">
               <button
                 className="account-link"
@@ -1093,6 +1095,7 @@ function Home({
                         <NativeSelect
                           id="collection-density"
                           value={density}
+                          disabled={savingDensity}
                           onChange={(event) =>
                             changeDensity(event.target.value)
                           }

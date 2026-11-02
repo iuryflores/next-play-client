@@ -1,5 +1,6 @@
 import PageLoading from './PageLoading';
 import ThemePicker from './ThemePicker';
+import { rememberTheme, validTheme } from './theme';
 import PageBoundary from './PageBoundary';
 import PasswordRecovery from './PasswordRecovery';
 import EmailConfirmation from './EmailConfirmation';
@@ -74,8 +75,19 @@ export default function LoginPage() {
       window.location.reload();
       return;
     }
+    rememberTheme(validTheme(value.theme));
     setUser(value);
   }
+  useEffect(() => {
+    const sync = (event: Event) =>
+      acceptUser((event as CustomEvent<AuthUser>).detail);
+    window.addEventListener('nextplay:preferences', sync);
+    return () => window.removeEventListener('nextplay:preferences', sync);
+  }, []);
+  useEffect(() => {
+    // Sair da conta remove da sessão a preferência pessoal carregada do banco.
+    if (!user) rememberTheme('system');
+  }, [user]);
 
   useEffect(() => {
     if (recovering || verifyingEmail) {

@@ -1,23 +1,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import {
-  initializeTheme,
-  rememberTheme,
-  readTheme,
-  themeKey,
-} from '../src/theme.ts';
+import { initializeTheme, rememberTheme, readTheme } from '../src/theme.ts';
 
-test('aparência respeita sistema, escolha explícita, outras abas e armazenamento bloqueado', () => {
-  const storage = new Map();
-  let blocked = false;
+test('aparência usa apenas a sessão em memória e nunca acessa armazenamento local', () => {
   globalThis.localStorage = {
-    getItem(key) {
-      if (blocked) throw new Error('blocked');
-      return storage.get(key) ?? null;
+    getItem() {
+      assert.fail('Tema não deve ler localStorage');
     },
-    setItem(key, value) {
-      if (blocked) throw new Error('blocked');
-      storage.set(key, value);
+    setItem() {
+      assert.fail('Tema não deve gravar localStorage');
     },
   };
   const events = new Map();
@@ -71,16 +62,13 @@ test('aparência respeita sistema, escolha explícita, outras abas e armazenamen
     'light',
     'escolha explícita prevalece sobre o sistema',
   );
-  storage.set(themeKey, 'dark');
-  events.get('storage')({ key: themeKey });
+  rememberTheme('dark');
   assert.equal(root.dataset.theme, 'dark');
-  storage.delete(themeKey);
   media.matches = false;
-  events.get('storage')({ key: null });
+  rememberTheme('system');
   assert.equal(root.dataset.theme, 'light');
   media.change({ matches: true });
   assert.equal(root.dataset.theme, 'dark');
-  blocked = true;
   assert.equal(readTheme(), 'system');
   rememberTheme('light');
   media.change({ matches: true });

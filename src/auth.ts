@@ -2,6 +2,8 @@ import { t } from './i18n';
 import { notifySaved } from './notifications';
 import { apiMessage } from './i18n';
 export interface AuthUser {
+  theme?: 'system' | 'light' | 'dark';
+  collectionDensity?: 'compact' | 'details';
   requiresVerification?: boolean;
   language?: 'pt-BR' | 'en-US' | 'es-ES';
   displayName?: string;
@@ -28,7 +30,16 @@ export async function authRequest<T>(path: string, body?: object): Promise<T> {
       headers:
         body === undefined ? undefined : { 'Content-Type': 'application/json' },
       body: body === undefined ? undefined : JSON.stringify(body),
-      signal: AbortSignal.timeout(['register', 'forgot-password', 'resend-confirmation', 'profile'].includes(path) ? 30000 : 15000),
+      signal: AbortSignal.timeout(
+        [
+          'register',
+          'forgot-password',
+          'resend-confirmation',
+          'profile',
+        ].includes(path)
+          ? 30000
+          : 15000,
+      ),
     });
   } catch {
     throw new ApiError(
@@ -57,5 +68,9 @@ export async function authRequest<T>(path: string, body?: object): Promise<T> {
     );
   }
   announce();
+  if (path === 'preferences' && payload && 'user' in payload)
+    window.dispatchEvent(
+      new CustomEvent('nextplay:preferences', { detail: payload.user }),
+    );
   return payload;
 }

@@ -2,23 +2,25 @@ import { useEffect, useId, useState } from 'react';
 import { NativeSelect } from '@/components/ui/native-select';
 import { readTheme, rememberTheme, validTheme, type Theme } from './theme';
 import { t } from './i18n';
+import { authRequest } from './auth';
 
 export default function ThemePicker({
   compact = false,
+  account = false,
 }: {
   compact?: boolean;
+  account?: boolean;
 }) {
   const id = useId();
   const [theme, setTheme] = useState(readTheme);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
   useEffect(() => {
-    const sync = () => setTheme(readTheme());
     // Mantém os controles do cabeçalho e do perfil sincronizados na mesma aba.
     const syncLocal = (event: Event) =>
       setTheme((event as CustomEvent<Theme>).detail);
-    window.addEventListener('storage', sync);
     window.addEventListener('nextplay:theme', syncLocal);
     return () => {
-      window.removeEventListener('storage', sync);
       window.removeEventListener('nextplay:theme', syncLocal);
     };
   }, []);
@@ -28,10 +30,22 @@ export default function ThemePicker({
       <NativeSelect
         id={id}
         value={theme}
-        onChange={(event) => {
+        disabled={saving}
+        onChange={async (event) => {
           const selected = validTheme(event.target.value);
-          setTheme(selected);
-          rememberTheme(selected);
+          setSaving(true);
+          setError('');
+          try {
+            if (account) await authRequest('preferences', { theme: selected });
+            // Só confirma a aparência da conta após o banco aceitar a alteração.
+            rememberTheme(selected);
+          } catch {
+            setError(
+              t('Não foi possível salvar a aparência. Tente novamente.'),
+            );
+          } finally {
+            setSaving(false);
+          }
         }}
       >
         <option value="system">{t('Usar tema do dispositivo')}</option>
@@ -39,8 +53,17 @@ export default function ThemePicker({
         <option value="dark">{t('Escuro')}</option>
       </NativeSelect>
       {!compact && (
-        <small>{t('Aplicado imediatamente e salvo neste navegador.')}</small>
+        <small>
+          {t(
+            account
+              ? 'Salvo na sua conta e aplicado ao entrar em qualquer dispositivo.'
+              : 'Entre na sua conta para salvar a aparência. Antes de entrar, a escolha vale apenas nesta sessão.',
+          )}
+        </small>
       )}
+      <output className="home-error" aria-live="polite">
+        {error}
+      </output>
     </div>
   );
 }

@@ -11,7 +11,7 @@ export default function Settings() {
   return (
     <section className="manual-title-page">
       <h2>{t('Configurações')}</h2>
-      <ThemePicker />
+      <ThemePicker account />
       <form
         className="item-form"
         onSubmit={async (event) => {

@@ -916,6 +916,10 @@ Informe o total acumulado. O tempo é mantido ao mudar o status do jogo.|Enter t
 Convidar amigo|Invite a friend|Invitar a un amigo
 Compartilhe seu código ou envie um pedido usando o código de outro usuário.|Share your code or send a request using another user's code.|Comparte tu código o envía una solicitud usando el código de otro usuario.
 Amizade|Friendship|Amistad
+Salvo na sua conta e aplicado ao entrar em qualquer dispositivo.|Saved to your account and applied when signing in on any device.|Guardado en tu cuenta y aplicado al iniciar sesión en cualquier dispositivo.
+Entre na sua conta para salvar a aparência. Antes de entrar, a escolha vale apenas nesta sessão.|Sign in to save your appearance. Before signing in, your choice applies only to this session.|Inicia sesión para guardar la apariencia. Antes de entrar, tu elección solo se aplica a esta sesión.
+Não foi possível salvar a aparência. Tente novamente.|Could not save appearance. Try again.|No se pudo guardar la apariencia. Inténtalo de nuevo.
+Não foi possível salvar a exibição. Tente novamente.|Could not save the display preference. Try again.|No se pudo guardar la preferencia de visualización. Inténtalo de nuevo.
 `;
 export const translations: Record<string, [string, string]> =
   Object.fromEntries(

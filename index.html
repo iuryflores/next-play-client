@@ -5,11 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#111018" />
     <script>
-      // Define a aparência antes de pintar a página, inclusive no retorno ao site.
+      // Antes de consultar a sessão, acompanha o dispositivo sem ler preferências locais.
       (() => {
-        let theme;
-        try { theme = localStorage.getItem('nextplay.theme'); } catch {}
-        const dark = theme === 'dark' || (theme !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+        const dark = matchMedia('(prefers-color-scheme: dark)').matches;
         document.documentElement.dataset.theme = dark ? 'dark' : 'light';
         document.documentElement.classList.toggle('dark', dark);
         document.querySelector('meta[name="theme-color"]').content = dark ? '#191621' : '#f5f3f9';
