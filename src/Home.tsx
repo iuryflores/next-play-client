@@ -1,3 +1,4 @@
+import useHomeRoute from './useHomeRoute';
 import ThemePicker from './ThemePicker';
 import PageLoading from './PageLoading';
 import PageBoundary from './PageBoundary';
@@ -108,24 +109,18 @@ function Home({
   onExpired: () => void;
 }) {
   const [items, setItems] = useState<LibraryItem[]>([]);
-  const [detailId, setDetailId] = useState<string | null>(null);
+  const { route, set: setRouteField } = useHomeRoute();
+  const { view, detailId, category, historyMode } = route;
+  const setDetailId = (value: string | null) =>
+    setRouteField('detailId', value);
+  const setView = (value: typeof view) => setRouteField('view', value);
+  const setCategory = (value: typeof category) =>
+    setRouteField('category', value);
+  const setHistoryMode = (value: boolean) =>
+    setRouteField('historyMode', value);
   const detailItem = items.find((item) => item.id === detailId);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [view, setView] = useState<
-    | 'all'
-    | 'explore'
-    | 'add'
-    | 'stats'
-    | 'incoming'
-    | 'coming-soon'
-    | 'account'
-    | 'achievements'
-    | 'acervo'
-    | 'archived'
-    | 'friends'
-    | Status
-  >('all');
   const [density, setDensity] = useState<'compact' | 'details'>(
     user.collectionDensity || 'compact',
   );
@@ -147,9 +142,7 @@ function Home({
       setSavingDensity(false);
     }
   }
-  const [category, setCategory] = useState<'all' | Kind>('all');
   const [search, setSearch] = useState('');
-  const [historyMode, setHistoryMode] = useState(false);
   const pageRef = useRef<HTMLElement>(null);
   useLayoutEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
