@@ -31,6 +31,8 @@ type FriendsData = {
     id: string;
     name: string;
     me: boolean;
+    avatar: string;
+    connection: { id: string; status: string; incoming: boolean } | null;
     minutes: number;
     episodes: number;
     incomplete: boolean;
@@ -89,6 +91,7 @@ export default function Friends({
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [code, setCode] = useState('');
+  const [inviteOpen, setInviteOpen] = useState(false);
   const [revision, setRevision] = useState(0);
   const [visitId] = useState(() => crypto.randomUUID());
   const [remove, setRemove] = useState<Connection | null>(null);
@@ -125,7 +128,10 @@ export default function Friends({
       );
       setData(refreshed);
       onNameChanged(refreshed.name);
-      if (path === '/requests') setCode('');
+      if (path === '/requests') {
+        setCode('');
+        setInviteOpen(false);
+      }
       setRemove(null);
     } catch (reason) {
       if (reason instanceof ApiError && reason.status === 401) onExpired();
@@ -143,6 +149,15 @@ export default function Friends({
     <section className="friends-page">
       <header className="collection-toolbar">
         <h1>{t('Amigos')}</h1>
+        <Button
+          onClick={() => {
+            setError('');
+            setInviteOpen(true);
+          }}
+          disabled={!data || busy}
+        >
+          {t('Convidar amigo')}
+        </Button>
         <IconAction
           variant="outline"
           disabled={busy}
@@ -157,69 +172,6 @@ export default function Friends({
       {!data && !error && <PageLoading label={t('Carregando amigos…')} />}
       {data && (
         <>
-          <div className="friends-settings">
-            <section>
-              <h2>{t('Seu perfil de amigo')}</h2>
-              <form
-                className="item-form"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  const value = new FormData(event.currentTarget).get('name');
-                  if (typeof value === 'string')
-                    void action('/profile', 'POST', { name: value });
-                }}
-              >
-                <label htmlFor="friend-name">{t('Nome no ranking')}</label>
-                <Input
-                  key={data.name}
-                  id="friend-name"
-                  name="name"
-                  defaultValue={data.name}
-                  required
-                  maxLength={40}
-                />
-                <Button disabled={busy} type="submit">
-                  {t('Salvar nome')}
-                </Button>
-              </form>
-              <label htmlFor="my-friend-code">{t('Seu código de amigo')}</label>
-              <Input
-                id="my-friend-code"
-                value={data.code}
-                readOnly
-                onFocus={(event) => event.currentTarget.select()}
-              />
-              <small>{t('Compartilhe este código com seus amigos.')}</small>
-            </section>
-            <section>
-              <h2>{t('Adicionar amigo')}</h2>
-              <p>
-                {t(
-                  'Ao aceitar a amizade, vocês compartilham o tempo assistido e a quantidade de episódios no ranking. Sua coleção, avaliações e anotações continuam privadas.',
-                )}
-              </p>
-              <form
-                className="item-form"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  void action('/requests', 'POST', { code: code.trim() });
-                }}
-              >
-                <label htmlFor="friend-code">{t('Código do amigo')}</label>
-                <Input
-                  id="friend-code"
-                  value={code}
-                  onChange={(event) => setCode(event.target.value)}
-                  required
-                  pattern="[a-fA-F0-9]{24}"
-                  maxLength={24}
-                />
-                <Button type="submit" disabled={busy}>
-                  {t('Enviar pedido')}
-                </Button>
-              </form>
-            </section>
-          </div>
           <section className="friends-ranking">
             <div
               className="friends-scopes"
@@ -263,6 +215,7 @@ export default function Friends({
                     </th>
                     <th scope="col">{t('Tempo em séries')}</th>
                     <th scope="col">{t('Episódios assistidos')}</th>
+                    <th scope="col">{t('Amizade')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -281,6 +234,19 @@ export default function Friends({
                         />
                       </td>
                       <th scope="row">
+                        <span className="friend-avatar" aria-hidden="true">
+                          {row.name.charAt(0).toUpperCase()}
+                          {row.avatar && (
+                            <img
+                              src={row.avatar}
+                              alt=""
+                              loading="lazy"
+                              onError={(event) => {
+                                event.currentTarget.style.display = 'none';
+                              }}
+                            />
+                          )}
+                        </span>
                         {row.name}
                         {row.me ? ` · ${t('Você')}` : ''}
                         {row.achievement && (
@@ -314,6 +280,38 @@ export default function Friends({
                         {row.minutes % 60}min
                       </td>
                       <td>{row.episodes.toLocaleString(language)}</td>
+                      <td>
+                        {!row.me &&
+                          (row.connection?.status === 'accepted' ? (
+                            <small>{t('Amizade confirmada')}</small>
+                          ) : row.connection?.incoming ? (
+                            <Button
+                              disabled={busy}
+                              onClick={() =>
+                                void action(
+                                  `/${row.connection!.id}/accept`,
+                                  'POST',
+                                )
+                              }
+                            >
+                              {t('Aceitar')}
+                            </Button>
+                          ) : row.connection ? (
+                            <small>{t('Pedido enviado')}</small>
+                          ) : (
+                            <Button
+                              variant="outline"
+                              disabled={busy}
+                              onClick={() =>
+                                void action('/requests', 'POST', {
+                                  code: row.id,
+                                })
+                              }
+                            >
+                              {t('Adicionar amigo')}
+                            </Button>
+                          ))}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -371,6 +369,95 @@ export default function Friends({
           </section>
         </>
       )}
+      <Dialog
+        open={inviteOpen}
+        onOpenChange={(open) => {
+          if (!busy) setInviteOpen(open);
+        }}
+      >
+        <DialogContent className="friends-invite-dialog">
+          <DialogTitle>{t('Convidar amigo')}</DialogTitle>
+          <DialogDescription>
+            {t(
+              'Compartilhe seu código ou envie um pedido usando o código de outro usuário.',
+            )}
+          </DialogDescription>
+          <output className="home-error" aria-live="polite">
+            {error}
+          </output>
+          {data && (
+            <>
+              <div className="friends-settings">
+                <section>
+                  <h2>{t('Seu perfil de amigo')}</h2>
+                  <form
+                    className="item-form"
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      const value = new FormData(event.currentTarget).get(
+                        'name',
+                      );
+                      if (typeof value === 'string')
+                        void action('/profile', 'POST', { name: value });
+                    }}
+                  >
+                    <label htmlFor="friend-name">{t('Nome no ranking')}</label>
+                    <Input
+                      key={data.name}
+                      id="friend-name"
+                      name="name"
+                      defaultValue={data.name}
+                      required
+                      maxLength={40}
+                    />
+                    <Button disabled={busy} type="submit">
+                      {t('Salvar nome')}
+                    </Button>
+                  </form>
+                  <label htmlFor="my-friend-code">
+                    {t('Seu código de amigo')}
+                  </label>
+                  <Input
+                    id="my-friend-code"
+                    value={data.code}
+                    readOnly
+                    onFocus={(event) => event.currentTarget.select()}
+                  />
+                  <small>{t('Compartilhe este código com seus amigos.')}</small>
+                </section>
+                <section>
+                  <h2>{t('Adicionar amigo')}</h2>
+                  <p>
+                    {t(
+                      'Ao aceitar a amizade, vocês compartilham o tempo assistido e a quantidade de episódios no ranking. Sua coleção, avaliações e anotações continuam privadas.',
+                    )}
+                  </p>
+                  <form
+                    className="item-form"
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      void action('/requests', 'POST', { code: code.trim() });
+                    }}
+                  >
+                    <label htmlFor="friend-code">{t('Código do amigo')}</label>
+                    <Input
+                      id="friend-code"
+                      value={code}
+                      onChange={(event) => setCode(event.target.value)}
+                      required
+                      pattern="[a-fA-F0-9]{24}"
+                      maxLength={24}
+                    />
+                    <Button type="submit" disabled={busy}>
+                      {t('Enviar pedido')}
+                    </Button>
+                  </form>
+                </section>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
       <Dialog
         open={!!remove}
         onOpenChange={(open) => {

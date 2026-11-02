@@ -913,6 +913,9 @@ Usuário|User|Usuario
 Horas jogadas|Hours played|Horas jugadas
 Tempo jogado|Play time|Tiempo jugado
 Informe o total acumulado. O tempo é mantido ao mudar o status do jogo.|Enter the accumulated total. Time is kept when changing the game's status.|Introduce el total acumulado. El tiempo se conserva al cambiar el estado del juego.
+Convidar amigo|Invite a friend|Invitar a un amigo
+Compartilhe seu código ou envie um pedido usando o código de outro usuário.|Share your code or send a request using another user's code.|Comparte tu código o envía una solicitud usando el código de otro usuario.
+Amizade|Friendship|Amistad
 `;
 export const translations: Record<string, [string, string]> =
   Object.fromEntries(
