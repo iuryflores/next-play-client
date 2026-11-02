@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/iuryflores/next-play-client/compare/v0.6.0...v0.7.0) (2026-11-02)
+
+
+### Features
+
+* exibe fotos e facilita convites nos rankings ([5ca61a0](https://github.com/iuryflores/next-play-client/commit/5ca61a07236b5f45a1ae3a19c8a05af331914aa4))
+
 ## [0.6.0](https://github.com/iuryflores/next-play-client/compare/v0.5.0...v0.6.0) (2026-11-02)
 
 
