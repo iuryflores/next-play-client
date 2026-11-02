@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://github.com/iuryflores/next-play-client/compare/v0.11.0...v0.12.0) (2026-11-02)
+
+
+### Features
+
+* permite cards enxutos em todos os concluídos ([16e99b0](https://github.com/iuryflores/next-play-client/commit/16e99b0c7e68934ccfaedc194d8cdf178d984866))
+
 ## [0.11.0](https://github.com/iuryflores/next-play-client/compare/v0.10.1...v0.11.0) (2026-11-02)
 
 
