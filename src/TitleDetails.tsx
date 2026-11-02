@@ -7,7 +7,6 @@ import MovieDirectors from './MovieDirectors';
 import IconAction from './IconAction';
 import { t } from './i18n';
 import { useEffect, useRef } from 'react';
-import { Button } from '@/components/ui/button';
 import { categories, statusNames, type LibraryItem } from './library';
 import OriginalTitle from './OriginalTitle';
 import Episodes from './Episodes';
