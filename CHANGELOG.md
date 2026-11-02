@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/iuryflores/next-play-client/compare/v0.7.0...v0.7.1) (2026-11-02)
+
+
+### Bug Fixes
+
+* salva tema e densidade na conta do usuário ([48b5d90](https://github.com/iuryflores/next-play-client/commit/48b5d907ee781d7ecc5381b0111dec840c6f5ce2))
+
 ## [0.7.0](https://github.com/iuryflores/next-play-client/compare/v0.6.0...v0.7.0) (2026-11-02)
 
 
