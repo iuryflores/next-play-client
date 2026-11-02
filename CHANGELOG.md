@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/iuryflores/next-play-client/compare/v0.9.0...v0.10.0) (2026-11-02)
+
+
+### Features
+
+* exibe conquistas de jogos e metas finitas de maratona ([a007cdd](https://github.com/iuryflores/next-play-client/commit/a007cdd4badf06db9af7098ff5878311f5729ed3))
+
 ## [0.9.0](https://github.com/iuryflores/next-play-client/compare/v0.8.1...v0.9.0) (2026-11-02)
 
 
