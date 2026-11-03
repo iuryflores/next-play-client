@@ -3322,3 +3322,7 @@ button.cast-card:focus-visible {
   .friend-connection > div:first-child { flex: 1; min-width: 0; }
   .friend-connection > div:last-child { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 }
+
+/* O selo compartilha a pilha de tags para não sobrepor prioridade, datas ou progresso. */
+.cover-bottom-content > .steam-import-tag { position: static; align-self: flex-start; pointer-events: auto; margin: 0 12px 8px; max-width: calc(100% - 24px); padding: 3px 7px; border: 1px solid #ffffff55; border-radius: 6px; background: #18212fee; color: #e5f2ff; font-size: 10px; line-height: 1.4; overflow-wrap: anywhere; text-decoration: none; }
+.cover-bottom-content > .steam-import-tag:hover, .cover-bottom-content > .steam-import-tag:focus-visible { text-decoration: underline; border-color: #b9dfff; }

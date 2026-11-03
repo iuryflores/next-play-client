@@ -195,7 +195,7 @@ export default function Social({
     return () => controller.abort();
   }, [profileId]);
   const candidates = items
-    .filter((item) => item.status === 'completed' && !item.archived)
+    .filter((item) => !item.archived)
     .sort((a, b) => a.title.localeCompare(b.title, language));
   useEffect(() => {
     const controller = new AbortController();

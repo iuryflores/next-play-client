@@ -1,3 +1,4 @@
+import ExternalGameStats from './ExternalGameStats';
 import Rewatch from './Rewatch';
 import GameStatusHistory from './GameStatusHistory';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,8 @@ import ReleaseBadge from './ReleaseBadge';
 import Trailer from './Trailer';
 import RottenTomatoes from './RottenTomatoes';
 import { ShareTitleAction } from './SharedTitle';
+import FavoriteTitleAction from './FavoriteTitleAction';
+import WhereAvailable from './WhereAvailable';
 import MovieDirectors from './MovieDirectors';
 import IconAction from './IconAction';
 import { t } from './i18n';
@@ -38,7 +41,6 @@ export default function TitleDetails({
   edit,
   changed,
   onProgress,
-  onWatched,
   onExpired,
   removed,
 }: {
@@ -50,7 +52,6 @@ export default function TitleDetails({
   edit: (item: LibraryItem) => void;
   changed: (item: LibraryItem) => void;
   onProgress: () => void;
-  onWatched: () => void;
   onExpired: () => void;
   removed: (id: string) => void;
 }) {
@@ -87,6 +88,7 @@ export default function TitleDetails({
       onExpired={onExpired}
     />
   );
+  // O progresso atualiza a coleção sem sair dos detalhes, mesmo ao concluir a série.
   const episodePanel = item.kind === 'series' && (
     <Episodes
       item={item}
@@ -94,7 +96,6 @@ export default function TitleDetails({
       itemId={item.id}
       onExpired={onExpired}
       onProgress={onProgress}
-      onWatched={onWatched}
     />
   );
   const information = (
@@ -115,6 +116,12 @@ export default function TitleDetails({
           {item.overview || t('Sinopse ainda não disponível para este título.')}
         </p>
       </div>
+      <WhereAvailable
+        key={item.id}
+        catalogId={item.catalogId}
+        kind={item.kind}
+        onExpired={onExpired}
+      />
 
       {item.sourceUrl && (
         <a
@@ -153,6 +160,49 @@ export default function TitleDetails({
       />
     </div>
   );
+  // A barra vem antes da capa na coluna da série, inclusive na ordem de navegação por teclado.
+  const titleActions = (
+    <div className="details-status-actions">
+      {item.kind === 'movie' && item.status === 'completed' && (
+        <div className="details-watched-banner">
+          <CircleCheck aria-hidden="true" />
+          <strong>{t('Assistido')}</strong>
+        </div>
+      )}
+      <div className="details-top-actions">
+        <div className="details-title-icons">
+          <FavoriteTitleAction
+            key={item.id}
+            item={item}
+            onExpired={onExpired}
+          />
+          {item.kind !== 'series' && (
+            <QuickActions
+              iconOnly
+              disableCompleted
+              owned={item}
+              changed={changed}
+              edit={edit}
+              onExpired={onExpired}
+            />
+          )}
+          <IconAction
+            variant="ghost"
+            label={t(' Editar ')}
+            icon={Pencil}
+            onClick={() => edit(item)}
+          />
+        </div>
+        <CollectionActions
+          item={item}
+          changed={changed}
+          removed={removed}
+          back={back}
+          onExpired={onExpired}
+        />
+      </div>
+    </div>
+  );
   return (
     <section className="title-details" aria-labelledby="title-details-heading">
       <div className="details-topbar">
@@ -181,120 +231,106 @@ export default function TitleDetails({
           </div>
         )}
         <div className="title-details-hero">
-          <div className="details-artwork">
-            {item.coverUrl ? (
-              <img
-                className="title-details-poster"
-                src={item.coverUrl}
-                alt={t('Capa de {0}', item.title)}
-                referrerPolicy="no-referrer"
-              />
-            ) : (
-              <div className="details-poster-placeholder">
-                {item.kind === 'book' ? (
-                  <BookOpen aria-hidden="true" />
-                ) : (
-                  <Film aria-hidden="true" />
-                )}
-              </div>
-            )}
-            {item.status === 'completed' && (
-              <section
-                className="title-details-experience"
-                aria-label={t('Sua experiência')}
-              >
-                <h2>{t(' Sua experiência ')}</h2>
-                <p
-                  className={
-                    item.stars ? 'details-personal-rating' : 'details-no-rating'
-                  }
+          {followingSeries && (
+            <div className="series-header-actions">{titleActions}</div>
+          )}
+          <div
+            className={
+              followingSeries
+                ? 'series-poster-scores'
+                : 'details-poster-wrapper'
+            }
+          >
+            <div className="details-artwork">
+              {item.coverUrl ? (
+                <img
+                  className="title-details-poster"
+                  src={item.coverUrl}
+                  alt={t('Capa de {0}', item.title)}
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <div className="details-poster-placeholder">
+                  {item.kind === 'book' ? (
+                    <BookOpen aria-hidden="true" />
+                  ) : (
+                    <Film aria-hidden="true" />
+                  )}
+                </div>
+              )}
+              {item.status === 'completed' && (
+                <section
+                  className="title-details-experience"
+                  aria-label={t('Sua experiência')}
                 >
-                  {item.stars
-                    ? `${'★'.repeat(item.stars)} · ${item.stars}/5`
-                    : t('Ainda sem nota')}
-                </p>
-                <p className="details-watched-date">
-                  {item.watchedDateUnknown && <>{t('Data desconhecida')} · </>}
-                  {item.kind === 'movie' || item.kind === 'series'
-                    ? t(
-                        item.completedOn ||
+                  <h2>{t(' Sua experiência ')}</h2>
+                  <p
+                    className={
+                      item.stars
+                        ? 'details-personal-rating'
+                        : 'details-no-rating'
+                    }
+                  >
+                    {item.stars
+                      ? `${'★'.repeat(item.stars)} · ${item.stars}/5`
+                      : t('Ainda sem nota')}
+                  </p>
+                  <p className="details-watched-date">
+                    {item.watchedDateUnknown && (
+                      <>{t('Data desconhecida')} · </>
+                    )}
+                    {item.kind === 'movie' || item.kind === 'series'
+                      ? t(
+                          item.completedOn ||
+                            (item.watchedDateUnknown
+                              ? undefined
+                              : item.completedAt)
+                            ? 'Assistido em'
+                            : 'Assistido',
+                        )
+                      : item.completedOn ||
                           (item.watchedDateUnknown
                             ? undefined
                             : item.completedAt)
-                          ? 'Assistido em'
-                          : 'Assistido',
-                      )
-                    : item.completedOn ||
-                        (item.watchedDateUnknown ? undefined : item.completedAt)
-                      ? item.kind === 'book'
-                        ? t('Lido em')
-                        : t(' Concluído em ')
-                      : item.rewatching
-                        ? t('Reassistindo')
-                        : statusNames[item.kind][item.status]}
-                  {(item.completedOn ||
-                    (item.watchedDateUnknown
-                      ? undefined
-                      : item.completedAt)) && (
+                        ? item.kind === 'book'
+                          ? t('Lido em')
+                          : t(' Concluído em ')
+                        : item.rewatching
+                          ? t('Reassistindo')
+                          : statusNames[item.kind][item.status]}
+                    {(item.completedOn ||
+                      (item.watchedDateUnknown
+                        ? undefined
+                        : item.completedAt)) && (
+                      <>
+                        {' '}
+                        {dateLabel(
+                          item.completedOn ||
+                            (item.watchedDateUnknown
+                              ? undefined
+                              : item.completedAt)!.slice(0, 10),
+                        )}
+                      </>
+                    )}
+                  </p>
+                  {item.feeling && feelings[item.feeling] && (
+                    <p>{feelings[item.feeling]}</p>
+                  )}
+                  {item.notes && (
                     <>
-                      {' '}
-                      {dateLabel(
-                        item.completedOn ||
-                          (item.watchedDateUnknown
-                            ? undefined
-                            : item.completedAt)!.slice(0, 10),
-                      )}
+                      <h3>{t(' Anotações privadas ')}</h3>
+                      <p className="title-details-notes">{item.notes}</p>
                     </>
                   )}
-                </p>
-                {item.feeling && feelings[item.feeling] && (
-                  <p>{feelings[item.feeling]}</p>
-                )}
-                {item.notes && (
-                  <>
-                    <h3>{t(' Anotações privadas ')}</h3>
-                    <p className="title-details-notes">{item.notes}</p>
-                  </>
-                )}
-              </section>
+                </section>
+              )}
+            </div>
+            {followingSeries && (
+              <div className="series-compact-scores">{scores}</div>
             )}
           </div>
           <div className="details-intro">
-            <div className="details-status-actions">
-              {item.kind === 'movie' && item.status === 'completed' && (
-                <div className="details-watched-banner">
-                  <CircleCheck aria-hidden="true" />
-                  <strong>{t('Assistido')}</strong>
-                </div>
-              )}
-              <div className="details-top-actions">
-                <div className="details-title-icons">
-                  {item.kind !== 'series' && (
-                    <QuickActions
-                      iconOnly
-                      disableCompleted
-                      owned={item}
-                      changed={changed}
-                      edit={edit}
-                      onExpired={onExpired}
-                    />
-                  )}
-                  <IconAction
-                    variant="ghost"
-                    label={t(' Editar ')}
-                    icon={Pencil}
-                    onClick={() => edit(item)}
-                  />
-                </div>
-                <CollectionActions
-                  item={item}
-                  changed={changed}
-                  removed={removed}
-                  back={back}
-                  onExpired={onExpired}
-                />
-              </div>
-            </div>
+            {!followingSeries && titleActions}
             {(item.kind === 'movie' || item.kind === 'series') && (
               <Rewatch item={item} changed={changed} onExpired={onExpired} />
             )}
@@ -366,11 +402,13 @@ export default function TitleDetails({
               />
             )}
             {followingSeries ? (
-              <details className="series-information">
-                <summary>{t('Sobre a série')}</summary>
+              <section
+                className="series-information"
+                aria-label={t('Sobre a série')}
+              >
+                <h2>{t('Sobre a série')}</h2>
                 {information}
-                {scores}
-              </details>
+              </section>
             ) : (
               information
             )}
@@ -398,7 +436,10 @@ export default function TitleDetails({
               </section>
             )}
             {item.kind === 'game' && (
-              <GameEstimate key={item.id} item={item} onExpired={onExpired} />
+              <>
+                <GameEstimate key={item.id} item={item} onExpired={onExpired} />
+                <ExternalGameStats key={`external-${item.id}`} id={item.id} />
+              </>
             )}
             {item.kind === 'game' && (
               <GameAddons

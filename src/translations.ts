@@ -1,5 +1,95 @@
 // Portuguese source messages with English and Spanish equivalents.
 const rows = `
+Experimental|Experimental|Experimental
+Integração comunitária não oficial, somente leitura. O código NPSSO não é salvo; a conexão temporária expira ou termina ao reiniciar o servidor.|Unofficial community integration, read-only. The NPSSO code is not saved; the temporary connection expires or ends when the server restarts.|Integración comunitaria no oficial, de solo lectura. No se guarda el código NPSSO; la conexión temporal caduca o termina al reiniciar el servidor.
+Conta PSN conectada|PSN account connected|Cuenta PSN conectada
+Conexão válida até|Connection valid until|Conexión válida hasta
+Consultar jogos jogados na PSN|Look up games played on PSN|Consultar juegos jugados en PSN
+Desconectar PSN|Disconnect PSN|Desconectar PSN
+Como obter o código NPSSO|How to obtain the NPSSO code|Cómo obtener el código NPSSO
+Entre na sua conta no site oficial da PlayStation.|Sign in on the official PlayStation website.|Inicia sesión en el sitio oficial de PlayStation.
+No mesmo navegador, abra a página Sony abaixo e copie somente o valor de npsso.|In the same browser, open the Sony page below and copy only the npsso value.|En el mismo navegador, abre la página de Sony y copia solo el valor de npsso.
+Obter código na Sony|Get code from Sony|Obtener código en Sony
+Cole o código no campo abaixo. Não envie por chat nem informe sua senha ao NextPlay.|Paste the code below. Do not send it in chat or give NextPlay your password.|Pega el código abajo. No lo envíes por chat ni compartas tu contraseña con NextPlay.
+Código NPSSO|NPSSO code|Código NPSSO
+Entendo que a integração é experimental e autorizo a consulta dos meus jogos, horas e troféus.|I understand this integration is experimental and authorize access to my games, playtime and trophies.|Entiendo que la integración es experimental y autorizo la consulta de mis juegos, horas y trofeos.
+Conectar PSN experimental|Connect experimental PSN|Conectar PSN experimental
+A PSN retorna jogos jogados; não garante a biblioteca completa de compras. Horas e troféus ausentes não serão inventados.|PSN returns played games, not necessarily your full purchased library. Missing playtime and trophies will not be invented.|PSN devuelve juegos jugados, no necesariamente toda la biblioteca de compras. No se inventarán horas ni trofeos ausentes.
+Estes jogos foram jogados na PSN. Só adicione ao acervo os títulos que você possui.|These games were played on PSN. Only add titles you own to your collection.|Estos juegos se jugaron en PSN. Añade a la colección solo los títulos que posees.
+Consultar troféus PSN|Look up PSN trophies|Consultar trofeos PSN
+Consultado na PSN experimental|Retrieved from experimental PSN|Consultado en PSN experimental
+Contas conectadas|Connected accounts|Cuentas conectadas
+Importar por arquivo|Import from file|Importar por archivo
+Via conexão de conta|Via account connection|Mediante conexión de cuenta
+Via arquivo JSON|Via JSON file|Mediante archivo JSON
+Baixar modelo JSON da Steam|Download Steam JSON template|Descargar modelo JSON de Steam
+Integrações|Integrations|Integraciones
+Importado da Steam|Imported from Steam|Importado de Steam
+Ver jogo na Steam|View game on Steam|Ver juego en Steam
+Conta de origem|Source account|Cuenta de origen
+Não registrada nesta importação. Reimporte para atualizar a origem.|Not recorded in this import. Import again to update the source.|No registrada en esta importación. Importa de nuevo para actualizar el origen.
+Última importação|Last import|Última importación
+Conectar Steam|Connect Steam|Conectar Steam
+Desconectar Steam|Disconnect Steam|Desconectar Steam
+Conta Steam conectada.|Steam account connected.|Cuenta Steam conectada.
+Ver perfil Steam|View Steam profile|Ver perfil de Steam
+Consultar minha biblioteca Steam|Look up my Steam library|Consultar mi biblioteca de Steam
+Conexão Steam cancelada.|Steam connection cancelled.|Conexión con Steam cancelada.
+Não foi possível conectar a Steam. Tente novamente.|Could not connect Steam. Try again.|No se pudo conectar Steam. Inténtalo de nuevo.
+Steam desconectada. Seus jogos importados foram preservados.|Steam disconnected. Your imported games were preserved.|Steam desconectada. Se conservaron tus juegos importados.
+Entre no site oficial da Steam para conectar sua conta. Os detalhes dos jogos precisam estar públicos para importar a biblioteca.|Sign in on the official Steam website to connect your account. Game details must be public to import your library.|Inicia sesión en el sitio oficial de Steam para conectar tu cuenta. Los detalles de juegos deben ser públicos para importar tu biblioteca.
+Importar próximos 20 jogos revisados|Import next 20 reviewed games|Importar los próximos 20 juegos revisados
+Importados neste lote: {0}|Imported in this batch: {0}|Importados en este lote: {0}
+Planejar meus jogos|Plan my games|Planificar mis juegos
+Estime o tempo do backlog e escolha o próximo jogo da sua lista.|Estimate your backlog time and choose the next game on your list.|Estima el tiempo pendiente y elige el próximo juego de tu lista.
+Calcular meu backlog|Calculate my backlog|Calcular mi lista pendiente
+Atualizar estimativas|Update estimates|Actualizar estimaciones
+Calculando…|Calculating…|Calculando…
+jogos consultados|games checked|juegos consultados
+Tempo restante do backlog|Remaining backlog time|Tiempo restante de la lista
+jogos com estimativa|games with estimates|juegos con estimación
+sem estimativa|without estimates|sin estimación
+falhas de consulta|lookup failures|consultas fallidas
+Total parcial quando faltam dados. Médias da IGDB menos as horas de cada conteúdo; DLCs contam separadamente. Atingir a média não significa concluir.|The total is partial when data is missing. IGDB averages minus each game's playtime; DLCs count separately. Reaching the average does not mean completion.|El total es parcial si faltan datos. Promedios de IGDB menos las horas de cada contenido; los DLC cuentan por separado. Alcanzar el promedio no significa terminar.
+O que jogar depois?|What should I play next?|¿Qué jugar después?
+Tempo disponível para terminar (horas)|Time available to finish (hours)|Tiempo disponible para terminar (horas)
+Zero inclui qualquer duração; não representa tempo de uma sessão.|Zero includes any length; this is not a session duration.|Cero incluye cualquier duración; no representa la duración de una sesión.
+Prioridade primeiro, depois jogos em andamento e menor tempo restante. Lançamentos futuros ficam de fora.|Priority first, then games in progress and shorter remaining time. Future releases are excluded.|Primero la prioridad, luego juegos en curso y menor tiempo restante. Se excluyen futuros lanzamientos.
+Sem estimativa|No estimate|Sin estimación
+Média já atingida|Average already reached|Promedio ya alcanzado
+Nenhum jogo corresponde aos filtros. Aumente o tempo ou altere suas preferências.|No games match the filters. Increase the time or change your preferences.|Ningún juego coincide con los filtros. Aumenta el tiempo o cambia tus preferencias.
+Não foi possível calcular o backlog. Tente novamente.|Could not calculate the backlog. Try again.|No se pudo calcular la lista pendiente. Inténtalo de nuevo.
+Importar jogos e histórico|Import games and history|Importar juegos e historial
+Acervo possuído e acompanhamento são independentes. Revise cada jogo antes de importar.|Owned collection and tracking are independent. Review each game before importing.|La colección en propiedad y el seguimiento son independientes. Revisa cada juego antes de importar.
+Consulta de biblioteca pública por SteamID64, sem senha e sem vincular sua conta. Os detalhes dos jogos precisam estar públicos.|Look up a public library by SteamID64, without a password or linking your account. Game details must be public.|Consulta una biblioteca pública por SteamID64, sin contraseña ni vincular tu cuenta. Los detalles de juegos deben ser públicos.
+A consulta automática Steam aguarda configuração da chave do aplicativo. A importação por arquivo já pode ser usada.|Automatic Steam lookup is awaiting the app key configuration. File import is already available.|La consulta automática de Steam espera la configuración de la clave de la aplicación. Ya puedes importar por archivo.
+Consultar Steam|Look up Steam|Consultar Steam
+Arquivo interoperável|Interoperable file|Archivo interoperable
+Steam, Xbox, PlayStation, Epic, GOG e Nintendo. Esta opção importa um arquivo adaptado ao modelo abaixo; não conecta nem sincroniza automaticamente essas contas.|Steam, Xbox, PlayStation, Epic, GOG and Nintendo. This option imports a file adapted to the template below; it does not connect or automatically sync these accounts.|Steam, Xbox, PlayStation, Epic, GOG y Nintendo. Esta opción importa un archivo adaptado al modelo; no conecta ni sincroniza automáticamente estas cuentas.
+Baixar modelo JSON|Download JSON template|Descargar modelo JSON
+Selecionar arquivo JSON|Select JSON file|Seleccionar archivo JSON
+O arquivo deve ter até 100 KiB e 200 jogos.|The file must be at most 100 KiB and 200 games.|El archivo debe tener como máximo 100 KiB y 200 juegos.
+Prévia|Preview|Vista previa
+Adicionar ao meu acervo digital|Add to my digital collection|Añadir a mi colección digital
+Uma cópia por jogo/origem importada. Cópias cadastradas manualmente não são unidas automaticamente.|One copy per imported game/source. Manually added copies are not merged automatically.|Una copia por juego/origen importado. Las copias añadidas manualmente no se unen automáticamente.
+Adicionar ou atualizar meu acompanhamento|Add or update my tracking|Añadir o actualizar mi seguimiento
+Horas não informadas|Playtime not provided|Horas no informadas
+Conquistas não informadas|Achievements not provided|Logros no informados
+conquistas externas|external achievements|logros externos
+Vincular a um jogo que já acompanho|Link to a game I already track|Vincular a un juego que ya sigo
+Criar novo acompanhamento|Create new tracking entry|Crear nuevo seguimiento
+Consultar conquistas Steam|Look up Steam achievements|Consultar logros de Steam
+Confirmar este jogo|Confirm this game|Confirmar este juego
+Importado|Imported|Importado
+Jogo importado.|Game imported.|Juego importado.
+Carregar mais jogos|Load more games|Cargar más juegos
+Dados importados das plataformas|Imported platform data|Datos importados de plataformas
+Consultado na Steam|Retrieved from Steam|Consultado en Steam
+Importado por arquivo|Imported from a file|Importado por archivo
+Conquistas externas são informativas e não equivalem às conquistas do NextPlay.|External achievements are informational and are separate from NextPlay achievements.|Los logros externos son informativos y no equivalen a los logros de NextPlay.
+Não foi possível importar. Confira o arquivo e tente novamente.|Could not import. Check the file and try again.|No se pudo importar. Revisa el archivo e inténtalo de nuevo.
+Modelo: provider identifica a plataforma; games contém externalId, title e, opcionalmente, playtimeMinutes, achievementsUnlocked e achievementsTotal. Não inclua senhas, tokens ou cookies.|Template: provider identifies the platform; games contains externalId, title and optionally playtimeMinutes, achievementsUnlocked and achievementsTotal. Do not include passwords, tokens or cookies.|Modelo: provider identifica la plataforma; games contiene externalId, title y opcionalmente playtimeMinutes, achievementsUnlocked y achievementsTotal. No incluyas contraseñas, tokens ni cookies.
+A prévia expira em uma hora. Novos acompanhamentos entram em Para depois; horas não significam conclusão. Sem sessões ou datas inventadas. Reimportar usa o maior total de horas, sem somar os totais.|The preview expires in one hour. New entries go to the backlog; playtime does not mean completion. No sessions or dates are invented. Reimporting uses the greater playtime total, without adding totals together.|La vista previa caduca en una hora. Los nuevos seguimientos van a Para después; las horas no significan finalización. No se inventan sesiones ni fechas. Reimportar usa el mayor total de horas, sin sumar los totales.
 Nota da comunidade|Community rating|Nota de la comunidad
 {0} avaliações|{0} ratings|{0} valoraciones
 {0} avaliações com {1} estrelas|{0} ratings with {1} stars|{0} valoraciones con {1} estrellas
@@ -1377,6 +1467,47 @@ Temporada marcada como assistida|Season marked as watched|Temporada marcada como
 Episódios marcados como assistidos|Episodes marked as watched|Episodios marcados como vistos
 Marcação de episódios removida|Episode watch marks removed|Marcas de episodios eliminadas
 Atividade registrada|Activity recorded|Actividad registrada
+Adicionar aos favoritos do perfil|Add to profile favorites|Añadir a favoritos del perfil
+Remover dos favoritos do perfil|Remove from profile favorites|Quitar de favoritos del perfil
+Conclua o título para favoritar|Complete the title to favorite it|Completa el título para marcarlo como favorito
+Restaure o título para favoritar|Restore the title to favorite it|Restaura el título para marcarlo como favorito
+Adicionado aos favoritos do perfil.|Added to profile favorites.|Añadido a favoritos del perfil.
+Removido dos favoritos do perfil.|Removed from profile favorites.|Eliminado de favoritos del perfil.
+Favoritos do perfil|Profile favorites|Favoritos del perfil
+Não foi possível carregar seus favoritos. Reabra os detalhes para tentar novamente.|Could not load your favorites. Reopen details to try again.|No se pudieron cargar tus favoritos. Abre los detalles de nuevo para reintentar.
+Onde assistir|Where to watch|Dónde ver
+Onde jogar|Where to play|Dónde jugar
+País|Country|País
+Brasil|Brazil|Brasil
+Estados Unidos|United States|Estados Unidos
+Espanha|Spain|España
+Reino Unido|United Kingdom|Reino Unido
+Canadá|Canada|Canadá
+França|France|Francia
+Alemanha|Germany|Alemania
+Japão|Japan|Japón
+Assinatura|Subscription|Suscripción
+Grátis|Free|Gratis
+Grátis com anúncios|Free with ads|Gratis con anuncios
+Alugar|Rent|Alquilar
+Comprar|Buy|Comprar
+Lojas|Stores|Tiendas
+Não foi possível consultar a disponibilidade agora.|Could not check availability right now.|No se pudo consultar la disponibilidad ahora.
+Consultando disponibilidade…|Checking availability…|Consultando disponibilidad…
+A IGDB ainda não informou plataformas ou lojas para este jogo.|IGDB has no platforms or stores listed for this game yet.|IGDB aún no informa plataformas o tiendas para este juego.
+Plataformas e links informados pela IGDB. Não confirma inclusão em Game Pass/PS Plus, preço, estoque ou disponibilidade na sua região.|Platforms and links provided by IGDB. This does not confirm Game Pass/PS Plus inclusion, price, stock or availability in your region.|Plataformas y enlaces de IGDB. No confirma inclusión en Game Pass/PS Plus, precio, existencias ni disponibilidad regional.
+Nenhuma opção informada para este país. Isso não confirma que o título esteja indisponível.|No options listed for this country. This does not confirm the title is unavailable.|No hay opciones informadas para este país. Esto no confirma que el título no esté disponible.
+Ver opções no TMDB|View options on TMDB|Ver opciones en TMDB
+Dados de disponibilidade:|Availability data:|Datos de disponibilidad:
+As ofertas podem mudar; confirme no serviço.|Offers may change; confirm with the service.|Las ofertas pueden cambiar; confirma en el servicio.
+Consulta ao catálogo em {0}|Catalog checked on {0}|Catálogo consultado el {0}
+Disponibilidade não disponível para títulos sem vínculo com o catálogo.|Availability is not provided for titles without a catalog link.|No hay datos de disponibilidad para títulos sin vínculo con el catálogo.
+Usar minha localização|Use my location|Usar mi ubicación
+Identificando país…|Detecting country…|Identificando país…
+País estimado pela sua localização. Você pode alterar manualmente.|Country estimated from your location. You can change it manually.|País estimado por tu ubicación. Puedes cambiarlo manualmente.
+Não foi possível identificar o país. Mantenha ou altere a seleção manual.|Could not identify the country. Keep or change the manual selection.|No se pudo identificar el país. Mantén o cambia la selección manual.
+Localização não permitida ou indisponível. Mantenha ou altere o país manualmente.|Location denied or unavailable. Keep or change the country manually.|Ubicación denegada o no disponible. Mantén o cambia el país manualmente.
+A localização só é solicitada com sua permissão. As coordenadas são processadas no navegador para estimar o país.|Location is only requested with your permission. Coordinates are processed in your browser to estimate the country.|La ubicación solo se solicita con tu permiso. Las coordenadas se procesan en tu navegador para estimar el país.
 `;
 export const translations: Record<string, [string, string]> =
   Object.fromEntries(

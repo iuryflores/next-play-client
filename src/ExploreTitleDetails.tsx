@@ -27,6 +27,7 @@ import { findOwned } from './QuickActions';
 import ExploreActions from './ExploreActions';
 import RottenTomatoes from './RottenTomatoes';
 import Trailer from './Trailer';
+import WhereAvailable from './WhereAvailable';
 import './title-details.css';
 import './explore-details.css';
 
@@ -315,6 +316,12 @@ export default function ExploreTitleDetails({
                 </p>
               </section>
             )}
+            <WhereAvailable
+              key={details.catalogId}
+              catalogId={details.catalogId}
+              kind={details.kind}
+              onExpired={onExpired}
+            />
             {(details.kind === 'movie' || details.kind === 'series') && (
               <>
                 {details.catalogId.startsWith('tmdb:') && (

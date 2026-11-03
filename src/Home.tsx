@@ -1,3 +1,5 @@
+import SteamImportBadge from './SteamImportBadge';
+import GamePlanner from './GamePlanner';
 import './rewatch.css';
 import { groupGames } from './game-groups';
 import {
@@ -353,18 +355,20 @@ function Home({
       previous?.parentGameCatalogId
     )
       item = { ...item, parentGameCatalogId: previous.parentGameCatalogId };
-    if (item.kind === 'series' && !keepExplore) setReload((value) => value + 1);
-    setItems((current) => [
-      item,
-      ...current.filter((entry) => entry.id !== item.id),
-    ]);
-    // No Explorar, salvar atualiza apenas os cards, sem refazer a página ou navegar.
+    // Respostas antigas de edição podem não carregar o selo derivado em lote da importação.
     if (
-      !keepExplore &&
-      previous?.status !== 'completed' &&
-      item.status === 'completed'
+      item.kind === 'game' &&
+      !item.steamImportAppId &&
+      previous?.steamImportAppId
     )
-      returnHome();
+      item = { ...item, steamImportAppId: previous.steamImportAppId };
+    if (item.kind === 'series' && !keepExplore) setReload((value) => value + 1);
+    // Atualiza o card no lugar e preserva rota, filtros e navegação após concluir.
+    setItems((current) =>
+      current.some((entry) => entry.id === item.id)
+        ? current.map((entry) => (entry.id === item.id ? item : entry))
+        : [item, ...current],
+    );
   }
   async function save(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -430,12 +434,6 @@ function Home({
       }
       setOpen(false);
       if (kind === 'series') setReload((value) => value + 1);
-      if (
-        editing &&
-        editing.status !== 'completed' &&
-        result.item.status === 'completed'
-      )
-        returnHome();
     } catch (reason) {
       if (reason instanceof ApiError && reason.status === 401) onExpired();
       else
@@ -1065,6 +1063,8 @@ function Home({
               <Account
                 user={user}
                 onSaved={onUserChanged}
+                items={items}
+                onImported={() => setReload((value) => value + 1)}
                 onExpired={onExpired}
               />
             ) : view === 'shared' ? (
@@ -1141,7 +1141,6 @@ function Home({
                 edit={edit}
                 changed={updateItem}
                 onProgress={() => setReload((value) => value + 1)}
-                onWatched={returnHome}
                 onExpired={onExpired}
                 removed={(id) => {
                   setItems((current) =>
@@ -1232,6 +1231,18 @@ function Home({
                   </TabsList>
                 </div>
                 <TabsContent value={category}>
+                  {category === 'game' &&
+                    (view === 'all' ||
+                      view === 'planned' ||
+                      view === 'active') && (
+                      <GamePlanner
+                        key={items
+                          .map((item) => `${item.id}:${item.updatedAt}`)
+                          .join('|')}
+                        open={setDetailId}
+                        onExpired={onExpired}
+                      />
+                    )}
                   {supportsDensity && (
                     <div className="collection-density">
                       <label htmlFor="collection-density">
@@ -1481,6 +1492,9 @@ function Home({
                                         )}
                                       </span>
                                     )}
+                                  <SteamImportBadge
+                                    appId={item.steamImportAppId}
+                                  />
                                   <ReleaseBadge item={item} />
                                   {/* Sem páginas registradas, mostramos um selo de estado,
                                     nunca uma barra que possa sugerir leitura concluída. */}

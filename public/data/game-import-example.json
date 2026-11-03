@@ -1,0 +1,6 @@
+{
+  "provider": "steam",
+  "games": [
+    {"externalId": "123456", "title": "Exemplo de jogo", "playtimeMinutes": 290, "achievementsUnlocked": 4, "achievementsTotal": 20}
+  ]
+}

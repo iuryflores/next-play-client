@@ -564,7 +564,7 @@
 .series-follow-layout .episodes-panel > h3 { font-size: 22px; letter-spacing: -.5px; }
 .series-follow-layout .episode-detail > h4 { font-size: clamp(22px, 3vw, 30px); line-height: 1.25; }
 .series-information { border-top: 1px solid var(--border); margin-top: 18px; padding-top: 14px; }
-.series-information > summary { cursor: pointer; font-size: 12px; color: var(--primary); }
+.series-information > h2 { font-size: 12px; color: var(--primary); margin-bottom: 12px; }
 .series-information .details-synopsis p { font-size: 12px; line-height: 1.7; }
 @media (max-width: 1000px) {
   .series-follow-layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'episode' 'summary' 'extras'; gap: 20px; }
@@ -576,3 +576,25 @@
 .series-follow-layout .details-trailer-cast .trailer-heading,
 .series-follow-layout .details-trailer-cast .cast-picker > legend { font-size: 13px; }
 @media (max-width: 1000px) { .series-follow-layout > .title-details-hero > .details-trailer-cast { grid-column: 1 / -1; } }
+.details-favorite-toggle[aria-pressed="true"] { color: var(--primary); }
+.details-favorite-toggle[aria-pressed="true"] svg { fill: currentColor; }
+
+/* A barra ocupa a largura da coluna e permanece acima do cartaz também no mobile. */
+.series-header-actions { width: 100%; grid-column: 1 / -1; }
+.series-header-actions .details-status-actions { margin: 0; }
+.series-header-actions .details-top-actions { justify-content: flex-start; }
+
+/* As notas compartilham a linha do cartaz sem aumentar a largura da coluna lateral. */
+.series-poster-scores { display: grid; grid-template-columns: 82px minmax(0, 1fr); gap: 12px; width: 100%; min-width: 0; }
+.series-follow-layout .series-poster-scores .details-artwork { width: 100%; }
+.series-compact-scores { min-width: 0; }
+.series-compact-scores .rt-inline, .series-compact-scores .rt-inline > div { align-items: flex-start; text-align: left; }
+.series-compact-scores .rt-inline .rt-scores { justify-content: flex-start; gap: 6px; }
+.series-compact-scores .rt-inline .rt-scores > div { flex-wrap: wrap; gap: 3px; }
+.series-compact-scores .rt-inline .rt-scores dt { font-size: 10px; }
+.series-compact-scores .rt-inline .rt-scores dd { font-size: 15px; }
+.series-compact-scores .rt-inline .rt-footer { justify-content: flex-start; }
+.series-compact-scores .rt-inline a, .series-compact-scores .rt-footer > .rt-query-date { font-size: 10px; white-space: normal; }
+@media (max-width: 1000px) { .series-poster-scores { grid-column: 1 / -1; } }
+
+.details-poster-wrapper { display: contents; }

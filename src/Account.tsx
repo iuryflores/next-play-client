@@ -1,3 +1,5 @@
+import GameImports from './GameImports';
+import type { LibraryItem } from './library';
 import Settings from './Settings';
 import { UserLevelCard } from './UserLevel';
 import { AchievementTitle } from './AchievementProvider';
@@ -45,9 +47,13 @@ async function preparePhoto(file: File): Promise<string> {
 export default function Account({
   user,
   onSaved,
+  items,
+  onImported,
   onExpired,
 }: {
   user: AuthUser;
+  items: LibraryItem[];
+  onImported: () => void;
   onSaved: (user: AuthUser) => void;
   onExpired: () => void;
 }) {
@@ -211,6 +217,11 @@ export default function Account({
           {t(busy ? 'Salvando…' : 'Salvar alterações')}
         </Button>
       </form>
+      {/* Conexões e importações pertencem à conta; o acompanhamento mantém apenas os jogos. */}
+      <section className="account-integrations" aria-label={t('Integrações')}>
+        <h2>{t('Integrações')}</h2>
+        <GameImports items={items} changed={onImported} onExpired={onExpired} />
+      </section>
       <div className="account-settings">
         <Settings />
       </div>

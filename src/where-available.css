@@ -1,0 +1,130 @@
+.where-available {
+  display: grid;
+  gap: 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  min-width: 0;
+}
+.where-available header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+.where-available h2 {
+  font-size: 18px;
+}
+.where-available h3 {
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+.where-available label {
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+  max-width: 100%;
+}
+.where-available select {
+  max-width: 100%;
+}
+.where-providers {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 130px), 1fr));
+  gap: 10px;
+}
+.where-providers li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.where-providers img {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: contain;
+}
+.where-links,
+.where-platforms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.where-links a,
+.where-platforms span {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+}
+.where-links svg,
+.where-platforms svg,
+.where-catalog-link svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+.where-catalog-link {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 13px;
+  color: var(--primary);
+}
+.where-note {
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--muted-foreground);
+}
+
+/* As tags mantêm a disponibilidade discreta; os ajustes de país ficam recolhidos. */
+.where-available {
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  gap: 8px;
+}
+.where-providers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+}
+.where-providers a {
+  display: inline-flex;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 12px;
+  background: var(--muted);
+  text-decoration: none;
+  color: inherit;
+}
+.where-providers a:hover {
+  border-color: var(--primary);
+}
+.where-settings {
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+.where-settings summary {
+  cursor: pointer;
+}
+.where-settings[open] {
+  display: grid;
+}
+.where-settings label,
+.where-settings button,
+.where-settings output,
+.where-settings small {
+  margin-top: 8px;
+}

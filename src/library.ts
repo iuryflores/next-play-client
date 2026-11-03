@@ -57,6 +57,7 @@ export interface LibraryItem {
   parentGameCatalogId?: string;
   platform?: string;
   playtimeMinutes?: number;
+  steamImportAppId?: string;
   lastPlayedOn?: string | null;
   catalogId?: string;
   coverUrl?: string;
