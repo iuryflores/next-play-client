@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.0](https://github.com/iuryflores/next-play-client/compare/v0.17.0...v1.0.0) (2026-11-03)
+
+
+### Features
+
+* adiciona comunidade e retrospectivas ao perfil ([daf7247](https://github.com/iuryflores/next-play-client/commit/daf724707ffa8b8265d9d98a8528d57fcb3146fa))
+* conecta plataformas e aprimora detalhes e jogos ([b0829ee](https://github.com/iuryflores/next-play-client/commit/b0829eea9c28209ba92c184bc42894c45994c00f))
+
 ## [0.17.0](https://github.com/iuryflores/next-play-client/compare/v0.16.0...v0.17.0) (2026-11-02)
 
 
