@@ -1,0 +1,130 @@
+/* Os alvos de prévia ficam separados das ações para abrir detalhes sem salvar o título. */
+.catalog-preview-cover,
+.catalog-preview-title,
+.catalog-preview-overlay {
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  padding: 0;
+  border: 0;
+}
+.catalog-preview-title {
+  background: transparent;
+  display: block;
+  width: 100%;
+}
+.catalog-preview-title:hover {
+  text-decoration: underline;
+}
+.catalog-preview-cover {
+  display: block;
+}
+.catalog-preview-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: transparent;
+}
+.catalog-preview-cover:focus-visible,
+.catalog-preview-title:focus-visible,
+.catalog-preview-overlay:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Uma área de ações própria alinha os cards e deixa o texto crescer sem escapar do botão. */
+.add-title-page .catalog-card-info > .catalog-card-actions {
+  margin-top: auto;
+  padding-top: 20px;
+  display: grid;
+  gap: 10px;
+}
+.add-title-page .catalog-card-actions .quick-actions {
+  margin: 0;
+  padding: 0;
+}
+.add-title-page .catalog-card-actions button {
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  gap: 8px;
+  white-space: normal;
+}
+.add-title-page .catalog-card-actions .explore-complete-action {
+  margin: 0;
+  background: transparent;
+  border-color: var(--border);
+  color: var(--foreground);
+  font-weight: 500;
+}
+.add-title-page
+  .catalog-card-actions
+  .explore-complete-action:hover:not(:disabled) {
+  background: var(--muted);
+  border-color: var(--primary);
+}
+.add-title-page .catalog-card-actions .explore-complete-action > span {
+  min-width: 0;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .add-title-page .catalog-card-actions button {
+    font-size: 12px;
+    padding: 10px 8px;
+    gap: 6px;
+  }
+}
+
+/* Filtros extensos ficam recolhidos, com seleção múltipla acessível por teclado. */
+.catalog-genre-filter {
+  margin: 16px 0;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.catalog-genre-filter summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.catalog-genre-filter p {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  margin: 10px 0;
+}
+.catalog-genre-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+}
+.catalog-genre-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 6px 0;
+}
+.catalog-genre-options input {
+  accent-color: var(--primary);
+  width: 16px;
+  height: 16px;
+}
+.catalog-search > form {
+  flex-wrap: wrap;
+}
+
+.add-title-page
+  .catalog-search
+  > form:not(.has-platform-filter)
+  .catalog-search-field {
+  grid-column: 1 / -1;
+}

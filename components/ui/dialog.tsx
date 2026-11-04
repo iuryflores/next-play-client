@@ -29,6 +29,9 @@ function DialogOverlay({
 }: DialogPrimitive.Backdrop.Props) {
   return (
     <DialogPrimitive.Backdrop
+      // O contexto global de nível contém um Dialog; a biblioteca oculta backdrops aninhados por padrão.
+      // Mantém a camada dos modais de página mesmo quando o Dialog ancestral está fechado.
+      forceRender
       data-slot="dialog-overlay"
       className={cn(
         'fixed inset-0 isolate z-50 bg-black/10 duration-100 supports-backdrop-filter:backdrop-blur-xs data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0',
@@ -43,17 +46,25 @@ function DialogContent({
   className,
   children,
   showCloseButton = true,
+  placement = 'center',
+  overlayClassName,
   ...props
 }: DialogPrimitive.Popup.Props & {
   showCloseButton?: boolean;
+  placement?: 'center' | 'side';
+  overlayClassName?: string;
 }) {
   return (
     <DialogPortal>
-      <DialogOverlay />
+      {/* Permite destacar prévias extensas sem alterar o fundo dos demais modais. */}
+      <DialogOverlay className={overlayClassName} />
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          'fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
+          'fixed z-50 grid gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0',
+          // Painéis laterais não herdam deslocamentos nem zoom de um modal centralizado.
+          placement === 'center' &&
+            'top-1/2 left-1/2 w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 sm:max-w-sm data-open:zoom-in-95 data-closed:zoom-out-95',
           className,
         )}
         {...props}

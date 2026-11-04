@@ -31,12 +31,14 @@ export interface BookTitle extends CatalogTitle {
 }
 export default function BookSearch({
   select,
+  preview,
   actions,
   context = 'collection',
   category,
   onExpired,
 }: {
   select: (book: CatalogTitle) => void;
+  preview?: (book: CatalogTitle) => void;
   actions?: (book: BookTitle) => ReactNode;
   context?: 'collection' | 'reading';
   category: (kind: Kind) => void;
@@ -284,6 +286,14 @@ export default function BookSearch({
         {results.map((book) => (
           <article className="catalog-result" key={book.catalogId}>
             <div className="catalog-cover-frame">
+              {preview && (
+                <button
+                  type="button"
+                  className="catalog-preview-overlay"
+                  aria-label={t('Ver detalhes de {0}', book.title)}
+                  onClick={() => preview(book)}
+                />
+              )}
               {book.coverUrl ? (
                 <img
                   src={book.coverUrl}
@@ -296,7 +306,20 @@ export default function BookSearch({
               )}
             </div>
             <div className="catalog-card-info">
-              <strong title={book.title}>{book.title}</strong>
+              {preview ? (
+                <strong>
+                  <button
+                    type="button"
+                    className="catalog-preview-title"
+                    onClick={() => preview(book)}
+                    aria-label={t('Ver detalhes de {0}', book.title)}
+                  >
+                    {book.title}
+                  </button>
+                </strong>
+              ) : (
+                <strong title={book.title}>{book.title}</strong>
+              )}
               <span title={book.authors.join(' · ')}>
                 {book.authors.join(' · ') || t('Autor não informado')}
               </span>

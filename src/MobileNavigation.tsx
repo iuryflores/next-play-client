@@ -1,5 +1,6 @@
+import NavigationHint from './NavigationHint';
 import { useEffect, useState, type ReactNode } from 'react';
-import { Bookmark, Compass, LayoutGrid, Menu, Plus, X } from 'lucide-react';
+import { Compass, LayoutGrid, Menu, Plus, X } from 'lucide-react';
 import {
   Dialog,
   DialogClose,
@@ -10,10 +11,9 @@ import {
 } from '@/components/ui/dialog';
 import { t } from './i18n';
 
-type Destination = 'all' | 'planned' | 'add' | 'explore';
+type Destination = 'all' | 'add' | 'explore';
 const shortcuts = [
   { id: 'all', label: 'Início', icon: LayoutGrid },
-  { id: 'planned', label: 'Para depois', icon: Bookmark },
   { id: 'add', label: 'Adicionar', icon: Plus },
   { id: 'explore', label: 'Explorar', icon: Compass },
 ] as const;
@@ -41,25 +41,29 @@ export default function MobileNavigation({
     <Dialog open={open} onOpenChange={setOpen}>
       <nav className="mobile-navigation" aria-label={t('Navegação principal')}>
         {shortcuts.map(({ id, label, icon: Icon }) => (
-          <button
-            key={id}
-            type="button"
-            aria-current={view === id ? 'page' : undefined}
-            className={id === 'add' ? 'mobile-add' : undefined}
-            onClick={() => navigate(id)}
-          >
-            <Icon aria-hidden="true" />
-            <span>{t(label)}</span>
-          </button>
+          <NavigationHint key={id} destination={id}>
+            <button
+              key={id}
+              type="button"
+              aria-current={view === id ? 'page' : undefined}
+              className={id === 'add' ? 'mobile-add' : undefined}
+              onClick={() => navigate(id)}
+            >
+              <Icon aria-hidden="true" />
+              <span>{t(label)}</span>
+            </button>
+          </NavigationHint>
         ))}
-        <DialogTrigger
-          aria-current={
-            !shortcuts.some(({ id }) => id === view) ? 'page' : undefined
-          }
-        >
-          <Menu aria-hidden="true" />
-          <span>{t('Menu')}</span>
-        </DialogTrigger>
+        <NavigationHint destination="menu">
+          <DialogTrigger
+            aria-current={
+              !shortcuts.some(({ id }) => id === view) ? 'page' : undefined
+            }
+          >
+            <Menu aria-hidden="true" />
+            <span>{t('Menu')}</span>
+          </DialogTrigger>
+        </NavigationHint>
       </nav>
       <DialogContent className="mobile-menu" showCloseButton={false}>
         <DialogTitle>{t('Biblioteca')}</DialogTitle>

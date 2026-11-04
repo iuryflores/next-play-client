@@ -35,6 +35,9 @@ type FriendsData = {
     avatar: string;
     connection: { id: string; status: string; incoming: boolean } | null;
     minutes: number;
+    movieMinutes: number;
+    gameMinutes: number;
+    movies: number;
     episodes: number;
     books: number;
     games: number;
@@ -254,6 +257,11 @@ export default function Friends({
                   'Livros lidos e jogos concluídos contam títulos distintos, incluindo arquivados. O tempo em séries soma os episódios assistidos uma vez por episódio e é apenas informativo.',
                 )}
               </p>
+              <p className="friends-ranking-note">
+                {t(
+                  'Filmes contam uma vez por título, incluindo arquivados; o tempo usa a duração conhecida, sem somar revisões. O tempo em jogos inclui as sessões registradas em qualquer status.',
+                )}
+              </p>
             </details>
             <div className="friends-table">
               <table>
@@ -266,6 +274,9 @@ export default function Friends({
                     <th scope="col">XP</th>
                     <th scope="col">{t('Tempo em séries')}</th>
                     <th scope="col">{t('Episódios assistidos')}</th>
+                    <th scope="col">{t('Tempo em filmes')}</th>
+                    <th scope="col">{t('Filmes assistidos')}</th>
+                    <th scope="col">{t('Tempo em jogos')}</th>
                     <th scope="col">{t('Livros lidos')}</th>
                     <th scope="col">{t('Jogos concluídos')}</th>
                     {scope === 'all' && <th scope="col">{t('Amizade')}</th>}
@@ -365,6 +376,31 @@ export default function Friends({
                         data-label={t('Episódios assistidos')}
                       >
                         {row.episodes.toLocaleString(language)}
+                      </td>
+                      {/* Os tempos complementam o XP; a posição continua seguindo os pontos. */}
+                      <td
+                        className="ranking-stat"
+                        data-label={t('Tempo em filmes')}
+                      >
+                        {Math.floor(
+                          (row.movieMinutes || 0) / 60,
+                        ).toLocaleString(language)}
+                        h {(row.movieMinutes || 0) % 60}min
+                      </td>
+                      <td
+                        className="ranking-number ranking-stat"
+                        data-label={t('Filmes assistidos')}
+                      >
+                        {(row.movies || 0).toLocaleString(language)}
+                      </td>
+                      <td
+                        className="ranking-stat"
+                        data-label={t('Tempo em jogos')}
+                      >
+                        {Math.floor((row.gameMinutes || 0) / 60).toLocaleString(
+                          language,
+                        )}
+                        h {(row.gameMinutes || 0) % 60}min
                       </td>
                       <td
                         className="ranking-number ranking-stat"

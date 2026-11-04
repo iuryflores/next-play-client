@@ -1,0 +1,289 @@
+/* Escopo dos modais: formulários de edição e outras avaliações mantêm sua apresentação. */
+.item-dialog.review-dialog[data-slot='dialog-content'] {
+  width: min(920px, calc(100vw - 24px));
+  max-width: min(920px, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px);
+  padding: 0;
+  gap: 0;
+  scroll-padding-bottom: 100px;
+}
+.review-dialog > [data-slot='dialog-close'] {
+  top: 16px;
+  right: 16px;
+}
+.review-dialog-heading {
+  padding: 28px 60px 24px 28px;
+  border-bottom: 1px solid var(--border);
+}
+.review-dialog-heading [data-slot='dialog-title'] {
+  font-size: 26px;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+.review-dialog-heading [data-slot='dialog-description'] {
+  line-height: 1.6;
+}
+.review-optional-note {
+  margin: 10px 0 0;
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+.review-dialog > .review-movie-summary {
+  margin: 24px 28px 0;
+  padding: 16px;
+  gap: 18px;
+  grid-template-columns: 76px minmax(0, 1fr);
+  background: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.review-dialog .review-movie-poster {
+  width: 76px;
+}
+.review-dialog .review-episode-still {
+  width: 76px;
+  height: auto;
+  aspect-ratio: 16 / 9;
+}
+.review-dialog .review-movie-info h3 {
+  font-size: 18px;
+  line-height: 1.4;
+}
+.review-dialog .review-movie-genres {
+  font-size: 12px;
+}
+.review-dialog .review-dialog-form {
+  margin: 0;
+  gap: 24px;
+  padding: 24px 28px 0;
+}
+:is(.review-dialog-form, .explore-preview-form) .watch-date-field {
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin: 0;
+}
+:is(.review-dialog-form, .explore-preview-form) .watch-date-field legend {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 0 6px;
+}
+:is(.review-dialog-form, .explore-preview-form) .watch-date-field label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+:is(.review-dialog-form, .explore-preview-form)
+  .watch-date-field
+  input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+}
+:is(.review-dialog-form, .explore-preview-form)
+  .watch-date-field
+  input[type='date'] {
+  margin-top: 12px;
+  width: min(100%, 230px);
+}
+/* A nota é a ação principal; emoções ficam ao lado e o elenco ocupa uma seção opcional. */
+:is(.review-dialog, .explore-title-dialog)
+  .review-fields-dialog.completion-review {
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+  gap: 24px;
+  align-items: start;
+}
+:is(.review-dialog, .explore-title-dialog)
+  .review-fields-dialog.completion-review
+  > legend {
+  padding: 0 0 20px;
+  font-size: 16px;
+  color: var(--foreground);
+}
+:is(.review-dialog, .explore-title-dialog) .review-fields-dialog > .star-rating,
+:is(.review-dialog, .explore-title-dialog)
+  .review-fields-dialog
+  > .feeling-picker {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+:is(.review-dialog, .explore-title-dialog)
+  .review-fields-dialog
+  .star-rating
+  legend,
+:is(.review-dialog, .explore-title-dialog)
+  .review-fields-dialog
+  .feeling-picker
+  legend {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+:is(.review-dialog, .explore-title-dialog) .review-fields-dialog .star-rating {
+  gap: 2px;
+}
+:is(.review-dialog, .explore-title-dialog)
+  .review-fields-dialog
+  .star-rating
+  label
+  > span {
+  width: 44px;
+  min-width: 40px;
+  min-height: 48px;
+  font-size: 42px;
+}
+:is(.review-dialog, .explore-title-dialog)
+  .review-fields-dialog
+  .star-rating
+  > button {
+  margin: 6px 0 0;
+}
+:is(.review-dialog, .explore-title-dialog)
+  .review-fields-dialog
+  .star-rating
+  > p {
+  margin: 6px 0 0;
+  min-height: 20px;
+  color: var(--muted-foreground);
+  font-size: 13px;
+}
+:is(.review-dialog, .explore-title-dialog) .review-fields-dialog .feeling-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 0;
+}
+:is(.review-dialog, .explore-title-dialog)
+  .review-fields-dialog
+  .feeling-grid
+  button {
+  min-height: 64px;
+  padding: 8px 4px;
+  gap: 4px;
+  border-width: 1px;
+  border-radius: 10px;
+  background: transparent;
+}
+:is(.review-dialog, .explore-title-dialog)
+  .review-fields-dialog
+  .feeling-grid
+  button
+  > span {
+  font-size: 24px;
+  line-height: 1.2;
+}
+:is(.review-dialog, .explore-title-dialog)
+  .review-fields-dialog
+  .feeling-grid
+  button
+  > small {
+  font-size: 11px;
+  line-height: 1.3;
+}
+:is(.review-dialog, .explore-title-dialog)
+  .review-fields-dialog
+  .feeling-grid
+  button[aria-pressed='true'] {
+  background: var(--muted);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+.review-character-options {
+  grid-column: 1 / -1;
+  min-width: 0;
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}
+.review-character-options > summary {
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+.review-character-options > summary > span {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  font-weight: 400;
+  margin-left: 8px;
+}
+.review-character-options .cast-picker {
+  margin-top: 18px;
+}
+.review-dialog .review-dialog-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  margin: 0 -28px;
+  padding: 18px 28px;
+  border-top: 1px solid var(--border);
+  background: var(--panel, #1d1827);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.review-dialog-actions button {
+  min-height: 44px;
+  height: auto;
+  padding: 10px 16px;
+  white-space: normal;
+}
+[data-slot='dialog-overlay'].review-dialog-backdrop {
+  background: rgb(0 0 0 / 45%);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+@media (max-width: 700px) {
+  :is(.review-dialog, .explore-title-dialog)
+    .review-fields-dialog.completion-review {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :is(.review-dialog, .explore-title-dialog)
+    .review-fields-dialog
+    .star-rating {
+    justify-content: flex-start;
+  }
+  :is(.review-dialog, .explore-title-dialog)
+    .review-fields-dialog
+    .feeling-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+@media (max-width: 480px) {
+  .review-dialog-heading {
+    padding: 24px 48px 20px 16px;
+  }
+  .review-dialog > .review-movie-summary {
+    margin: 20px 16px 0;
+    padding: 12px;
+    gap: 12px;
+    grid-template-columns: 56px minmax(0, 1fr);
+  }
+  .review-dialog .review-movie-poster {
+    width: 56px;
+  }
+  .review-dialog .review-movie-info h3 {
+    font-size: 16px;
+  }
+  .review-dialog .review-dialog-form {
+    padding: 20px 16px 0;
+  }
+  :is(.review-dialog, .explore-title-dialog)
+    .review-fields-dialog
+    .feeling-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .review-dialog .review-dialog-actions {
+    position: static;
+    margin: 0 -16px;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}

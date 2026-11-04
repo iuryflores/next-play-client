@@ -1,5 +1,6 @@
 import ExternalGameStats from './ExternalGameStats';
 import Rewatch from './Rewatch';
+import SeriesRating from './SeriesRating';
 import GameStatusHistory from './GameStatusHistory';
 import { Button } from '@/components/ui/button';
 import { groupGames } from './game-groups';
@@ -213,6 +214,57 @@ export default function TitleDetails({
           </Button>
         )}
       </div>
+      {followingSeries && (
+        <header className="series-page-header">
+          {item.coverUrl && (
+            <img
+              src={item.coverUrl}
+              alt={t('Capa de {0}', item.title)}
+              referrerPolicy="no-referrer"
+            />
+          )}
+          <div className="series-page-identity">
+            <small>
+              {categories[item.kind]}
+              {item.year ? ` · ${item.year}` : ''}
+            </small>
+            <h1 id="title-details-heading" ref={heading} tabIndex={-1}>
+              {item.title}
+            </h1>
+            <div className="series-page-progress">
+              <span>
+                {item.rewatching
+                  ? t('Reassistindo')
+                  : statusNames.series[item.status]}
+              </span>
+              {item.episodeProgress?.initialized && (
+                <span>
+                  {t(
+                    '{0} de {1} episódios assistidos',
+                    item.episodeProgress.watched,
+                    item.episodeProgress.total,
+                  )}
+                </span>
+              )}
+              {item.seriesStatus && item.seriesStatus !== 'unknown' && (
+                <span>
+                  {t(
+                    item.seriesStatus === 'ended'
+                      ? 'Série encerrada'
+                      : item.seriesStatus === 'canceled'
+                        ? 'Série cancelada'
+                        : 'Série em produção',
+                  )}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="series-page-actions">
+            <SeriesRating item={item} changed={changed} onExpired={onExpired} />
+            {titleActions}
+          </div>
+        </header>
+      )}
       {!followingSeries && scores}
       <div
         className={
@@ -231,106 +283,110 @@ export default function TitleDetails({
           </div>
         )}
         <div className="title-details-hero">
-          {followingSeries && (
-            <div className="series-header-actions">{titleActions}</div>
-          )}
-          <div
-            className={
-              followingSeries
-                ? 'series-poster-scores'
-                : 'details-poster-wrapper'
-            }
-          >
-            <div className="details-artwork">
-              {item.coverUrl ? (
-                <img
-                  className="title-details-poster"
-                  src={item.coverUrl}
-                  alt={t('Capa de {0}', item.title)}
-                  referrerPolicy="no-referrer"
-                />
-              ) : (
-                <div className="details-poster-placeholder">
-                  {item.kind === 'book' ? (
-                    <BookOpen aria-hidden="true" />
-                  ) : (
-                    <Film aria-hidden="true" />
-                  )}
-                </div>
-              )}
-              {item.status === 'completed' && (
-                <section
-                  className="title-details-experience"
-                  aria-label={t('Sua experiência')}
-                >
-                  <h2>{t(' Sua experiência ')}</h2>
-                  <p
-                    className={
-                      item.stars
-                        ? 'details-personal-rating'
-                        : 'details-no-rating'
-                    }
-                  >
-                    {item.stars
-                      ? `${'★'.repeat(item.stars)} · ${item.stars}/5`
-                      : t('Ainda sem nota')}
-                  </p>
-                  <p className="details-watched-date">
-                    {item.watchedDateUnknown && (
-                      <>{t('Data desconhecida')} · </>
+          {/* A identidade fica no cabeçalho; a área complementar reúne apenas informações da série. */}
+          {!followingSeries && (
+            <div className="details-poster-wrapper">
+              <div className="details-artwork">
+                {item.coverUrl ? (
+                  <img
+                    className="title-details-poster"
+                    src={item.coverUrl}
+                    alt={t('Capa de {0}', item.title)}
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <div className="details-poster-placeholder">
+                    {item.kind === 'book' ? (
+                      <BookOpen aria-hidden="true" />
+                    ) : (
+                      <Film aria-hidden="true" />
                     )}
-                    {item.kind === 'movie' || item.kind === 'series'
-                      ? t(
-                          item.completedOn ||
+                  </div>
+                )}
+                {item.status === 'completed' && (
+                  <section
+                    className="title-details-experience"
+                    aria-label={t('Sua experiência')}
+                  >
+                    <h2>{t(' Sua experiência ')}</h2>
+                    <p
+                      className={
+                        item.stars
+                          ? 'details-personal-rating'
+                          : 'details-no-rating'
+                      }
+                    >
+                      {item.stars
+                        ? `${'★'.repeat(item.stars)} · ${item.stars}/5`
+                        : t('Ainda sem nota')}
+                    </p>
+                    <p className="details-watched-date">
+                      {item.watchedDateUnknown && (
+                        <>{t('Data desconhecida')} · </>
+                      )}
+                      {item.kind === 'movie' || item.kind === 'series'
+                        ? t(
+                            item.completedOn ||
+                              (item.watchedDateUnknown
+                                ? undefined
+                                : item.completedAt)
+                              ? 'Assistido em'
+                              : 'Assistido',
+                          )
+                        : item.completedOn ||
                             (item.watchedDateUnknown
                               ? undefined
                               : item.completedAt)
-                            ? 'Assistido em'
-                            : 'Assistido',
-                        )
-                      : item.completedOn ||
-                          (item.watchedDateUnknown
-                            ? undefined
-                            : item.completedAt)
-                        ? item.kind === 'book'
-                          ? t('Lido em')
-                          : t(' Concluído em ')
-                        : item.rewatching
-                          ? t('Reassistindo')
-                          : statusNames[item.kind][item.status]}
-                    {(item.completedOn ||
-                      (item.watchedDateUnknown
-                        ? undefined
-                        : item.completedAt)) && (
+                          ? item.kind === 'book'
+                            ? t('Lido em')
+                            : t(' Concluído em ')
+                          : item.rewatching
+                            ? t('Reassistindo')
+                            : statusNames[item.kind][item.status]}
+                      {(item.completedOn ||
+                        (item.watchedDateUnknown
+                          ? undefined
+                          : item.completedAt)) && (
+                        <>
+                          {' '}
+                          {dateLabel(
+                            item.completedOn ||
+                              (item.watchedDateUnknown
+                                ? undefined
+                                : item.completedAt)!.slice(0, 10),
+                          )}
+                        </>
+                      )}
+                    </p>
+                    {item.feeling && feelings[item.feeling] && (
+                      <p>{feelings[item.feeling]}</p>
+                    )}
+                    {item.notes && (
                       <>
-                        {' '}
-                        {dateLabel(
-                          item.completedOn ||
-                            (item.watchedDateUnknown
-                              ? undefined
-                              : item.completedAt)!.slice(0, 10),
-                        )}
+                        <h3>{t(' Anotações privadas ')}</h3>
+                        <p className="title-details-notes">{item.notes}</p>
                       </>
                     )}
-                  </p>
-                  {item.feeling && feelings[item.feeling] && (
-                    <p>{feelings[item.feeling]}</p>
-                  )}
-                  {item.notes && (
-                    <>
-                      <h3>{t(' Anotações privadas ')}</h3>
-                      <p className="title-details-notes">{item.notes}</p>
-                    </>
-                  )}
-                </section>
+                  </section>
+                )}
+              </div>
+              {followingSeries && (
+                <div className="series-compact-scores">{scores}</div>
               )}
             </div>
-            {followingSeries && (
-              <div className="series-compact-scores">{scores}</div>
-            )}
-          </div>
+          )}
+          {followingSeries && (
+            <div className="series-compact-scores">{scores}</div>
+          )}
           <div className="details-intro">
             {!followingSeries && titleActions}
+            {!followingSeries && item.kind === 'series' && (
+              <SeriesRating
+                item={item}
+                changed={changed}
+                onExpired={onExpired}
+              />
+            )}
             {(item.kind === 'movie' || item.kind === 'series') && (
               <Rewatch item={item} changed={changed} onExpired={onExpired} />
             )}
@@ -346,12 +402,30 @@ export default function TitleDetails({
                 </span>
               ) : null}
             </div>
-            <div className="details-title-row">
-              <h1 id="title-details-heading" ref={heading} tabIndex={-1}>
-                {item.title}
-              </h1>
-            </div>
+            {!followingSeries && (
+              <div className="details-title-row">
+                <h1 id="title-details-heading" ref={heading} tabIndex={-1}>
+                  {item.title}
+                </h1>
+              </div>
+            )}
             <ReleaseBadge item={item} />
+            {item.kind === 'series' && (
+              <p className="series-lifecycle-label">
+                {t(
+                  item.seriesStatus === 'ended'
+                    ? 'Série encerrada'
+                    : item.seriesStatus === 'canceled'
+                      ? 'Série cancelada'
+                      : item.seriesStatus === 'returning'
+                        ? 'Série em produção'
+                        : 'Situação da série não confirmada',
+                )}
+                {item.caughtUp && item.status !== 'completed' && (
+                  <> · {t('Em dia')}</>
+                )}
+              </p>
+            )}
             <OriginalTitle
               title={item.title}
               originalTitle={item.originalTitle}

@@ -4,6 +4,7 @@ import {
   useEffect,
   useEffectEvent,
   useState,
+  useRef,
   type ReactNode,
 } from 'react';
 import { ArrowUpRight, Sparkles, RefreshCw } from 'lucide-react';
@@ -138,12 +139,22 @@ export default function UserLevelProvider({
   const [error, setError] = useState('');
   const [revision, setRevision] = useState(0);
   const expired = useEffectEvent(onExpired);
-  const refresh = () => setRevision((value) => value + 1);
+  const mode = useRef<'read' | 'changed' | 'force'>('read');
+  const refresh = () => {
+    mode.current = 'force';
+    setRevision((value) => value + 1);
+  };
   useEffect(() => {
     // Espera as conquistas serem sincronizadas para incluir o bônus recém-concedido.
-    const activity = () => setRevision((value) => value + 1);
+    const activity = () => {
+      mode.current = 'changed';
+      setRevision((value) => value + 1);
+    };
     const visible = () => {
-      if (document.visibilityState === 'visible') activity();
+      if (document.visibilityState === 'visible') {
+        mode.current = 'read';
+        setRevision((value) => value + 1);
+      }
     };
     window.addEventListener('nextplay:achievements-synced', activity);
     document.addEventListener('visibilitychange', visible);
@@ -155,14 +166,21 @@ export default function UserLevelProvider({
   useEffect(() => {
     const controller = new AbortController();
     const timer = window.setTimeout(() => {
-      void fetch('/api/progression/sync', {
-        method: 'POST',
-        credentials: 'same-origin',
-        signal: AbortSignal.any([
-          controller.signal,
-          AbortSignal.timeout(30000),
-        ]),
-      })
+      // Na abertura, lê créditos prontos. Após uma atividade, só reconhece alterações pendentes.
+      const currentMode = mode.current;
+      void fetch(
+        currentMode === 'read'
+          ? '/api/progression'
+          : `/api/progression/sync${currentMode === 'changed' ? '?changed=1' : ''}`,
+        {
+          method: currentMode === 'read' ? 'GET' : 'POST',
+          credentials: 'same-origin',
+          signal: AbortSignal.any([
+            controller.signal,
+            AbortSignal.timeout(30000),
+          ]),
+        },
+      )
         .then(async (response) => {
           if (!response.ok)
             throw new ApiError(
@@ -247,7 +265,7 @@ export default function UserLevelProvider({
                 </p>
                 <p>
                   {t(
-                    'Cada obra, episódio e conquista pontua uma vez. Avaliar com nota ou sentimento rende um único bônus por registro. Editar, desmarcar ou recadastrar não repete o XP já reconhecido.',
+                    'Cada obra, episódio distinto e conquista pontua uma vez. Cada revisão concluída de filme rende mais 20 XP. Avaliar com nota ou sentimento rende um único bônus por registro. Editar, desmarcar ou recadastrar não repete o XP já reconhecido.',
                   )}
                 </p>
                 <p>
@@ -259,6 +277,11 @@ export default function UserLevelProvider({
                 <p>
                   {t(
                     'O histórico existente também conta, mesmo sem data de consumo. O XP reconhecido fica salvo após exclusões. O nível do perfil é separado dos níveis das conquistas.',
+                  )}
+                </p>
+                <p>
+                  {t(
+                    'Cada hora completa assistida rende 5 XP extras. Minutos se acumulam por filme, incluindo revisões concluídas, ou por série, somando episódios distintos. Só durações conhecidas contam; tempo sem duração não é estimado.',
                   )}
                 </p>
               </details>

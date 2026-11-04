@@ -24,14 +24,45 @@
     linear-gradient(135deg, #241b30, #18141e);
   align-items: start;
 }
-.details-status-actions { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-.details-status-actions > .details-top-actions { margin-left: auto; gap: 4px; }
-.details-status-actions > .details-watched-banner { flex: 1; min-width: 0; min-height: 52px; margin: 0; padding: 12px 16px; }
+.details-status-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.details-status-actions > .details-top-actions {
+  margin-left: auto;
+  gap: 4px;
+}
+.details-status-actions > .details-watched-banner {
+  flex: 1;
+  min-width: 0;
+  min-height: 52px;
+  margin: 0;
+  padding: 12px 16px;
+}
 .title-details-hero .details-title-icons,
-.title-details-hero .title-details-actions { display: flex; align-items: center; gap: 4px; margin: 0; }
-.title-details-hero .details-top-actions button:not(.archive-title-action) { width: 36px; height: 36px; border: 0; box-shadow: none; }
-.title-details-hero .details-top-actions button svg { width: 18px; height: 18px; }
-.title-details-hero .details-top-actions button:disabled { opacity: 0.35; }
+.title-details-hero .title-details-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+}
+.title-details-hero .details-top-actions button:not(.archive-title-action) {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  box-shadow: none;
+}
+.title-details-hero .details-top-actions button svg {
+  width: 18px;
+  height: 18px;
+}
+.title-details-hero .details-top-actions button:disabled {
+  opacity: 0.35;
+}
 .details-artwork {
   min-width: 0;
 }
@@ -43,15 +74,40 @@
   margin-bottom: 24px;
 }
 .details-trailer-cast > .title-trailer,
-.details-trailer-cast > .cast-picker { margin: 0; min-width: 0; }
-.details-trailer-cast:not(:has(.title-trailer)) { grid-template-columns: minmax(0, 1fr); }
+.details-trailer-cast > .cast-picker {
+  margin: 0;
+  min-width: 0;
+}
+.details-trailer-cast:not(:has(.title-trailer)) {
+  grid-template-columns: minmax(0, 1fr);
+}
 .details-trailer-cast .trailer-heading,
-.details-trailer-cast .cast-picker > legend { font-size: 16px; font-weight: 600; line-height: 24px; padding: 0; margin: 0; }
-.details-trailer-cast .trailer-heading { margin-bottom: 17px; }
-.cast-card.cast-card-favorite { border-color: var(--warning-ink, #e7be5c); background: #e7be5c14; box-shadow: inset 0 0 0 1px #e7be5c; }
-.cast-favorite-label { display: block; color: var(--warning-ink, #f1cf7c); font-size: 11px; margin-top: 6px; }
+.details-trailer-cast .cast-picker > legend {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  padding: 0;
+  margin: 0;
+}
+.details-trailer-cast .trailer-heading {
+  margin-bottom: 17px;
+}
+.cast-card.cast-card-favorite {
+  border-color: var(--warning-ink, #e7be5c);
+  background: #e7be5c14;
+  box-shadow: inset 0 0 0 1px #e7be5c;
+}
+.cast-favorite-label {
+  display: block;
+  color: var(--warning-ink, #f1cf7c);
+  font-size: 11px;
+  margin-top: 6px;
+}
 @media (max-width: 700px) {
-  .details-trailer-cast { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .details-trailer-cast {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
 }
 .details-artwork .title-details-experience {
   margin: 16px 0 0;
@@ -488,46 +544,203 @@
   color: var(--ink, #f5f3fa);
   border: 1px solid var(--line, #574766);
 }
-.rt-search { display: grid; gap: 8px; }
-.rt-search > div { display: flex; gap: 8px; }
-.rt-search input { min-width: 0; background: var(--panel, #211a2d); color: var(--ink, #f5f3fa); }
-.rt-results { display: grid; gap: 12px; }
-.rt-results article { padding: 16px; border: 1px solid var(--line, #574766); border-radius: 12px; background: var(--panel, #211a2d); }
-.rt-results h3 { font-size: 16px; font-weight: 600; }
-.rt-results h3 span, .rt-scores dt, .rt-timestamp { color: var(--ink-muted, #c4b9d4); }
-.rt-scores { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 12px 0; }
-.rt-scores dt, .rt-timestamp, .rt-results a { font-size: 14px; }
-.rt-scores dd { font-size: 24px; font-weight: 700; }
-.rt-results a { display: inline-flex; align-items: center; gap: 6px; color: var(--accent-ink, #c5b3ff); text-decoration: underline; }
-.rt-timestamp { margin-top: 12px; }
-.rt-inline { margin: 0 0 12px; padding: 0; border: 0; background: transparent; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; text-align: right; }
-.rt-inline > div { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; min-width: 0; max-width: 100%; }
-.rt-inline .rt-scores { display: flex; flex-wrap: wrap; justify-content: flex-end; margin: 0; gap: 4px 20px; }
-.rt-inline .rt-scores > div { display: flex; align-items: center; gap: 6px; }
-.rt-inline .rt-scores dt { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; }
-.rt-score-icon { font-size: 20px; line-height: 1; }
-.rt-inline .rt-scores dd { font-size: 18px; line-height: 1.3; }
-.rt-inline > button { margin: 0; }
-.rt-inline > div > p { margin: 0; font-size: 12px; }
-.rt-inline .rt-footer { justify-content: flex-end; }
-.rt-inline a { display: inline-flex; gap: 6px; align-items: center; color: var(--accent-ink, #c5b3ff); text-decoration: underline; font-size: 14px; }
-.rt-query-date { font-size: 0.75rem; line-height: 1.5; margin-top: 6px; color: var(--ink-muted, #aaa2b9); }
-.rt-footer { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; }
-.rt-footer > a { font-size: 0.75rem; white-space: nowrap; }
-.rt-footer > .rt-query-date { margin: 0; }
-.rt-footer > .rt-correct-match { font-size: 0.75rem; font-weight: 400; min-height: 28px; height: auto; margin: 0; padding: 4px 0; color: var(--ink-muted, #b7a9c9); gap: 5px; }
-.rt-correct-match svg { width: 12px; height: 12px; }
+.rt-search {
+  display: grid;
+  gap: 8px;
+}
+.rt-search > div {
+  display: flex;
+  gap: 8px;
+}
+.rt-search input {
+  min-width: 0;
+  background: var(--panel, #211a2d);
+  color: var(--ink, #f5f3fa);
+}
+.rt-results {
+  display: grid;
+  gap: 12px;
+}
+.rt-results article {
+  padding: 16px;
+  border: 1px solid var(--line, #574766);
+  border-radius: 12px;
+  background: var(--panel, #211a2d);
+}
+.rt-results h3 {
+  font-size: 16px;
+  font-weight: 600;
+}
+.rt-results h3 span,
+.rt-scores dt,
+.rt-timestamp {
+  color: var(--ink-muted, #c4b9d4);
+}
+.rt-scores {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 12px 0;
+}
+.rt-scores dt,
+.rt-timestamp,
+.rt-results a {
+  font-size: 14px;
+}
+.rt-scores dd {
+  font-size: 24px;
+  font-weight: 700;
+}
+.rt-results a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent-ink, #c5b3ff);
+  text-decoration: underline;
+}
+.rt-timestamp {
+  margin-top: 12px;
+}
+.rt-inline {
+  margin: 0 0 12px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  text-align: right;
+}
+.rt-inline > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  min-width: 0;
+  max-width: 100%;
+}
+.rt-inline .rt-scores {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  margin: 0;
+  gap: 4px 20px;
+}
+.rt-inline .rt-scores > div {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.rt-inline .rt-scores dt {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+}
+.rt-score-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+.rt-inline .rt-scores dd {
+  font-size: 18px;
+  line-height: 1.3;
+}
+.rt-inline > button {
+  margin: 0;
+}
+.rt-inline > div > p {
+  margin: 0;
+  font-size: 12px;
+}
+.rt-inline .rt-footer {
+  justify-content: flex-end;
+}
+.rt-inline a {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  color: var(--accent-ink, #c5b3ff);
+  text-decoration: underline;
+  font-size: 14px;
+}
+.rt-query-date {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  margin-top: 6px;
+  color: var(--ink-muted, #aaa2b9);
+}
+.rt-footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+.rt-footer > a {
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+.rt-footer > .rt-query-date {
+  margin: 0;
+}
+.rt-footer > .rt-correct-match {
+  font-size: 0.75rem;
+  font-weight: 400;
+  min-height: 28px;
+  height: auto;
+  margin: 0;
+  padding: 4px 0;
+  color: var(--ink-muted, #b7a9c9);
+  gap: 5px;
+}
+.rt-correct-match svg {
+  width: 12px;
+  height: 12px;
+}
 /* Ações secundárias usam somente ícones, com alvos de clique e espaçamento consistentes. */
-.title-details-hero .details-top-actions { gap: 4px; max-width: 100%; }
+.title-details-hero .details-top-actions {
+  gap: 4px;
+  max-width: 100%;
+}
 .title-details-hero .details-title-icons,
-.title-details-hero .title-details-actions { gap: 4px; padding: 0; border: 0; border-radius: 0; background: transparent; }
-.title-details-hero .details-top-actions button { border-radius: 8px; background: transparent; }
-.title-details-hero .details-top-actions button:hover:not(:disabled) { background: var(--muted); }
-.title-details-hero .details-top-actions .archive-title-action { width: 36px; height: 36px; flex: 0 0 36px; padding: 0; border: 0; border-radius: 8px; color: var(--foreground); box-shadow: none; }
-.title-details-hero .archive-title-action svg { flex-shrink: 0; }
-.title-details-hero .archive-title-action:hover { background: var(--muted); }
-.title-details-hero .details-top-actions .remove-item { flex-shrink: 0; border-radius: 8px; color: var(--destructive); }
-.title-details-hero .details-top-actions .remove-item:hover { background: color-mix(in srgb, var(--destructive) 10%, transparent); }
+.title-details-hero .title-details-actions {
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.title-details-hero .details-top-actions button {
+  border-radius: 8px;
+  background: transparent;
+}
+.title-details-hero .details-top-actions button:hover:not(:disabled) {
+  background: var(--muted);
+}
+.title-details-hero .details-top-actions .archive-title-action {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  color: var(--foreground);
+  box-shadow: none;
+}
+.title-details-hero .archive-title-action svg {
+  flex-shrink: 0;
+}
+.title-details-hero .archive-title-action:hover {
+  background: var(--muted);
+}
+.title-details-hero .details-top-actions .remove-item {
+  flex-shrink: 0;
+  border-radius: 8px;
+  color: var(--destructive);
+}
+.title-details-hero .details-top-actions .remove-item:hover {
+  background: color-mix(in srgb, var(--destructive) 10%, transparent);
+}
 /* A margem antiga das ações do formulário não se aplica à barra de ícones do cabeçalho. */
 .title-details-hero .details-top-actions .title-details-actions,
 .title-details-hero .details-top-actions .details-title-icons {
@@ -549,52 +762,384 @@
   flex-shrink: 0;
 }
 /* A série em andamento abre no episódio; informações gerais ocupam a coluna lateral. */
-.series-follow-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 300px); grid-template-areas: 'episode summary' 'extras summary'; gap: 24px; align-items: start; }
-.series-episode-focus { grid-area: episode; min-width: 0; outline: none; }
-.series-follow-layout > .title-details-hero { grid-area: summary; display: flex; flex-direction: column; gap: 16px; padding: 20px; margin: 0; border-radius: 18px; min-width: 0; }
-.series-follow-layout .details-artwork { width: 92px; }
-.series-follow-layout .title-details-poster { border-radius: 10px; }
-.series-follow-layout .details-intro { min-width: 0; width: 100%; }
-.series-follow-layout .details-intro h1 { font-size: 22px; line-height: 1.25; letter-spacing: -.5px; }
-.series-follow-layout .details-meta { font-size: 11px; }
-.series-follow-layout .details-genre-tags { gap: 5px; margin-block: 12px; }
-.series-follow-layout .details-genre-tags > span { font-size: 10px; padding: 4px 7px; }
-.series-follow-layout > .details-content-grid { grid-area: extras; display: block; min-width: 0; }
-.series-follow-layout .episodes-panel { margin: 0; border-color: color-mix(in srgb, var(--primary) 35%, var(--border)); }
-.series-follow-layout .episodes-panel > h3 { font-size: 22px; letter-spacing: -.5px; }
-.series-follow-layout .episode-detail > h4 { font-size: clamp(22px, 3vw, 30px); line-height: 1.25; }
-.series-information { border-top: 1px solid var(--border); margin-top: 18px; padding-top: 14px; }
-.series-information > h2 { font-size: 12px; color: var(--primary); margin-bottom: 12px; }
-.series-information .details-synopsis p { font-size: 12px; line-height: 1.7; }
-@media (max-width: 1000px) {
-  .series-follow-layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'episode' 'summary' 'extras'; gap: 20px; }
-  .series-follow-layout > .title-details-hero { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 16px; padding: 16px; }
-  .series-follow-layout .details-artwork { width: 72px; }
-  .series-follow-layout .details-intro h1 { font-size: 20px; }
+.series-follow-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 300px);
+  grid-template-areas: 'episode summary' 'extras summary';
+  gap: 24px;
+  align-items: start;
 }
-.series-follow-layout .details-trailer-cast { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; width: 100%; border-top: 1px solid var(--border); padding-top: 18px; }
+.series-episode-focus {
+  grid-area: episode;
+  min-width: 0;
+  outline: none;
+}
+.series-follow-layout > .title-details-hero {
+  grid-area: summary;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  margin: 0;
+  border-radius: 18px;
+  min-width: 0;
+}
+.series-follow-layout .details-artwork {
+  width: 92px;
+}
+.series-follow-layout .title-details-poster {
+  border-radius: 10px;
+}
+.series-follow-layout .details-intro {
+  min-width: 0;
+  width: 100%;
+}
+.series-follow-layout .details-intro h1 {
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+}
+.series-follow-layout .details-meta {
+  font-size: 11px;
+}
+.series-follow-layout .details-genre-tags {
+  gap: 5px;
+  margin-block: 12px;
+}
+.series-follow-layout .details-genre-tags > span {
+  font-size: 10px;
+  padding: 4px 7px;
+}
+.series-follow-layout > .details-content-grid {
+  grid-area: extras;
+  display: block;
+  min-width: 0;
+}
+.series-follow-layout .episodes-panel {
+  margin: 0;
+  border-color: color-mix(in srgb, var(--primary) 35%, var(--border));
+}
+.series-follow-layout .episodes-panel > h3 {
+  font-size: 22px;
+  letter-spacing: -0.5px;
+}
+.series-follow-layout .episode-detail > h4 {
+  font-size: clamp(22px, 3vw, 30px);
+  line-height: 1.25;
+}
+.series-information {
+  border-top: 1px solid var(--border);
+  margin-top: 18px;
+  padding-top: 14px;
+}
+.series-information > h2 {
+  font-size: 12px;
+  color: var(--primary);
+  margin-bottom: 12px;
+}
+.series-information .details-synopsis p {
+  font-size: 12px;
+  line-height: 1.7;
+}
+@media (max-width: 1000px) {
+  .series-follow-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'episode' 'summary' 'extras';
+    gap: 20px;
+  }
+  .series-follow-layout > .title-details-hero {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 16px;
+    padding: 16px;
+  }
+  .series-follow-layout .details-artwork {
+    width: 72px;
+  }
+  .series-follow-layout .details-intro h1 {
+    font-size: 20px;
+  }
+}
+.series-follow-layout .details-trailer-cast {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  width: 100%;
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}
 .series-follow-layout .details-trailer-cast .trailer-heading,
-.series-follow-layout .details-trailer-cast .cast-picker > legend { font-size: 13px; }
-@media (max-width: 1000px) { .series-follow-layout > .title-details-hero > .details-trailer-cast { grid-column: 1 / -1; } }
-.details-favorite-toggle[aria-pressed="true"] { color: var(--primary); }
-.details-favorite-toggle[aria-pressed="true"] svg { fill: currentColor; }
+.series-follow-layout .details-trailer-cast .cast-picker > legend {
+  font-size: 13px;
+}
+@media (max-width: 1000px) {
+  .series-follow-layout > .title-details-hero > .details-trailer-cast {
+    grid-column: 1 / -1;
+  }
+}
+.details-favorite-toggle[aria-pressed='true'] {
+  color: var(--primary);
+}
+.details-favorite-toggle[aria-pressed='true'] svg {
+  fill: currentColor;
+}
 
 /* A barra ocupa a largura da coluna e permanece acima do cartaz também no mobile. */
-.series-header-actions { width: 100%; grid-column: 1 / -1; }
-.series-header-actions .details-status-actions { margin: 0; }
-.series-header-actions .details-top-actions { justify-content: flex-start; }
+.series-header-actions {
+  width: 100%;
+  grid-column: 1 / -1;
+}
+.series-header-actions .details-status-actions {
+  margin: 0;
+}
+.series-header-actions .details-top-actions {
+  justify-content: flex-start;
+}
 
 /* As notas compartilham a linha do cartaz sem aumentar a largura da coluna lateral. */
-.series-poster-scores { display: grid; grid-template-columns: 82px minmax(0, 1fr); gap: 12px; width: 100%; min-width: 0; }
-.series-follow-layout .series-poster-scores .details-artwork { width: 100%; }
-.series-compact-scores { min-width: 0; }
-.series-compact-scores .rt-inline, .series-compact-scores .rt-inline > div { align-items: flex-start; text-align: left; }
-.series-compact-scores .rt-inline .rt-scores { justify-content: flex-start; gap: 6px; }
-.series-compact-scores .rt-inline .rt-scores > div { flex-wrap: wrap; gap: 3px; }
-.series-compact-scores .rt-inline .rt-scores dt { font-size: 10px; }
-.series-compact-scores .rt-inline .rt-scores dd { font-size: 15px; }
-.series-compact-scores .rt-inline .rt-footer { justify-content: flex-start; }
-.series-compact-scores .rt-inline a, .series-compact-scores .rt-footer > .rt-query-date { font-size: 10px; white-space: normal; }
-@media (max-width: 1000px) { .series-poster-scores { grid-column: 1 / -1; } }
+.series-poster-scores {
+  display: grid;
+  grid-template-columns: 82px minmax(0, 1fr);
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+.series-follow-layout .series-poster-scores .details-artwork {
+  width: 100%;
+}
+.series-compact-scores {
+  min-width: 0;
+}
+.series-compact-scores .rt-inline,
+.series-compact-scores .rt-inline > div {
+  align-items: flex-start;
+  text-align: left;
+}
+.series-compact-scores .rt-inline .rt-scores {
+  justify-content: flex-start;
+  gap: 6px;
+}
+.series-compact-scores .rt-inline .rt-scores > div {
+  flex-wrap: wrap;
+  gap: 3px;
+}
+.series-compact-scores .rt-inline .rt-scores dt {
+  font-size: 10px;
+}
+.series-compact-scores .rt-inline .rt-scores dd {
+  font-size: 15px;
+}
+.series-compact-scores .rt-inline .rt-footer {
+  justify-content: flex-start;
+}
+.series-compact-scores .rt-inline a,
+.series-compact-scores .rt-footer > .rt-query-date {
+  font-size: 10px;
+  white-space: normal;
+}
+@media (max-width: 1000px) {
+  .series-poster-scores {
+    grid-column: 1 / -1;
+  }
+}
 
-.details-poster-wrapper { display: contents; }
+.details-poster-wrapper {
+  display: contents;
+}
+
+/* A avaliação geral é uma ação explícita, separada da conclusão e das notas de episódios. */
+.series-page-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.series-rating-trigger { width: fit-content; gap: 8px; }
+.series-rating-trigger > svg { width: 16px; height: 16px; color: var(--primary); }
+.series-rating-trigger > span { color: var(--primary); }
+.series-rating-dialog { width: min(460px, calc(100vw - 32px)); }
+.series-rating-dialog .star-rating { margin: 24px 0; }
+@media (max-width: 700px) { .series-page-actions { width: 100%; } }
+
+/* O acompanhamento ocupa a largura útil; informações e conversa ficam em segundo plano. */
+.series-page-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 0 0 24px;
+  padding: 20px 24px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--card);
+}
+.series-page-header > img {
+  width: 64px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 9px;
+  flex-shrink: 0;
+}
+.series-page-identity {
+  flex: 1;
+  min-width: 0;
+}
+.series-page-identity > small {
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+.series-page-header h1 {
+  margin: 5px 0 10px;
+  font-size: clamp(22px, 3vw, 32px);
+  line-height: 1.2;
+}
+.series-page-progress {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+.series-page-progress > :first-child {
+  color: var(--primary);
+  font-weight: 600;
+}
+.series-page-header .details-status-actions {
+  margin: 0;
+  flex-shrink: 0;
+}
+.series-follow-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas: 'episode episode' 'summary extras';
+}
+.series-follow-layout > .title-details-hero {
+  padding: 24px;
+  gap: 20px;
+}
+.series-follow-layout .details-intro > .details-meta {
+  display: none;
+}
+.series-follow-layout .series-information {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.series-follow-layout .series-information > h2 {
+  font-size: 18px;
+  color: var(--foreground);
+}
+.series-follow-layout .series-information .details-synopsis p {
+  font-size: 14px;
+}
+.series-follow-layout .details-trailer-cast {
+  gap: 24px;
+}
+.series-follow-layout .episodes-panel {
+  padding: 24px;
+  gap: 18px 24px;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+  align-items: start;
+}
+.series-follow-layout .episodes-panel > * {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+.series-follow-layout .episodes-panel > h2 {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 650;
+}
+.series-follow-layout .episodes-panel > .episode-detail {
+  grid-column: 1;
+  grid-row: 2 / span 2;
+}
+.series-follow-layout .episode-detail > img {
+  max-height: 240px;
+}
+.series-follow-layout .episodes-panel > .episode-picker {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 0;
+  padding: 16px;
+  background: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.series-follow-layout .episode-picker summary {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.series-follow-layout .episode-picker .episode-list {
+  max-height: 430px;
+  overscroll-behavior: contain;
+}
+.series-follow-layout .episode-row {
+  background: var(--card);
+}
+.series-follow-layout .episodes-panel > .episode-refresh {
+  grid-column: 2;
+  grid-row: 3;
+  gap: 4px;
+}
+.episode-management {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+.episode-management > summary {
+  cursor: pointer;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  width: fit-content;
+}
+.episode-management .episode-bulk-actions {
+  margin-top: 14px;
+}
+/* Erros e carregamento não compartilham a célula do episódio, evitando sobreposição ao atualizar. */
+.series-follow-layout
+  .episodes-panel:has(> .page-loading, > .home-error)
+  > .episode-detail {
+  grid-row: auto;
+}
+.series-follow-layout
+  .episodes-panel:has(> .page-loading, > .home-error)
+  > .episode-picker,
+.series-follow-layout
+  .episodes-panel:has(> .page-loading, > .home-error)
+  > .episode-refresh {
+  grid-row: auto;
+}
+@media (max-width: 1000px) {
+  .series-follow-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'episode' 'summary' 'extras';
+  }
+  .series-follow-layout > .title-details-hero {
+    display: flex;
+  }
+}
+@media (max-width: 700px) {
+  .series-page-header {
+    flex-wrap: wrap;
+    padding: 16px;
+    gap: 14px;
+  }
+  .series-page-header > img {
+    width: 48px;
+    height: 72px;
+  }
+  .series-page-header > .details-status-actions {
+    width: 100%;
+  }
+  .series-page-header .details-top-actions {
+    justify-content: flex-start;
+  }
+  .series-follow-layout .episodes-panel {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 16px;
+    gap: 18px;
+  }
+  .series-follow-layout .episodes-panel > .episode-detail,
+  .series-follow-layout .episodes-panel > .episode-picker,
+  .series-follow-layout .episodes-panel > .episode-refresh {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .series-follow-layout .episode-picker .episode-list {
+    max-height: 280px;
+  }
+}

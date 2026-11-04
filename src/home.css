@@ -3151,7 +3151,7 @@ button.cast-card:focus-visible {
 }
 /* No desktop os totais ficam em colunas; o mobile usa cards nas regras responsivas abaixo. */
 .friends-table table {
-  min-width: 850px;
+  min-width: 1120px;
 }
 .friends-table .ranking-number,
 .friends-table .ranking-xp {
@@ -3326,3 +3326,41 @@ button.cast-card:focus-visible {
 /* O selo compartilha a pilha de tags para não sobrepor prioridade, datas ou progresso. */
 .cover-bottom-content > .steam-import-tag { position: static; align-self: flex-start; pointer-events: auto; margin: 0 12px 8px; max-width: calc(100% - 24px); padding: 3px 7px; border: 1px solid #ffffff55; border-radius: 6px; background: #18212fee; color: #e5f2ff; font-size: 10px; line-height: 1.4; overflow-wrap: anywhere; text-decoration: none; }
 .cover-bottom-content > .steam-import-tag:hover, .cover-bottom-content > .steam-import-tag:focus-visible { text-decoration: underline; border-color: #b9dfff; }
+
+.overview-status-filter {
+  border: 0;
+  padding: 0;
+  margin: 0 0 24px;
+  min-width: 0;
+}
+.overview-status-filter legend {
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+.overview-status-filter > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.overview-status-filter p {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+/* Título, busca e densidade compartilham a linha; em telas estreitas os controles podem quebrar. */
+.tracking-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(200px, 280px) auto;
+  gap: 16px;
+}
+.tracking-toolbar .collection-search { width: 100%; }
+.tracking-toolbar .collection-density { margin-bottom: 0; }
+@media (max-width: 1100px) {
+  .tracking-toolbar { grid-template-columns: minmax(0, 1fr) auto; }
+  .tracking-toolbar > :first-child { grid-column: 1 / -1; }
+}
+@media (max-width: 540px) {
+  .tracking-toolbar { grid-template-columns: minmax(0, 1fr); }
+  .tracking-toolbar .collection-density { justify-content: flex-start; }
+}

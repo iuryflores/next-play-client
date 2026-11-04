@@ -1,3 +1,4 @@
+import CastPicker from './CastPicker';
 import WatchDateField from './WatchDateField';
 import BackButton from './BackButton';
 import {
@@ -34,6 +35,7 @@ import './explore-details.css';
 export default function ExploreTitleDetails({
   title,
   initialComplete = false,
+  select,
   items,
   changed,
   edit,
@@ -42,6 +44,7 @@ export default function ExploreTitleDetails({
 }: {
   title: CatalogTitle;
   initialComplete?: boolean;
+  select?: (title: CatalogTitle) => void;
   items: LibraryItem[];
   changed: (item: LibraryItem) => void;
   edit: (item: LibraryItem) => void;
@@ -187,19 +190,10 @@ export default function ExploreTitleDetails({
     >
       <DialogContent
         className="item-dialog explore-title-dialog"
+        overlayClassName="explore-title-backdrop"
         showCloseButton={!saving}
         initialFocus={heading}
       >
-        <DialogTitle ref={heading} tabIndex={-1}>
-          {details.title}
-        </DialogTitle>
-        <DialogDescription>
-          {t(
-            completing
-              ? 'Avalie antes de confirmar como assistido.'
-              : 'Conheça este título antes de adicionar ao acompanhamento.',
-          )}
-        </DialogDescription>
         <div className="explore-preview-heading">
           <div className="explore-preview-cover">
             {details.coverUrl ? (
@@ -214,8 +208,18 @@ export default function ExploreTitleDetails({
               <Film aria-hidden="true" />
             )}
           </div>
-          <div>
-            <p>
+          <div className="explore-preview-summary">
+            <DialogTitle ref={heading} tabIndex={-1}>
+              {details.title}
+            </DialogTitle>
+            <DialogDescription>
+              {t(
+                completing
+                  ? 'Avalie antes de confirmar como assistido.'
+                  : 'Conheça este título antes de adicionar ao acompanhamento.',
+              )}
+            </DialogDescription>
+            <p className="explore-preview-meta">
               {[
                 categories[details.kind],
                 details.year,
@@ -265,7 +269,10 @@ export default function ExploreTitleDetails({
           </p>
         )}
         {completing ? (
-          <form className="item-form" onSubmit={(event) => void save(event)}>
+          <form
+            className="item-form explore-preview-form"
+            onSubmit={(event) => void save(event)}
+          >
             <WatchDateField
               withDate
               initialUnknown={owned?.watchedDateUnknown}
@@ -274,6 +281,7 @@ export default function ExploreTitleDetails({
             />
             <fieldset disabled={saving}>
               <ReviewFields
+                dialogLayout
                 initial={owned}
                 target={
                   owned
@@ -284,7 +292,7 @@ export default function ExploreTitleDetails({
                 }
               />
             </fieldset>
-            <div className="item-form-actions">
+            <div className="item-form-actions review-dialog-actions">
               <BackButton
                 disabled={saving}
                 onClick={() => {
@@ -299,72 +307,113 @@ export default function ExploreTitleDetails({
           </form>
         ) : (
           <>
-            <section>
-              <h3>{t('Sinopse')}</h3>
-              <p className="explore-preview-synopsis">
-                {details.overview ||
-                  t('Sinopse ainda não disponível para este título.')}
-              </p>
-            </section>
-            {!!details.productionCompanies?.length && (
-              <section>
-                <h3>{t('Produtoras')}</h3>
-                <p>
-                  {details.productionCompanies
-                    .map((company) => company.name)
-                    .join(' · ')}
-                </p>
-              </section>
-            )}
-            <WhereAvailable
-              key={details.catalogId}
-              catalogId={details.catalogId}
-              kind={details.kind}
-              onExpired={onExpired}
-            />
-            {(details.kind === 'movie' || details.kind === 'series') && (
-              <>
-                {details.catalogId.startsWith('tmdb:') && (
-                  <Trailer
-                    catalogId={details.catalogId}
-                    title={details.title}
-                    onExpired={onExpired}
-                  />
-                )}
-                <RottenTomatoes
-                  title={details.originalTitle || details.title}
-                  kind={details.kind}
-                  year={details.year}
+            {/* A leitura principal fica separada da mídia; no celular as colunas seguem a ordem do conteúdo. */}
+            <div className="explore-preview-content">
+              <div className="explore-preview-main">
+                <section>
+                  <h3>{t('Sinopse')}</h3>
+                  <p className="explore-preview-synopsis">
+                    {details.overview ||
+                      t('Sinopse ainda não disponível para este título.')}
+                  </p>
+                </section>
+                {details.kind === 'movie' &&
+                  details.catalogId.startsWith('tmdb:') && (
+                    <section
+                      className="explore-preview-cast"
+                      aria-label={t('Elenco')}
+                    >
+                      {/* A consulta pública mostra o elenco sem exigir adicionar o filme à biblioteca. */}
+                      <CastPicker
+                        readOnly
+                        target={{ catalogId: details.catalogId }}
+                      />
+                    </section>
+                  )}
+                <WhereAvailable
+                  key={details.catalogId}
                   catalogId={details.catalogId}
+                  kind={details.kind}
                   onExpired={onExpired}
                 />
-              </>
-            )}
-            <ExploreActions
-              showEdit
-              title={details}
-              owned={owned}
-              changed={(item) => {
-                close();
-                changed(item);
-              }}
-              edit={(item) => {
-                close();
-                edit(item);
-              }}
-              onExpired={onExpired}
-              markWatched={() => setCompleting(true)}
-            />
-            {details.sourceUrl && (
-              <a
-                className="catalog-source"
-                href={details.sourceUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {t('Ver na fonte')} ↗
-              </a>
-            )}
+                {!!details.productionCompanies?.length && (
+                  <details className="explore-preview-companies">
+                    <summary>{t('Produtoras')}</summary>
+                    <p>
+                      {details.productionCompanies
+                        .map((company) => company.name)
+                        .join(' · ')}
+                    </p>
+                  </details>
+                )}
+              </div>
+              {(details.kind === 'movie' || details.kind === 'series') && (
+                <aside
+                  className="explore-preview-media"
+                  aria-label={t('Trailer e avaliações')}
+                >
+                  {(details.kind === 'movie' || details.kind === 'series') && (
+                    <>
+                      {details.catalogId.startsWith('tmdb:') && (
+                        <Trailer
+                          catalogId={details.catalogId}
+                          title={details.title}
+                          onExpired={onExpired}
+                        />
+                      )}
+                      <RottenTomatoes
+                        title={details.originalTitle || details.title}
+                        kind={details.kind}
+                        year={details.year}
+                        catalogId={details.catalogId}
+                        onExpired={onExpired}
+                      />
+                    </>
+                  )}
+                </aside>
+              )}
+            </div>
+            <footer className="explore-preview-footer">
+              <div className="explore-preview-actions">
+                {select ? (
+                  <Button
+                    className="home-primary"
+                    onClick={() => {
+                      close();
+                      select(details);
+                    }}
+                  >
+                    {t('Escolher esta obra')}
+                  </Button>
+                ) : (
+                  <ExploreActions
+                    showEdit
+                    title={details}
+                    owned={owned}
+                    changed={(item) => {
+                      close();
+                      changed(item);
+                    }}
+                    edit={(item) => {
+                      close();
+                      edit(item);
+                    }}
+                    onExpired={onExpired}
+                    markWatched={() => setCompleting(true)}
+                  />
+                )}
+              </div>
+              {details.sourceUrl && (
+                <a
+                  className="catalog-source"
+                  href={details.sourceUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {t('Ver na fonte')} ↗
+                </a>
+              )}
+            </footer>
           </>
         )}
       </DialogContent>

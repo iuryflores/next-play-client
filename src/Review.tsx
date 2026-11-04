@@ -1,3 +1,4 @@
+import './review-dialog.css';
 import WatchDateField from './WatchDateField';
 import { t, genreLabel, dateLabel } from './i18n';
 import type { Episode } from './episode-navigation';
@@ -46,10 +47,12 @@ export function ReviewFields({
   initial,
   target,
   showCharacter = true,
+  dialogLayout = false,
 }: {
   initial?: Partial<ReviewValue>;
   target?: CastTarget;
   showCharacter?: boolean;
+  dialogLayout?: boolean;
 }) {
   const id = useId();
   const [stars, setStars] = useState(initial?.stars || 0);
@@ -62,7 +65,9 @@ export function ReviewFields({
     t('Excelente'),
   ];
   return (
-    <fieldset className="completion-review">
+    <fieldset
+      className={`completion-review${dialogLayout ? ' review-fields-dialog' : ''}`}
+    >
       <legend>{t(' Sua experiência ')}</legend>
       <fieldset className="star-rating">
         <legend>{t(' De ruim a excelente ')}</legend>
@@ -109,13 +114,29 @@ export function ReviewFields({
           })}
         </div>
       </fieldset>
-      {showCharacter && (
-        <CastPicker
-          target={target}
-          initial={initial?.favoriteCharacter}
-          initialCastId={initial?.favoriteCastId}
-        />
-      )}
+      {showCharacter &&
+        (dialogLayout ? (
+          <details
+            className="review-character-options"
+            open={initial?.favoriteCharacter ? true : undefined}
+          >
+            <summary>
+              {t('Personagem favorito')} <span>{t('Opcional')}</span>
+            </summary>
+            {/* O campo permanece montado ao recolher, preservando o voto no envio do formulário. */}
+            <CastPicker
+              target={target}
+              initial={initial?.favoriteCharacter}
+              initialCastId={initial?.favoriteCastId}
+            />
+          </details>
+        ) : (
+          <CastPicker
+            target={target}
+            initial={initial?.favoriteCharacter}
+            initialCastId={initial?.favoriteCastId}
+          />
+        ))}
     </fieldset>
   );
 }
@@ -165,19 +186,24 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
       >
         <DialogContent
           className="item-dialog review-dialog"
-          showCloseButton={false}
+          overlayClassName="review-dialog-backdrop"
         >
-          <DialogTitle>{t(' O que você achou? ')}</DialogTitle>
-          <DialogDescription>
-            {!target?.item && !target?.episode && target?.title}
-            {target?.editing
-              ? t(
-                  'Atualize sua avaliação e informe se não souber a data em que assistiu.',
-                )
-              : target?.item || target?.episode
-                ? t('Avalie antes de confirmar como assistido.')
-                : t(' · Avalie antes de confirmar como assistido. ')}
-          </DialogDescription>
+          <header className="review-dialog-heading">
+            <DialogTitle>{t(' O que você achou? ')}</DialogTitle>
+            <DialogDescription>
+              {!target?.item && !target?.episode && target?.title}
+              {target?.editing
+                ? t(
+                    'Atualize sua avaliação e informe se não souber a data em que assistiu.',
+                  )
+                : target?.item || target?.episode
+                  ? t('Avalie antes de confirmar como assistido.')
+                  : t(' · Avalie antes de confirmar como assistido. ')}
+            </DialogDescription>
+            <p className="review-optional-note">
+              {t('A nota, a emoção e o personagem são opcionais.')}
+            </p>
+          </header>
           {target?.episode ? (
             <ReviewEpisodeSummary
               key={`${target.castTarget?.itemId}:${target.castTarget?.season}:${target.episode.number}`}
@@ -192,7 +218,8 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
           )}
           {target && (
             <form
-              className="item-form"
+              className="item-form review-dialog-form"
+              key={`${target.title}:${target.item?.id || ''}`}
               onSubmit={(event) => {
                 event.preventDefault();
                 const data = new FormData(event.currentTarget);
@@ -223,10 +250,11 @@ export function ReviewProvider({ children }: { children: ReactNode }) {
                 />
               )}
               <ReviewFields
+                dialogLayout
                 initial={target.initial}
                 target={target.castTarget}
               />
-              <div className="item-form-actions">
+              <div className="item-form-actions review-dialog-actions">
                 <Button
                   type="button"
                   variant="outline"

@@ -1,3 +1,4 @@
+import NavigationHint from './NavigationHint';
 import SteamImportBadge from './SteamImportBadge';
 import GamePlanner from './GamePlanner';
 import './rewatch.css';
@@ -36,6 +37,7 @@ import {
   lazy,
   useLayoutEffect,
   useRef,
+  useMemo,
   useState,
   type SubmitEvent,
 } from 'react';
@@ -49,7 +51,6 @@ import {
   LayoutGrid,
   Bookmark,
   CalendarClock,
-  CheckCheck,
   Plus,
   Search,
   LogOut,
@@ -57,7 +58,6 @@ import {
   Pencil,
   Compass,
   ChartNoAxesCombined,
-  Archive,
   Users,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -86,6 +86,9 @@ import QuickActions from './QuickActions';
 import CompletionFields from './CompletionFields';
 import {
   matchesView,
+  matchesOverview,
+  overviewStatuses,
+  defaultOverviewStatuses,
   overviewOrder,
   gameOrder,
   backlogOrder,
@@ -112,10 +115,7 @@ const Challenges = lazy(() => import('./Challenges'));
 const icons = { movie: Film, series: Tv, game: Gamepad2, book: BookOpen };
 const views = [
   { id: 'all', label: t('Visão geral'), icon: LayoutGrid },
-  { id: 'planned', label: t('Para depois'), icon: Bookmark },
   { id: 'coming-soon', label: t('Em breve'), icon: CalendarClock },
-  { id: 'completed', label: t('Concluídos'), icon: CheckCheck },
-  { id: 'archived', label: t('Arquivados'), icon: Archive },
 ] as const;
 function Home({
   user,
@@ -142,6 +142,13 @@ function Home({
     setRouteField('category', value);
   const setHistoryMode = (value: boolean) =>
     setRouteField('historyMode', value);
+  const selectedStatuses = route.statuses ?? defaultOverviewStatuses;
+  const overviewStatusLabels = {
+    planned: t('Não iniciados'),
+    active: t('Em andamento'),
+    completed: t('Concluídos'),
+    archived: t('Arquivados'),
+  };
   const detailItem = items.find((item) => item.id === detailId);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -199,13 +206,20 @@ function Home({
     return () => cancelAnimationFrame(frame);
   }, [view, detailId, category, historyMode]);
   const matchesCollection = (item: LibraryItem, target: string) =>
-    target === 'completed' && historyMode
-      ? !item.archived && hasWatched(item)
-      : matchesView(item, target);
+    target === 'all'
+      ? matchesOverview(item, selectedStatuses)
+      : target === 'completed' && historyMode
+        ? !item.archived && hasWatched(item)
+        : matchesView(item, target);
   const [reload, setReload] = useState(0);
+  const lastLibraryRead = useRef(0);
   useEffect(() => {
     const refresh = () => {
-      if (document.visibilityState === 'visible')
+      // Alternar rapidamente entre janelas não deve baixar a biblioteca inteira de novo.
+      if (
+        document.visibilityState === 'visible' &&
+        Date.now() - lastLibraryRead.current >= 30000
+      )
         setReload((value) => value + 1);
     };
     window.addEventListener('focus', refresh);
@@ -214,7 +228,7 @@ function Home({
       const today = new Date().toISOString().slice(0, 10);
       if (today !== day) {
         day = today;
-        refresh();
+        setReload((value) => value + 1);
       }
     }, 60000);
     return () => {
@@ -228,7 +242,8 @@ function Home({
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [catalogMode, setCatalogMode] = useState(false);
+  // Abrir /adicionar diretamente ou atualizar a página deve iniciar pela busca, nunca pelo cadastro manual.
+  const [catalogMode, setCatalogMode] = useState(true);
   const [selectedTitle, setSelectedTitle] = useState<CatalogTitle | null>(null);
   useEffect(() => {
     document.title = t('Minha biblioteca · NextPlay');
@@ -248,6 +263,7 @@ function Home({
           if (active) {
             // A leitura compartilha a lista de acompanhamento, sem importar exemplares da Minha Coleção.
             setItems(data.items);
+            lastLibraryRead.current = Date.now();
             setError('');
           }
         })
@@ -273,7 +289,7 @@ function Home({
     };
   }, [reload]);
   // As opções refletem a lista atual, sem encolher ao pesquisar ou escolher uma plataforma.
-  const cardItems = groupGames(items);
+  const cardItems = useMemo(() => groupGames(items), [items]);
   const gamePlatforms = platformOptions(
     cardItems.filter((item) => matchesCollection(item, view)),
   );
@@ -310,7 +326,12 @@ function Home({
     };
     visible.sort(
       (a, b) =>
-        (view === 'planned' ? backlogOrder(a, b) : 0) ||
+        (view === 'planned' ||
+        (view === 'all' &&
+          selectedStatuses.length === 1 &&
+          selectedStatuses[0] === 'planned')
+          ? backlogOrder(a, b)
+          : 0) ||
         (view === 'coming-soon' ? releaseTime(a) - releaseTime(b) : 0) ||
         (category === 'game' && view !== 'coming-soon' && view !== 'planned'
           ? gameOrder(a, b)
@@ -744,117 +765,137 @@ function Home({
   const libraryNavigation = (afterNavigate?: () => void) => (
     <nav className="library-navigation" aria-label={t('Biblioteca')}>
       {views.map(({ id, label, icon: Icon }) => (
+        <NavigationHint destination={id} key={id}>
+          <button
+            key={id}
+            className={view === id ? 'selected' : ''}
+            aria-current={view === id ? 'page' : undefined}
+            onClick={() => {
+              afterNavigate?.();
+              setDetailId(null);
+              setHistoryMode(false);
+              if (id === 'coming-soon') {
+                setCategory('all');
+                setSearch('');
+              }
+              setView(id);
+            }}
+          >
+            <Icon aria-hidden="true" />
+            {label}
+            {id !== 'coming-soon' && (
+              <span>
+                {
+                  cardItems.filter((item) =>
+                    id === 'all'
+                      ? matchesOverview(item, selectedStatuses)
+                      : matchesView(item, id),
+                  ).length
+                }
+              </span>
+            )}
+          </button>
+        </NavigationHint>
+      ))}
+      <NavigationHint destination="acervo">
         <button
-          key={id}
-          className={view === id ? 'selected' : ''}
-          aria-current={view === id ? 'page' : undefined}
+          className={view === 'acervo' ? 'selected' : ''}
+          aria-current={view === 'acervo' ? 'page' : undefined}
+          onClick={() => {
+            afterNavigate?.();
+            setDetailId(null);
+            setView('acervo');
+          }}
+        >
+          <Library aria-hidden="true" />
+          {t('Minha Coleção')}
+        </button>
+      </NavigationHint>
+      <NavigationHint destination="achievements">
+        <button
+          className={view === 'achievements' ? 'selected' : ''}
+          aria-current={view === 'achievements' ? 'page' : undefined}
           onClick={() => {
             afterNavigate?.();
             setDetailId(null);
             setHistoryMode(false);
-            if (id === 'coming-soon') {
-              setCategory('all');
-              setSearch('');
-            }
-            setView(id);
+            setView('achievements');
           }}
         >
-          <Icon aria-hidden="true" />
-          {label}
-          {id !== 'coming-soon' && (
-            <span>
-              {cardItems.filter((item) => matchesView(item, id)).length}
-            </span>
-          )}
+          <Trophy aria-hidden="true" />
+          {t('Conquistas')}
         </button>
-      ))}
-      <button
-        className={view === 'acervo' ? 'selected' : ''}
-        aria-current={view === 'acervo' ? 'page' : undefined}
-        onClick={() => {
-          afterNavigate?.();
-          setDetailId(null);
-          setView('acervo');
-        }}
-      >
-        <Library aria-hidden="true" />
-        {t('Minha Coleção')}
-      </button>
-      <button
-        className={view === 'achievements' ? 'selected' : ''}
-        aria-current={view === 'achievements' ? 'page' : undefined}
-        onClick={() => {
-          afterNavigate?.();
-          setDetailId(null);
-          setHistoryMode(false);
-          setView('achievements');
-        }}
-      >
-        <Trophy aria-hidden="true" />
-        {t('Conquistas')}
-      </button>
-      <button
-        className={view === 'challenges' ? 'selected' : ''}
-        aria-current={view === 'challenges' ? 'page' : undefined}
-        onClick={() => {
-          afterNavigate?.();
-          setDetailId(null);
-          setView('challenges');
-        }}
-      >
-        <Flag aria-hidden="true" />
-        {t('Desafios pessoais')}
-      </button>
-      <button
-        className={view === 'explore' ? 'selected' : ''}
-        aria-current={view === 'explore' ? 'page' : undefined}
-        onClick={() => {
-          afterNavigate?.();
-          setDetailId(null);
-          setView('explore');
-        }}
-      >
-        <Compass aria-hidden="true" />
-        {t(' Explorar ')}
-      </button>
-      <button
-        className={view === 'stats' ? 'selected' : ''}
-        aria-current={view === 'stats' ? 'page' : undefined}
-        onClick={() => {
-          afterNavigate?.();
-          setDetailId(null);
-          setView('stats');
-        }}
-      >
-        <ChartNoAxesCombined aria-hidden="true" />
-        {t(' Estatísticas ')}
-      </button>
-      <button
-        aria-current={
-          view === 'friends' ||
-          view === 'social' ||
-          view === 'lists' ||
-          view === 'community'
-            ? 'page'
-            : undefined
-        }
-        className={
-          view === 'friends' ||
-          view === 'social' ||
-          view === 'lists' ||
-          view === 'community'
-            ? 'selected'
-            : ''
-        }
-        onClick={() => {
-          afterNavigate?.();
-          setDetailId(null);
-          setView('friends');
-        }}
-      >
-        <Users aria-hidden="true" />
-        {t('Amigos')}
-      </button>
+      </NavigationHint>
+      <NavigationHint destination="challenges">
+        <button
+          className={view === 'challenges' ? 'selected' : ''}
+          aria-current={view === 'challenges' ? 'page' : undefined}
+          onClick={() => {
+            afterNavigate?.();
+            setDetailId(null);
+            setView('challenges');
+          }}
+        >
+          <Flag aria-hidden="true" />
+          {t('Desafios pessoais')}
+        </button>
+      </NavigationHint>
+      <NavigationHint destination="explore">
+        <button
+          className={view === 'explore' ? 'selected' : ''}
+          aria-current={view === 'explore' ? 'page' : undefined}
+          onClick={() => {
+            afterNavigate?.();
+            setDetailId(null);
+            setView('explore');
+          }}
+        >
+          <Compass aria-hidden="true" />
+          {t(' Explorar ')}
+        </button>
+      </NavigationHint>
+      <NavigationHint destination="stats">
+        <button
+          className={view === 'stats' ? 'selected' : ''}
+          aria-current={view === 'stats' ? 'page' : undefined}
+          onClick={() => {
+            afterNavigate?.();
+            setDetailId(null);
+            setView('stats');
+          }}
+        >
+          <ChartNoAxesCombined aria-hidden="true" />
+          {t(' Estatísticas ')}
+        </button>
+      </NavigationHint>
+      <NavigationHint destination="friends">
+        <button
+          aria-current={
+            view === 'friends' ||
+            view === 'social' ||
+            view === 'lists' ||
+            view === 'community'
+              ? 'page'
+              : undefined
+          }
+          className={
+            view === 'friends' ||
+            view === 'social' ||
+            view === 'lists' ||
+            view === 'community'
+              ? 'selected'
+              : ''
+          }
+          onClick={() => {
+            afterNavigate?.();
+            setDetailId(null);
+            setView('friends');
+          }}
+        >
+          <Users aria-hidden="true" />
+          {t('Amigos')}
+        </button>
+      </NavigationHint>
     </nav>
   );
   return (
@@ -912,7 +953,7 @@ function Home({
                               : view === 'stats'
                                 ? t('Suas estatísticas')
                                 : view === 'add'
-                                  ? t('Adicionar título')
+                                  ? t('Adicionar')
                                   : view === 'explore'
                                     ? t('Explorar')
                                     : views.find((item) => item.id === view)
@@ -921,27 +962,29 @@ function Home({
           <div className="home-topbar-actions">
             <ThemePicker compact account />
             <div className="home-account">
-              <button
-                className="account-link"
-                onClick={() => {
-                  setDetailId(null);
-                  setView('account');
-                }}
-                aria-label={t(' Minha conta ')}
-                aria-current={view === 'account' ? 'page' : undefined}
-              >
-                <span className="avatar" aria-hidden="true">
-                  {user.avatar ? (
-                    <img src={user.avatar} alt="" />
-                  ) : (
-                    (user.displayName || user.email).charAt(0).toUpperCase()
-                  )}
-                </span>
-                <span className="account-label">
-                  <strong>{user.displayName || user.email}</strong>
-                  <AchievementTitle compact />
-                </span>
-              </button>
+              <NavigationHint destination="account">
+                <button
+                  className="account-link"
+                  onClick={() => {
+                    setDetailId(null);
+                    setView('account');
+                  }}
+                  aria-label={t(' Minha conta ')}
+                  aria-current={view === 'account' ? 'page' : undefined}
+                >
+                  <span className="avatar" aria-hidden="true">
+                    {user.avatar ? (
+                      <img src={user.avatar} alt="" />
+                    ) : (
+                      (user.displayName || user.email).charAt(0).toUpperCase()
+                    )}
+                  </span>
+                  <span className="account-label">
+                    <strong>{user.displayName || user.email}</strong>
+                    <AchievementTitle compact />
+                  </span>
+                </button>
+              </NavigationHint>
               <UserLevelBadge />
               <NotificationBell
                 onTitle={(id) => {
@@ -1036,7 +1079,7 @@ function Home({
                       t('← Meu acompanhamento')
                     ) : (
                       <>
-                        <Plus aria-hidden="true" /> {t(' Adicionar título ')}
+                        <Plus aria-hidden="true" /> {t('Adicionar')}
                       </>
                     )}
                   </Button>
@@ -1243,24 +1286,58 @@ function Home({
                         onExpired={onExpired}
                       />
                     )}
-                  {supportsDensity && (
-                    <div className="collection-density">
-                      <label htmlFor="collection-density">
-                        {t(' Exibição ')}
-                      </label>
-                      <NativeSelect
-                        id="collection-density"
-                        value={density}
-                        disabled={savingDensity}
-                        onChange={(event) => changeDensity(event.target.value)}
-                      >
-                        <option value="compact">{t(' Enxuto ')}</option>
-                        <option value="details">
-                          {t(' Mais informações ')}
-                        </option>
-                      </NativeSelect>
+                  <div className="collection-toolbar tracking-toolbar">
+                    <div>
+                      <h2 id="collection-title">
+                        {view === 'coming-soon'
+                          ? t('Novos títulos')
+                          : category === 'all'
+                            ? t(
+                                view === 'completed' && historyMode
+                                  ? 'Últimos assistidos'
+                                  : 'Meu acompanhamento',
+                              )
+                            : categories[category]}
+                        <span>{visible.length}</span>
+                      </h2>
+                      {view === 'coming-soon' && (
+                        <p className="coming-soon-note">
+                          {t(
+                            'Obras da sua lista que ainda serão lançadas, ordenadas pela estreia mais próxima. Datas não anunciadas ficam ao final.',
+                          )}
+                        </p>
+                      )}
                     </div>
-                  )}
+                    <div className="collection-search">
+                      <Search aria-hidden="true" />
+                      <Input
+                        aria-label={t('Buscar na sua coleção')}
+                        placeholder={t('Buscar título ou produtora…')}
+                        value={search}
+                        onChange={(event) => setSearch(event.target.value)}
+                      />
+                    </div>
+                    {supportsDensity && (
+                      <div className="collection-density">
+                        <label htmlFor="collection-density">
+                          {t(' Exibição ')}
+                        </label>
+                        <NativeSelect
+                          id="collection-density"
+                          value={density}
+                          disabled={savingDensity}
+                          onChange={(event) =>
+                            changeDensity(event.target.value)
+                          }
+                        >
+                          <option value="compact">{t(' Enxuto ')}</option>
+                          <option value="details">
+                            {t(' Mais informações ')}
+                          </option>
+                        </NativeSelect>
+                      </div>
+                    )}
+                  </div>
                   {view === 'coming-soon' &&
                     !loading &&
                     (category === 'all' || category === 'series') && (
@@ -1295,38 +1372,58 @@ function Home({
                         </Button>
                       </div>
                     )}
-                    <div className="collection-toolbar">
-                      <div>
-                        <h2 id="collection-title">
-                          {view === 'coming-soon'
-                            ? t('Novos títulos')
-                            : category === 'all'
-                              ? t(
-                                  view === 'completed' && historyMode
-                                    ? 'Últimos assistidos'
-                                    : 'Seu acompanhamento',
+                    {view === 'all' && (
+                      <fieldset className="overview-status-filter">
+                        <legend>{t('Filtrar por status')}</legend>
+                        <div>
+                          <Button
+                            variant={
+                              selectedStatuses.length ===
+                              overviewStatuses.length
+                                ? 'default'
+                                : 'outline'
+                            }
+                            aria-pressed={
+                              selectedStatuses.length ===
+                              overviewStatuses.length
+                            }
+                            onClick={() =>
+                              setRouteField('statuses', [...overviewStatuses])
+                            }
+                          >
+                            {t('Ver tudo')}
+                          </Button>
+                          {overviewStatuses.map((status) => (
+                            <Button
+                              key={status}
+                              variant={
+                                selectedStatuses.includes(status)
+                                  ? 'default'
+                                  : 'outline'
+                              }
+                              aria-pressed={selectedStatuses.includes(status)}
+                              onClick={() =>
+                                setRouteField(
+                                  'statuses',
+                                  selectedStatuses.includes(status)
+                                    ? selectedStatuses.filter(
+                                        (value) => value !== status,
+                                      )
+                                    : [...selectedStatuses, status],
                                 )
-                              : categories[category]}
-                          <span>{visible.length}</span>
-                        </h2>
-                        {view === 'coming-soon' && (
-                          <p className="coming-soon-note">
-                            {t(
-                              'Obras da sua lista que ainda serão lançadas, ordenadas pela estreia mais próxima. Datas não anunciadas ficam ao final.',
-                            )}
-                          </p>
-                        )}
-                      </div>
-                      <div className="collection-search">
-                        <Search aria-hidden="true" />
-                        <Input
-                          aria-label={t('Buscar na sua coleção')}
-                          placeholder={t('Buscar título ou produtora…')}
-                          value={search}
-                          onChange={(event) => setSearch(event.target.value)}
-                        />
-                      </div>
-                    </div>
+                              }
+                            >
+                              {overviewStatusLabels[status]}
+                            </Button>
+                          ))}
+                        </div>
+                        <p>
+                          {t(
+                            'Selecione um ou mais status para combinar os resultados.',
+                          )}
+                        </p>
+                      </fieldset>
+                    )}
                     {category === 'game' && (
                       <div className="game-platform-filter">
                         <label htmlFor="game-platform-filter">
@@ -1573,12 +1670,22 @@ function Home({
                                             {t(' % assistido ')}
                                           </strong>
                                           <small>
-                                            {Math.max(
-                                              0,
-                                              item.episodeProgress.total -
+                                            {/* Nas concluídas, destaca o histórico assistido em vez de um saldo zerado. */}
+                                            {item.status === 'completed' ? (
+                                              t(
+                                                '{0} episódios assistidos',
                                                 item.episodeProgress.watched,
-                                            )}{' '}
-                                            {t(' episódios restantes ')}
+                                              )
+                                            ) : (
+                                              <>
+                                                {Math.max(
+                                                  0,
+                                                  item.episodeProgress.total -
+                                                    item.episodeProgress.watched,
+                                                )}{' '}
+                                                {t(' episódios restantes ')}
+                                              </>
+                                            )}
                                           </small>
                                         </div>
                                         <progress
@@ -1718,7 +1825,7 @@ function Home({
                         >
                           <Plus aria-hidden="true" />
                           {items.length
-                            ? t('Adicionar título')
+                            ? t('Adicionar')
                             : t('Adicionar meu primeiro título')}
                         </Button>
                         <div className="empty-types">

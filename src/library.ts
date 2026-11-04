@@ -24,6 +24,7 @@ export interface LibraryItem {
   priority?: Priority;
   inProgress?: boolean;
   caughtUp?: boolean;
+  seriesStatus?: 'ended' | 'canceled' | 'returning' | 'unknown';
   lastWatchedAt?: string;
   lastWatchedEpisode?: { season: number; episode: number };
   archived?: boolean;
@@ -100,6 +101,7 @@ export async function libraryRequest<T>(
   action?:
     | 'rewatches'
     | 'priority'
+    | 'rating'
     | 'playtime'
     | 'archive'
     | 'upcoming'
@@ -140,7 +142,7 @@ export async function libraryRequest<T>(
   const announce = () => {
     if (
       method !== 'GET' &&
-      (!action || action === 'archive' || action === 'playtime')
+      (!action || action === 'archive' || action === 'playtime' || action === 'rating')
     )
       achievementActivity();
     if (
@@ -149,6 +151,7 @@ export async function libraryRequest<T>(
         action === 'archive' ||
         action === 'playtime' ||
         action === 'priority' ||
+        action === 'rating' ||
         action === 'rewatches')
     )
       notifySaved(

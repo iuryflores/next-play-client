@@ -50,11 +50,15 @@ export default function ExploreActions({
           onClick={markWatched}
         >
           <CheckCheck aria-hidden="true" />
-          {t(
-            owned?.status === 'completed'
-              ? 'Assistido'
-              : 'Marcar como assistido',
-          )}
+          <span>
+            {t(
+              owned?.status === 'completed'
+                ? 'Assistido'
+                : owned
+                  ? 'Marcar como assistido'
+                  : 'Adicionar como assistido',
+            )}
+          </span>
         </Button>
       )}
       {showEdit && title.kind === 'movie' && owned?.status === 'completed' && (

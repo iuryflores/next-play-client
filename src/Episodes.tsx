@@ -268,7 +268,9 @@ export default function Episodes({
       className="episodes-panel"
       aria-label={t('Próximo episódio da série')}
     >
-      <h3>{t(' Continuar assistindo ')}</h3>
+      <h2>
+        {t(item?.status === 'completed' ? 'Episódios' : 'Continuar assistindo')}
+      </h2>
       {busy && (
         <PageLoading
           compact
@@ -451,7 +453,8 @@ export default function Episodes({
         </article>
       )}
       {data?.supported && (
-        <details className="episode-picker">
+        // A lista começa aberta para permitir trocar de episódio sem descobrir um controle oculto.
+        <details className="episode-picker" open>
           <summary>{t(' Ver temporadas e escolher outro episódio ')}</summary>
           <label htmlFor="episode-season">{t(' Temporada ')}</label>
           <NativeSelect
@@ -537,69 +540,72 @@ export default function Episodes({
         </div>
       )}
       {data?.supported && (
-        <div className="episode-bulk-actions">
-          {season && (
+        <details className="episode-management">
+          <summary>{t('Gerenciar progresso')}</summary>
+          <div className="episode-bulk-actions">
+            {season && (
+              <Button
+                variant="outline"
+                disabled={busy || watched === 0}
+                onClick={() => {
+                  setUnwatchError('');
+                  setNotice('');
+                  setUnwatch({
+                    scope: 'season',
+                    season: season.number,
+                    name: season.name,
+                  });
+                }}
+                title={
+                  !watched
+                    ? t(
+                        'Nenhum episódio assistido nesta temporada para desmarcar.',
+                      )
+                    : undefined
+                }
+              >
+                <Undo2 aria-hidden="true" />
+                <span>{t('Desmarcar temporada')}</span>
+              </Button>
+            )}
             <Button
               variant="outline"
-              disabled={busy || watched === 0}
+              disabled={busy}
               onClick={() => {
                 setUnwatchError('');
                 setNotice('');
-                setUnwatch({
-                  scope: 'season',
-                  season: season.number,
-                  name: season.name,
-                });
+                setUnwatch({ scope: 'series' });
               }}
-              title={
-                !watched
-                  ? t(
-                      'Nenhum episódio assistido nesta temporada para desmarcar.',
-                    )
-                  : undefined
-              }
             >
-              <Undo2 aria-hidden="true" />
-              <span>{t('Desmarcar temporada')}</span>
+              <RotateCcw aria-hidden="true" />
+              <span>{t('Desmarcar série')}</span>
             </Button>
-          )}
-          <Button
-            variant="outline"
-            disabled={busy}
-            onClick={() => {
-              setUnwatchError('');
-              setNotice('');
-              setUnwatch({ scope: 'series' });
-            }}
-          >
-            <RotateCcw aria-hidden="true" />
-            <span>{t('Desmarcar série')}</span>
-          </Button>
-          {season && (
+            {season && (
+              <Button
+                type="button"
+                variant="outline"
+                disabled={busy || season.episodes.length === 0}
+                onClick={() => setConfirmation('season')}
+                aria-label={t(' Marcar temporada como assistida ')}
+                title={t(' Marcar temporada como assistida ')}
+              >
+                <ListChecks aria-hidden="true" />
+                <span>{t('Concluir temporada')}</span>
+              </Button>
+            )}
             <Button
               type="button"
               variant="outline"
-              disabled={busy || season.episodes.length === 0}
-              onClick={() => setConfirmation('season')}
-              aria-label={t(' Marcar temporada como assistida ')}
-              title={t(' Marcar temporada como assistida ')}
+              disabled={busy}
+              onClick={() => setConfirmation('series')}
+              aria-label={t(' Marcar série inteira como assistida ')}
+              title={t(' Marcar série inteira como assistida ')}
             >
-              <ListChecks aria-hidden="true" />
-              <span>{t('Concluir temporada')}</span>
+              <CheckCheck aria-hidden="true" />
+              <span>{t('Concluir série')}</span>
             </Button>
-          )}
-          <Button
-            type="button"
-            variant="outline"
-            disabled={busy}
-            onClick={() => setConfirmation('series')}
-            aria-label={t(' Marcar série inteira como assistida ')}
-            title={t(' Marcar série inteira como assistida ')}
-          >
-            <CheckCheck aria-hidden="true" />
-            <span>{t('Concluir série')}</span>
-          </Button>
-        </div>
+          </div>
+        </details>
       )}
       {notice && <output>{notice}</output>}
       <Dialog

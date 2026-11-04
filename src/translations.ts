@@ -582,6 +582,7 @@ Os episódios desta seleção voltarão a não assistidos. Suas datas, notas, se
 O total inclui episódios anunciados que ainda não estrearam.|The total includes announced episodes that have not aired yet.|El total incluye episodios anunciados que aún no se han estrenado.
 {0} séries ainda sem total de episódios disponível.|Episode totals are not yet available for {0} shows.|Aún no hay un total de episodios disponible para {0} series.
 Tempo em filmes|Movie watch time|Tiempo en películas
+Filmes contam uma vez por título, incluindo arquivados; o tempo usa a duração conhecida, sem somar revisões. O tempo em jogos inclui as sessões registradas em qualquer status.|Movies count once per title, including archived ones; watch time uses the known runtime, without rewatches. Gaming time includes recorded sessions in any status.|Las películas cuentan una vez por título, incluidas las archivadas; el tiempo usa la duración conocida, sin repeticiones. El tiempo de juego incluye sesiones registradas en cualquier estado.
 Soma da duração dos filmes assistidos, uma vez por título, incluindo arquivados.|Total runtime of watched movies, once per title, including archived movies.|Suma de la duración de las películas vistas, una vez por título, incluidas las archivadas.
 {0} filmes sem duração informada ficaram fora do cálculo.|{0} movies without a known runtime were excluded from the calculation.|{0} películas sin duración informada quedaron fuera del cálculo.
 Geral|Overview|General
@@ -1098,12 +1099,19 @@ Carregando seu episódio…|Loading your episode…|Cargando tu episodio…
 {0}: T{1} · E{2}|{0}: S{1} · E{2}|{0}: T{1} · E{2}
 Em dia com os episódios|Up to date with episodes|Al día con los episodios
 episódios assistidos|episodes watched|episodios vistos
+Gerenciar progresso|Manage progress|Gestionar progreso
 Não foi possível carregar suas estatísticas.|Could not load your statistics.|No se pudieron cargar tus estadísticas.
 Preparando seu histórico e suas estatísticas…|Preparing your history and statistics…|Preparando tu historial y estadísticas…
 Episódios assistidos|Episodes watched|Episodios vistos
 Tempo em séries|Time watching series|Tiempo en series
 Séries concluídas|Series completed|Series completadas
 Filmes assistidos|Movies watched|Películas vistas
+Avaliar série|Rate series|Valorar serie
+Série encerrada|Series ended|Serie finalizada
+Série cancelada|Series canceled|Serie cancelada
+Série em produção|Series in production|Serie en producción
+Situação da série não confirmada|Series status unconfirmed|Estado de la serie sin confirmar
+Sua nota geral, sem alterar o progresso dos episódios.|Your overall rating, without changing episode progress.|Tu valoración general, sin cambiar el progreso de los episodios.
 O tempo soma a duração dos episódios marcados, uma vez por episódio. Filmes e jogos não entram nessa duração.|Time adds up watched episode runtimes, once per episode. Movies and games are not included.|El tiempo suma la duración de los episodios vistos, una vez por episodio. No incluye películas ni juegos.
 episódios sem duração informada ficaram fora do cálculo de tempo.|episodes with unknown runtime were excluded from the time total.|episodios sin duración quedaron fuera del cálculo de tiempo.
 séries concluídas ainda precisam dos dados dos episódios. Os totais podem estar incompletos.|completed series still need episode data. Totals may be incomplete.|series completadas aún necesitan datos de episodios. Los totales pueden estar incompletos.
@@ -1508,6 +1516,43 @@ País estimado pela sua localização. Você pode alterar manualmente.|Country e
 Não foi possível identificar o país. Mantenha ou altere a seleção manual.|Could not identify the country. Keep or change the manual selection.|No se pudo identificar el país. Mantén o cambia la selección manual.
 Localização não permitida ou indisponível. Mantenha ou altere o país manualmente.|Location denied or unavailable. Keep or change the country manually.|Ubicación denegada o no disponible. Mantén o cambia el país manualmente.
 A localização só é solicitada com sua permissão. As coordenadas são processadas no navegador para estimar o país.|Location is only requested with your permission. Coordinates are processed in your browser to estimate the country.|La ubicación solo se solicita con tu permiso. Las coordenadas se procesan en tu navegador para estimar el país.
+Não iniciados|Not started|Sin iniciar
+Filtrar por status|Filter by status|Filtrar por estado
+Ver tudo|View everything|Ver todo
+Selecione um ou mais status para combinar os resultados.|Select one or more statuses to combine the results.|Selecciona uno o más estados para combinar los resultados.
+Acompanhe filmes, séries, jogos e livros e combine filtros de status para escolher o que ver.|Track movies, shows, games and books and combine status filters to choose what to see.|Sigue películas, series, juegos y libros y combina filtros de estado para elegir qué ver.
+Veja os próximos lançamentos da sua lista e os episódios que estão chegando.|See upcoming releases from your list and new episodes on the way.|Consulta los próximos estrenos de tu lista y los episodios que están por llegar.
+Organize os exemplares e as edições que você possui na sua coleção.|Organize the copies and editions you own in your collection.|Organiza los ejemplares y las ediciones que tienes en tu colección.
+Veja suas conquistas, acompanhe o progresso e escolha um título para seu perfil.|View your achievements, track progress and choose a title for your profile.|Consulta tus logros, sigue tu progreso y elige un título para tu perfil.
+Crie metas pessoais com prazo e acompanhe seu progresso em filmes, jogos e livros.|Set personal goals with deadlines and track your progress in movies, games and books.|Crea metas personales con plazos y sigue tu progreso en películas, juegos y libros.
+Descubra títulos e sugestões para adicionar à sua biblioteca.|Discover titles and recommendations to add to your library.|Descubre títulos y sugerencias para añadir a tu biblioteca.
+Explore seus hábitos, tempo dedicado, avaliações e preferências de entretenimento.|Explore your habits, time spent, ratings and entertainment preferences.|Explora tus hábitos, tiempo dedicado, valoraciones y preferencias de entretenimiento.
+Encontre amigos, gerencie conexões e acesse atividades, listas e a comunidade.|Find friends, manage connections and access activities, lists and the community.|Encuentra amigos, gestiona conexiones y accede a actividades, listas y la comunidad.
+Busque um filme, série, jogo ou livro para adicionar ao seu acompanhamento.|Find a movie, show, game or book to add to your tracking.|Busca una película, serie, juego o libro para añadir a tu seguimiento.
+Gerencie seu perfil, preferências e integrações com outras plataformas.|Manage your profile, preferences and integrations with other platforms.|Gestiona tu perfil, preferencias e integraciones con otras plataformas.
+Abra o menu para acessar todas as páginas da sua biblioteca.|Open the menu to access all pages in your library.|Abre el menú para acceder a todas las páginas de tu biblioteca.
+Todos os lançamentos|All releases|Todos los lanzamientos
+Já lançados|Already released|Ya publicados
+Ainda não lançados|Not yet released|Aún sin publicar
+Ver detalhes de {0}|View details for {0}|Ver detalles de {0}
+Meu acompanhamento|My tracking|Mi seguimiento
+Trailer e avaliações|Trailer and ratings|Tráiler y valoraciones
+Adicionar como assistido|Add as watched|Añadir como vista
+Filmes e séries|Movies and shows|Películas y series
+Produtora|Production company|Productora
+Ex.: Marvel, Pixar…|E.g.: Marvel, Pixar…|Ej.: Marvel, Pixar…
+Selecione até 8 gêneros. Os resultados podem pertencer a qualquer um deles.|Select up to 8 genres. Results can belong to any of them.|Selecciona hasta 8 géneros. Los resultados pueden pertenecer a cualquiera de ellos.
+Carregando gêneros…|Loading genres…|Cargando géneros…
+Não foi possível carregar os gêneros.|Could not load genres.|No se pudieron cargar los géneros.
+Limpar gêneros|Clear genres|Limpiar géneros
+Títulos que combinam com seus filtros|Titles matching your filters|Títulos que coinciden con tus filtros
+A nota, a emoção e o personagem são opcionais.|Rating, feeling and character are optional.|La nota, la emoción y el personaje son opcionales.
+Personagem favorito|Favorite character|Personaje favorito
+Filmes revistos|Movies rewatched|Películas vistas de nuevo
+Horas assistidas em filmes|Hours watching movies|Horas viendo películas
+Horas assistidas em episódios|Hours watching episodes|Horas viendo episodios
+Cada obra, episódio distinto e conquista pontua uma vez. Cada revisão concluída de filme rende mais 20 XP. Avaliar com nota ou sentimento rende um único bônus por registro. Editar, desmarcar ou recadastrar não repete o XP já reconhecido.|Each title, distinct episode and achievement scores once. Each completed movie rewatch earns another 20 XP. A rating or feeling earns one review bonus per entry. Editing, unmarking or re-adding does not repeat recognized XP.|Cada obra, episodio distinto y logro puntúa una vez. Cada nueva visualización completada de una película suma 20 XP. Una nota o emoción otorga un único bono por registro. Editar, desmarcar o volver a añadir no repite el XP reconocido.
+Cada hora completa assistida rende 5 XP extras. Minutos se acumulam por filme, incluindo revisões concluídas, ou por série, somando episódios distintos. Só durações conhecidas contam; tempo sem duração não é estimado.|Each full hour watched earns 5 extra XP. Minutes accumulate per movie, including completed rewatches, or per show from distinct episodes. Only known runtimes count; missing runtimes are not estimated.|Cada hora completa vista suma 5 XP extra. Los minutos se acumulan por película, incluidas nuevas visualizaciones completadas, o por serie, sumando episodios distintos. Solo cuentan duraciones conocidas; no se estiman las ausentes.
 `;
 export const translations: Record<string, [string, string]> =
   Object.fromEntries(

@@ -120,10 +120,20 @@ export default function NotificationBell({
   useEffect(() => {
     const controller = new AbortController();
     generation.current++;
-    void request<Notices>('/notifications', 'GET', controller.signal)
+    // Com a central fechada, o sino precisa só do contador, sem baixar evidências e perfis de trinta avisos.
+    const summary = !opened.current;
+    void request<Notices>(
+      summary ? '/notifications?summary=1' : '/notifications',
+      'GET',
+      controller.signal,
+    )
       .then((value) => {
         if (!controller.signal.aborted) {
-          setData(value);
+          setData((current) =>
+            summary && current
+              ? { ...current, unreadCount: value.unreadCount }
+              : value,
+          );
         }
       })
       .catch((reason) => {
@@ -210,6 +220,7 @@ export default function NotificationBell({
         // Abrir a central apenas atualiza o histórico; a leitura exige uma ação explícita.
         if (value) {
           setError('');
+          setLoading(true);
           setRevision((current) => current + 1);
         }
       }}
@@ -235,7 +246,7 @@ export default function NotificationBell({
           </span>
         )}
       </DialogTrigger>
-      <DialogContent className="notification-center">
+      <DialogContent placement="side" className="notification-center">
         <header className="notification-heading">
           <span className="notification-heading-icon" aria-hidden="true">
             <Bell />

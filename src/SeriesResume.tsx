@@ -32,7 +32,8 @@ export default function SeriesResume({
   const updated = useEffectEvent(onProgress);
   const expired = useEffectEvent(onExpired);
   useEffect(() => {
-    if (!needsLoad) return;
+    // Cards compactos não exibem este componente; importar temporadas aqui causava recargas invisíveis da biblioteca.
+    if (compact || !needsLoad) return;
     let active = true;
     const task = queue
       .then(async () => {
@@ -59,7 +60,14 @@ export default function SeriesResume({
     return () => {
       active = false;
     };
-  }, [item.id, item.status, item.episodesCompletedAt, needsLoad, retry]);
+  }, [
+    item.id,
+    item.status,
+    item.episodesCompletedAt,
+    compact,
+    needsLoad,
+    retry,
+  ]);
   const next = progress?.next;
   const future =
     !!next?.airDate && next.airDate > new Date().toISOString().slice(0, 10);

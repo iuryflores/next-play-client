@@ -30,8 +30,9 @@
 }
 
 .item-dialog.explore-title-dialog {
-  width: min(760px, calc(100vw - 24px));
-  max-width: min(760px, calc(100vw - 24px));
+  /* Aproveita monitores maiores sem ultrapassar a janela ou perder as margens no celular. */
+  width: min(1080px, calc(100vw - 24px));
+  max-width: min(1080px, calc(100vw - 24px));
   max-height: calc(100dvh - 24px);
   overflow-y: auto;
 }
@@ -109,3 +110,204 @@
     min-height: 44px;
   }
 }
+
+/* Aplica o efeito na camada atrás do modal, com suporte ao Safari e escurecimento de reserva. */
+[data-slot='dialog-overlay'].explore-title-backdrop {
+  background-color: rgb(0 0 0 / 45%);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* A miniatura apenas abre o player em outro modal; não precisa ocupar a largura dos detalhes. */
+.explore-title-dialog .title-trailer {
+  width: min(100%, 300px);
+}
+.explore-title-dialog .trailer-preview-play {
+  width: 36px;
+  height: 36px;
+}
+.explore-title-dialog .trailer-preview-play svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* A apresentação e o rodapé delimitam a leitura; ações continuam acessíveis durante a rolagem. */
+.item-dialog.explore-title-dialog {
+  padding: 0;
+  gap: 0;
+  scroll-padding-block: 24px 100px;
+}
+.explore-title-dialog > [data-slot='dialog-close'] {
+  top: 16px;
+  right: 16px;
+}
+.explore-preview-heading {
+  padding: 28px 56px 24px 28px;
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: 24px;
+  border-bottom: 1px solid var(--border);
+}
+.explore-preview-cover {
+  width: 132px;
+}
+.explore-preview-summary {
+  min-width: 0;
+}
+.explore-preview-summary [data-slot='dialog-title'] {
+  font-size: clamp(22px, 2.3vw, 30px);
+  line-height: 1.2;
+  margin: 0 0 8px;
+  overflow-wrap: anywhere;
+}
+.explore-preview-summary [data-slot='dialog-description'] {
+  margin-bottom: 16px;
+}
+.explore-preview-summary p {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+.explore-preview-summary .explore-preview-meta {
+  color: var(--foreground);
+  font-weight: 600;
+}
+.explore-preview-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 32px;
+  padding: 28px;
+  align-items: start;
+}
+.explore-preview-content:not(:has(.explore-preview-media)) {
+  grid-template-columns: minmax(0, 1fr);
+}
+.explore-preview-main,
+.explore-preview-media {
+  min-width: 0;
+  display: grid;
+  gap: 24px;
+}
+.explore-preview-content h3,
+.explore-preview-content h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+.explore-preview-synopsis {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.explore-preview-main .where-available {
+  margin: 0;
+}
+.explore-preview-media {
+  border-left: 1px solid var(--border);
+  padding-left: 24px;
+}
+.explore-preview-media .title-trailer {
+  margin: 0;
+  width: 100%;
+}
+.explore-preview-media .rt-inline {
+  margin: 0;
+  min-width: 0;
+}
+.explore-preview-companies {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  font-size: 13px;
+}
+.explore-preview-companies summary {
+  cursor: pointer;
+  color: var(--muted-foreground);
+}
+.explore-preview-companies p {
+  margin: 12px 0 0;
+  line-height: 1.6;
+}
+.explore-preview-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  padding: 16px 28px;
+  background: var(--panel, #1d1827);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.explore-preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.explore-preview-actions .quick-actions {
+  margin: 0;
+}
+.explore-preview-actions button {
+  white-space: normal;
+}
+.explore-preview-footer .catalog-source {
+  margin: 0;
+  font-size: 12px;
+}
+.explore-preview-form {
+  padding: 24px 28px;
+}
+.explore-title-dialog > .home-error,
+.explore-title-dialog > .page-loading {
+  margin: 16px 28px;
+}
+@media (max-width: 760px) {
+  .explore-preview-content {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .explore-preview-media {
+    border-left: 0;
+    border-top: 1px solid var(--border);
+    padding: 20px 0 0;
+  }
+  .explore-preview-media .title-trailer {
+    width: min(100%, 280px);
+  }
+}
+@media (max-width: 540px) {
+  .explore-preview-heading {
+    padding: 24px 44px 20px 16px;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 14px;
+  }
+  .explore-preview-cover {
+    width: 72px;
+  }
+  .explore-preview-summary [data-slot='dialog-title'] {
+    font-size: 21px;
+  }
+  .explore-preview-summary [data-slot='dialog-description'] {
+    font-size: 12px;
+  }
+  .explore-preview-content,
+  .explore-preview-form {
+    padding: 20px 16px;
+  }
+  .explore-preview-footer {
+    position: static;
+    padding: 16px;
+  }
+}
+
+/* O elenco complementa a sinopse, com navegação horizontal em vez de alongar a leitura. */
+.explore-preview-cast { min-width: 0; }
+.explore-preview-cast .cast-picker { border: 0; padding: 0; margin: 0; }
+.explore-preview-cast .cast-picker > legend { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+.explore-preview-cast .cast-carousel-slide { flex-basis: 132px; }
+.explore-preview-cast .cast-card { padding: 10px 8px; border-width: 1px; background: transparent; }
+.explore-preview-cast .cast-card strong { font-size: 12px; line-height: 1.4; }
+.explore-preview-cast .cast-card small { font-size: 11px; line-height: 1.4; }
+.explore-preview-cast .cast-card img, .explore-preview-cast .cast-photo-placeholder { width: 76px; height: 96px; }

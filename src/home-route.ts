@@ -1,3 +1,4 @@
+import { overviewStatuses, type OverviewStatus } from './collection-view.ts';
 export const homePaths = {
   all: '/biblioteca',
   planned: '/para-depois',
@@ -30,6 +31,7 @@ export type HomeRoute = {
   category: 'all' | 'movie' | 'series' | 'game' | 'book';
   historyMode: boolean;
   platform?: string;
+  statuses?: OverviewStatus[];
 };
 export function readHomeRoute(url: URL): HomeRoute {
   const path = url.pathname.replace(/\/+$/, '') || '/';
@@ -49,6 +51,14 @@ export function readHomeRoute(url: URL): HomeRoute {
   const sharedId = url.searchParams.get('obra');
   return {
     view,
+    // A seleção vazia é válida; valores desconhecidos não podem ampliar o filtro.
+    ...(view === 'all' && url.searchParams.has('status')
+      ? {
+          statuses: overviewStatuses.filter((status) =>
+            (url.searchParams.get('status') || '').split(',').includes(status),
+          ),
+        }
+      : {}),
     ...(view === 'shared' && sharedId && /^[a-f0-9]{24}$/i.test(sharedId)
       ? { sharedId }
       : {}),
@@ -88,6 +98,13 @@ export function readHomeRoute(url: URL): HomeRoute {
 }
 export function homeRouteUrl(route: HomeRoute) {
   const query = new URLSearchParams();
+  if (route.view === 'all' && route.statuses)
+    query.set(
+      'status',
+      overviewStatuses
+        .filter((status) => route.statuses!.includes(status))
+        .join(','),
+    );
   if (route.category !== 'all') query.set('categoria', route.category);
   if (route.category === 'game' && route.platform)
     query.set('plataforma', route.platform);

@@ -105,7 +105,11 @@ export default function AchievementProvider({
   const celebrationHeading = useRef<HTMLHeadingElement>(null);
   const titleRevision = useRef(0);
   const expired = useEffectEvent(onExpired);
-  const refresh = () => setRevision((value) => value + 1);
+  const forceRefresh = useRef(false);
+  const refresh = () => {
+    forceRefresh.current = true;
+    setRevision((value) => value + 1);
+  };
   useEffect(() => {
     const activity = () => setRevision((value) => value + 1);
     const visible = () => {
@@ -123,13 +127,15 @@ export default function AchievementProvider({
     // Agrupa salvamentos próximos. Se a resposta anterior for cancelada, as
     // celebrações continuam pendentes no banco e voltam na próxima sincronização.
     const timer = window.setTimeout(() => {
+      const manualRefresh = forceRefresh.current;
+      forceRefresh.current = false;
       const startedTitleRevision = titleRevision.current;
       let timeZone = 'UTC';
       try {
         timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       } catch {}
       void achievementRequest<AchievementState>(
-        'sync',
+        manualRefresh ? 'sync' : 'sync?changed=1',
         'POST',
         { timeZone },
         controller.signal,

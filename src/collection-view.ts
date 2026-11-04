@@ -122,3 +122,44 @@ export function matchesView(item: CollectionItem, view: string) {
   if (view === 'planned' && upcoming) return false;
   return item.status === view;
 }
+
+export type OverviewStatus = 'planned' | 'active' | 'completed' | 'archived';
+export const overviewStatuses: OverviewStatus[] = [
+  'planned',
+  'active',
+  'completed',
+  'archived',
+];
+// A visão inicial prioriza o que ainda falta iniciar ou concluir.
+export const defaultOverviewStatuses: OverviewStatus[] = ['planned', 'active'];
+
+export function matchesOverview(
+  item: CollectionItem,
+  statuses: readonly OverviewStatus[],
+) {
+  // Obras futuras ficam em Em breve; na data da estreia passam a respeitar os filtros de status.
+  // Sem data ou indicação de lançamento futuro, não presumimos que a obra ainda não estreou.
+  if (upcomingRelease(item)) return false;
+  // Arquivamento prevalece sobre o status anterior, para não misturar itens guardados aos atuais.
+  if (item.archived) return statuses.includes('archived');
+  const finished =
+    item.status === 'completed' ||
+    (item.kind === 'series' && item.caughtUp === true);
+  // Uma repetição mantém o histórico concluído e também aparece entre os títulos em andamento.
+  return (
+    (statuses.includes('completed') &&
+      (finished || Boolean(item.watchedBefore))) ||
+    (statuses.includes('active') &&
+      (Boolean(item.rewatching) ||
+        (!finished &&
+          (item.status === 'active' ||
+            Boolean(item.inProgress) ||
+            (item.episodeProgress?.watched || 0) > 0)))) ||
+    (statuses.includes('planned') &&
+      !finished &&
+      !item.rewatching &&
+      !item.inProgress &&
+      !(item.episodeProgress?.watched || 0) &&
+      item.status === 'planned')
+  );
+}

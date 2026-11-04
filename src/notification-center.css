@@ -39,7 +39,9 @@
   left: auto;
   width: min(480px, calc(100vw - 24px));
   max-width: 480px;
-  max-height: none;
+  /* A altura acompanha a janela, inclusive com zoom; só a lista interna deve rolar. */
+  height: calc(100dvh - 24px);
+  max-height: calc(100dvh - 24px);
   transform: none;
   translate: none;
   padding: 0;
@@ -55,6 +57,10 @@
   top: 20px;
   right: 18px;
   color: var(--muted-foreground);
+}
+.notification-heading,
+.notification-toolbar {
+  flex-shrink: 0;
 }
 .notification-heading {
   display: flex;
@@ -261,6 +267,8 @@
 @media (max-width: 540px) {
   .notification-center {
     inset: 8px;
+    height: calc(100dvh - 16px);
+    max-height: calc(100dvh - 16px);
     width: calc(100vw - 16px);
     max-width: none;
     border-radius: 16px;

@@ -1,6 +1,9 @@
+import ExploreActions from './ExploreActions';
+import ExploreTitleDetails from './ExploreTitleDetails';
+import './catalog-preview.css';
 import PageLoading from './PageLoading';
 import useSuggestionScroll from './useSuggestionScroll';
-import { t } from './i18n';
+import { t, genreLabel } from './i18n';
 import ReleaseBadge from './ReleaseBadge';
 import OriginalTitle from './OriginalTitle';
 import { useEffect, useEffectEvent, useState, type SubmitEvent } from 'react';
@@ -62,11 +65,34 @@ type CatalogSearchProps = {
 };
 export default function CatalogSearch(props: CatalogSearchProps) {
   const [kind, setKind] = useState(props.initialKind);
+  const [preview, setPreview] = useState<CatalogTitle | null>(null);
+  const [previewComplete, setPreviewComplete] = useState(false);
+  // O atalho abre a confirmação antes de criar o acompanhamento, evitando um registro intermediário.
+  function openPreview(title: CatalogTitle, complete = false) {
+    setPreviewComplete(complete);
+    setPreview(title);
+  }
+  // A prévia não substitui a busca, preservando resultados, filtros e posição ao fechar.
+  const detailsModal = preview && (
+    <ExploreTitleDetails
+      key={preview.catalogId}
+      title={preview}
+      initialComplete={previewComplete}
+      items={props.items}
+      changed={props.changed}
+      edit={props.edit}
+      onExpired={props.onExpired}
+      select={props.select}
+      close={() => setPreview(null)}
+    />
+  );
   // A mesma busca serve à posse e à leitura; cada fluxo usa suas próprias ações e sugestões.
   if (kind === 'book')
     return (
       <>
+        {detailsModal}
         <BookSearch
+          preview={openPreview}
           select={props.select || props.choose || (() => {})}
           context={props.select ? 'collection' : 'reading'}
           actions={
@@ -119,15 +145,19 @@ export default function CatalogSearch(props: CatalogSearchProps) {
       </>
     );
   return (
-    <MediaCatalogSearch
-      key={kind}
-      {...props}
-      initialKind={kind}
-      onBook={() => {
-        setKind('book');
-        props.onKindChange?.('book');
-      }}
-    />
+    <>
+      {detailsModal}
+      <MediaCatalogSearch
+        preview={openPreview}
+        key={kind}
+        {...props}
+        initialKind={kind}
+        onBook={() => {
+          setKind('book');
+          props.onKindChange?.('book');
+        }}
+      />
+    </>
   );
 }
 function MediaCatalogSearch({
@@ -139,11 +169,61 @@ function MediaCatalogSearch({
   onExpired,
   select,
   onBook,
+  preview,
   onKindChange,
-}: CatalogSearchProps & { onBook: () => void }) {
+}: CatalogSearchProps & {
+  onBook: () => void;
+  preview: (title: CatalogTitle, complete?: boolean) => void;
+}) {
   const [kind, setKind] = useState(
     initialKind === 'book' ? 'movie' : initialKind,
   );
+  const [mixed, setMixed] = useState(false);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [genreDirectory, setGenreDirectory] = useState<
+    { kind: string; id: number; name: string }[]
+  >([]);
+  const [genreError, setGenreError] = useState('');
+  const [genreRevision, setGenreRevision] = useState(0);
+  const [company, setCompany] = useState('');
+  const providerNext = useRef<Record<string, number | null>>({});
+  const expired = useEffectEvent(onExpired);
+  useEffect(() => {
+    const controller = new AbortController();
+    void Promise.all(
+      (mixed ? ['movie', 'series'] : [kind]).map(async (category) => {
+        const response = await fetch(`/api/catalog/genres?kind=${category}`, {
+          credentials: 'same-origin',
+          signal: AbortSignal.any([
+            controller.signal,
+            AbortSignal.timeout(20000),
+          ]),
+        });
+        if (!response.ok)
+          throw new ApiError(
+            response.status,
+            t('Não foi possível carregar os gêneros.'),
+          );
+        const data = (await response.json()) as {
+          genres: { id: number; name: string }[];
+        };
+        if (!Array.isArray(data.genres)) throw Error();
+        return data.genres.map((genre) => ({ ...genre, kind: category }));
+      }),
+    )
+      .then((rows) => {
+        if (!controller.signal.aborted) {
+          setGenreDirectory(rows.flat());
+          setGenreError('');
+        }
+      })
+      .catch((reason) => {
+        if (controller.signal.aborted) return;
+        if (reason instanceof ApiError && reason.status === 401) expired();
+        else setGenreError(t('Não foi possível carregar os gêneros.'));
+      });
+    return () => controller.abort();
+  }, [kind, mixed, genreRevision]);
   const [query, setQuery] = useState('');
   const [platform, setPlatform] = useState('');
   const [results, setResults] = useState<CatalogTitle[]>([]);
@@ -152,6 +232,7 @@ function MediaCatalogSearch({
   const [error, setError] = useState('');
   const [request, setRequest] = useState({
     term: '',
+    company: '',
     revision: 0,
     page: 1,
   });
@@ -170,10 +251,24 @@ function MediaCatalogSearch({
     enabled: nextPage !== null,
     loading: busy,
     blocked: Boolean(error),
-    resetKey: JSON.stringify([kind, platform, request.term]),
+    resetKey: JSON.stringify([
+      kind,
+      mixed,
+      platform,
+      selectedGenres,
+      request.term,
+      request.company,
+    ]),
     loadMore: more,
   });
-  const expired = useEffectEvent(onExpired);
+  const genreIdsFor = useEffectEvent((category: string) =>
+    genreDirectory
+      .filter(
+        (genre) =>
+          genre.kind === category && selectedGenres.includes(genre.name),
+      )
+      .map((genre) => genre.id),
+  );
   const buffer = useRef<SuggestionBuffer<CatalogTitle>>({
     pending: [],
     next: 1,
@@ -199,37 +294,84 @@ function MediaCatalogSearch({
       setError('');
       try {
         async function fetchPage(apiPage: number) {
-          params.set('page', String(apiPage));
-          const response = await fetch(
-            `/api/catalog/${request.term ? 'search' : 'suggestions'}?${params}`,
-            {
-              credentials: 'same-origin',
-              signal: AbortSignal.any([
-                controller.signal,
-                AbortSignal.timeout(20000),
-              ]),
-            },
+          const categoriesToFetch = mixed ? ['movie', 'series'] : [kind];
+          const pages = await Promise.all(
+            categoriesToFetch.map(async (category) => {
+              if (apiPage > 1 && providerNext.current[category] === null)
+                return { category, results: [], nextPage: null };
+              const genreIds = genreIdsFor(category);
+              // Um gênero inexistente na categoria não pode remover silenciosamente o filtro escolhido.
+              if (selectedGenres.length && !genreIds.length)
+                return { category, results: [], nextPage: null };
+              const categoryParams = new URLSearchParams(params);
+              categoryParams.set('kind', category);
+              categoryParams.set('page', String(apiPage));
+              if (genreIds.length)
+                categoryParams.set('genres', genreIds.join(','));
+              if (request.company)
+                categoryParams.set('company', request.company);
+              const endpoint =
+                selectedGenres.length || request.company
+                  ? 'browse'
+                  : request.term
+                    ? 'search'
+                    : 'suggestions';
+              const response = await fetch(
+                `/api/catalog/${endpoint}?${categoryParams}`,
+                {
+                  credentials: 'same-origin',
+                  signal: AbortSignal.any([
+                    controller.signal,
+                    AbortSignal.timeout(20000),
+                  ]),
+                },
+              );
+              const data = (await response.json().catch(() => null)) as {
+                results?: CatalogTitle[];
+                message?: string;
+                nextPage?: number | null;
+              } | null;
+              if (!response.ok || !Array.isArray(data?.results))
+                throw new ApiError(
+                  response.status,
+                  data?.message || t('Não foi possível consultar o catálogo.'),
+                );
+              return {
+                category,
+                results: data.results,
+                nextPage: data.nextPage ?? null,
+              };
+            }),
           );
-          const data = (await response.json().catch(() => null)) as {
-            results?: CatalogTitle[];
-            message?: string;
-            nextPage?: number | null;
-          } | null;
-          if (!response.ok || !Array.isArray(data?.results))
-            throw new ApiError(
-              response.status,
-              data?.message || t('Não foi possível consultar o catálogo.'),
-            );
+          // Só avança os cursores depois que todas as categorias responderem; uma falha pode ser repetida sem perder títulos.
+          if (!controller.signal.aborted)
+            for (const data of pages)
+              providerNext.current[data.category] = data.nextPage;
+          const titles = pages.flatMap((data) => data.results);
+          // Intercala as categorias para que a primeira página não esconda todas as séries após os filmes.
+          const combined = mixed
+            ? Array.from(
+                {
+                  length: Math.max(
+                    ...pages.map((data) => data.results.length),
+                    0,
+                  ),
+                },
+                (_, index) =>
+                  pages.flatMap((data) =>
+                    data.results[index] ? [data.results[index]] : [],
+                  ),
+              ).flat()
+            : titles;
           return {
             results: request.term
-              ? [...data.results].sort(
-                  (a, b) => releaseTime(b) - releaseTime(a),
-                )
-              : // Filmes/séries já vêm por afinidade e popularidade do TMDB.
-                kind === 'movie' || kind === 'series'
-                ? data.results
-                : shuffleSuggestions(data.results),
-            nextPage: data.nextPage ?? null,
+              ? combined.sort((a, b) => releaseTime(b) - releaseTime(a))
+              : kind === 'game'
+                ? shuffleSuggestions(combined)
+                : combined,
+            nextPage: pages.some((data) => data.nextPage !== null)
+              ? apiPage + 1
+              : null,
           };
         }
         const searchPage = request.term ? await fetchPage(page) : null;
@@ -241,6 +383,7 @@ function MediaCatalogSearch({
               exclude,
               controller.signal,
               batchSize(page),
+              4,
             );
         if (active) {
           setResults((current) =>
@@ -269,8 +412,9 @@ function MediaCatalogSearch({
       active = false;
       controller.abort();
     };
-  }, [kind, platform, request]);
-  function load(term: string) {
+  }, [kind, mixed, platform, selectedGenres, request]);
+  function load(term: string, companyTerm = request.company) {
+    providerNext.current = {};
     buffer.current = { pending: [], next: 1 };
     setBusy(true);
     setError('');
@@ -279,14 +423,15 @@ function MediaCatalogSearch({
     setNextPage(null);
     setRequest((current) => ({
       term,
+      company: companyTerm,
       revision: current.revision + 1,
       page: 1,
     }));
   }
   function search(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (query.trim().length === 1) return;
-    load(query.trim());
+    if (query.trim().length === 1 || company.trim().length === 1) return;
+    load(query.trim(), company.trim());
   }
   return (
     <div className="catalog-search">
@@ -300,7 +445,7 @@ function MediaCatalogSearch({
           </label>
           <NativeSelect
             id="catalog-kind"
-            value={kind}
+            value={mixed ? 'screen' : kind}
             onChange={(event) => {
               // Livros usam Google Books; não enviamos essa categoria ao TMDB/IGDB.
               if (event.target.value === 'book') {
@@ -308,9 +453,19 @@ function MediaCatalogSearch({
                 return;
               }
               setQuery('');
-              load('');
-              setKind(event.target.value as 'movie' | 'series' | 'game');
-              onKindChange?.(event.target.value as Kind);
+              setGenreDirectory([]);
+              setGenreError('');
+              setCompany('');
+              setSelectedGenres([]);
+              setMixed(event.target.value === 'screen');
+              load('', '');
+              setKind(
+                event.target.value === 'screen'
+                  ? 'movie'
+                  : (event.target.value as 'movie' | 'series' | 'game'),
+              );
+              if (event.target.value !== 'screen')
+                onKindChange?.(event.target.value as Kind);
             }}
           >
             {(['movie', 'series', 'game'] as const).map((key) => (
@@ -318,6 +473,7 @@ function MediaCatalogSearch({
                 {categories[key]}
               </option>
             ))}
+            <option value="screen">{t('Filmes e séries')}</option>
             <option value="book">{categories.book}</option>
           </NativeSelect>
         </div>
@@ -369,6 +525,18 @@ function MediaCatalogSearch({
             </NativeSelect>
           </div>
         )}
+        {kind !== 'game' && (
+          <div className="catalog-filter-field">
+            <label htmlFor="catalog-company">{t('Produtora')}</label>
+            <Input
+              id="catalog-company"
+              value={company}
+              onChange={(event) => setCompany(event.target.value)}
+              maxLength={100}
+              placeholder={t('Ex.: Marvel, Pixar…')}
+            />
+          </div>
+        )}
         <div className="catalog-filter-field catalog-search-field">
           <label htmlFor="catalog-query">{t(' Buscar no catálogo ')}</label>
           <div className="catalog-query">
@@ -391,7 +559,9 @@ function MediaCatalogSearch({
             <Button
               type="submit"
               className="home-primary"
-              disabled={busy || query.trim().length === 1}
+              disabled={
+                busy || query.trim().length === 1 || company.trim().length === 1
+              }
             >
               <Search aria-hidden="true" />
               {busy ? t('Buscando…') : t('Buscar')}
@@ -399,14 +569,78 @@ function MediaCatalogSearch({
           </div>
         </div>
       </form>
+      <details className="catalog-genre-filter">
+        <summary>
+          {t('Gêneros')}
+          {selectedGenres.length ? ` (${selectedGenres.length})` : ''}
+        </summary>
+        <p>
+          {t(
+            'Selecione até 8 gêneros. Os resultados podem pertencer a qualquer um deles.',
+          )}
+        </p>
+        {genreError ? (
+          <p role="alert">
+            {genreError}{' '}
+            <Button
+              variant="link"
+              onClick={() => {
+                setGenreError('');
+                setGenreRevision((value) => value + 1);
+              }}
+            >
+              {t('Tentar novamente')}
+            </Button>
+          </p>
+        ) : !genreDirectory.length ? (
+          <p>{t('Carregando gêneros…')}</p>
+        ) : null}
+        <div className="catalog-genre-options">
+          {[...new Set(genreDirectory.map((genre) => genre.name))]
+            .sort((a, b) => genreLabel(a).localeCompare(genreLabel(b)))
+            .map((name) => (
+              <label key={name}>
+                <input
+                  type="checkbox"
+                  checked={selectedGenres.includes(name)}
+                  disabled={
+                    !selectedGenres.includes(name) && selectedGenres.length >= 8
+                  }
+                  onChange={() => {
+                    setSelectedGenres((current) =>
+                      current.includes(name)
+                        ? current.filter((value) => value !== name)
+                        : [...current, name],
+                    );
+                    load(request.term);
+                  }}
+                />
+                {genreLabel(name)}
+              </label>
+            ))}
+        </div>
+        {selectedGenres.length > 0 && (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setSelectedGenres([]);
+              load(request.term);
+            }}
+          >
+            {t('Limpar gêneros')}
+          </Button>
+        )}
+      </details>
       <p>
         {request.term
           ? t('Resultados para “{0}”', request.term)
-          : items.some((item) => item.kind === kind && item.genres?.length)
-            ? t('Sugestões inspiradas nos gêneros da sua coleção')
-            : kind === 'game'
-              ? t('Jogos para conhecer')
-              : t('Populares no catálogo')}
+          : selectedGenres.length || request.company
+            ? t('Títulos que combinam com seus filtros')
+            : items.some((item) => item.kind === kind && item.genres?.length)
+              ? t('Sugestões inspiradas nos gêneros da sua coleção')
+              : kind === 'game'
+                ? t('Jogos para conhecer')
+                : t('Populares no catálogo')}
       </p>
       {busy && !results.length && (
         <PageLoading label={t('Carregando títulos…')} />
@@ -434,7 +668,12 @@ function MediaCatalogSearch({
         {/* Salvar mantém o card e sua posição; apenas as ações e o selo mudam. */}
         {results.map((item) => (
           <article key={item.catalogId} className="catalog-result">
-            <div className="catalog-cover-frame">
+            <button
+              type="button"
+              className="catalog-cover-frame catalog-preview-cover"
+              onClick={() => preview(item)}
+              aria-label={t('Ver detalhes de {0}', item.title)}
+            >
               {findOwned(items, item) && (
                 <span className="catalog-owned-badge">{t('Na coleção')}</span>
               )}
@@ -451,16 +690,25 @@ function MediaCatalogSearch({
                   <ImageOff aria-hidden="true" />
                 </span>
               )}
-            </div>
+            </button>
             <div className="catalog-card-info">
-              <strong>{item.title}</strong>
+              <strong>
+                <button
+                  type="button"
+                  className="catalog-preview-title"
+                  onClick={() => preview(item)}
+                  aria-label={t('Ver detalhes de {0}', item.title)}
+                >
+                  {item.title}
+                </button>
+              </strong>
               <OriginalTitle
                 title={item.title}
                 originalTitle={item.originalTitle}
               />
               <small>
-                {item.year || t('Ano não informado')} ·{' '}
-                {kind === 'game' ? 'IGDB' : 'TMDB'}
+                {item.year || t('Ano não informado')} · {categories[item.kind]}{' '}
+                · {item.kind === 'game' ? 'IGDB' : 'TMDB'}
               </small>
               <span className="catalog-overview">
                 {item.overview || t('Sem sinopse disponível.')}
@@ -482,13 +730,16 @@ function MediaCatalogSearch({
                   {t('Escolher esta obra')}
                 </Button>
               ) : (
-                <QuickActions
-                  title={item}
-                  owned={findOwned(items, item)}
-                  changed={changed}
-                  edit={edit}
-                  onExpired={onExpired}
-                />
+                <div className="catalog-card-actions">
+                  <ExploreActions
+                    title={item}
+                    owned={findOwned(items, item)}
+                    changed={changed}
+                    edit={edit}
+                    onExpired={onExpired}
+                    markWatched={() => preview(item, true)}
+                  />
+                </div>
               )}
             </div>
           </article>
