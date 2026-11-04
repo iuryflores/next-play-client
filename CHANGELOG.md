@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/iuryflores/next-play-client/compare/v1.0.0...v1.1.0) (2026-11-04)
+
+
+### Features
+
+* aprimora acompanhamento, catalogo e experiencia dos titulos ([0057565](https://github.com/iuryflores/next-play-client/commit/005756544f4fa1a885d775ed3515d3501d948885))
+
 ## [1.0.0](https://github.com/iuryflores/next-play-client/compare/v0.17.0...v1.0.0) (2026-11-03)
 
 
