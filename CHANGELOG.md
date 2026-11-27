@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/iuryflores/next-play-client/compare/v1.1.0...v1.2.0) (2026-11-27)
+
+
+### Features
+
+* amplia filtros e acompanhamento e restaura rolagem de sugestões ([b2b2ce0](https://github.com/iuryflores/next-play-client/commit/b2b2ce0da100377b24ea85db1d041441604460ef))
+
 ## [1.1.0](https://github.com/iuryflores/next-play-client/compare/v1.0.0...v1.1.0) (2026-11-04)
 
 
