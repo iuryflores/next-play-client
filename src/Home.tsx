@@ -1,4 +1,5 @@
 import NavigationHint from './NavigationHint';
+import SavedTitleFilters, { useSavedTitleFilters } from './SavedTitleFilters';
 import SteamImportBadge from './SteamImportBadge';
 import GamePlanner from './GamePlanner';
 import './rewatch.css';
@@ -147,6 +148,7 @@ function Home({
     planned: t('Não iniciados'),
     active: t('Em andamento'),
     completed: t('Concluídos'),
+    abandoned: t('Abandonados'),
     archived: t('Arquivados'),
   };
   const detailItem = items.find((item) => item.id === detailId);
@@ -293,11 +295,50 @@ function Home({
   const gamePlatforms = platformOptions(
     cardItems.filter((item) => matchesCollection(item, view)),
   );
-  const visible = cardItems.filter(
+  const showSavedFilters = ['all', 'completed'].includes(view) && category !== 'book';
+  // A plataforma usa a mesma grade nas telas com filtros de obras salvas.
+  const platformFilter = category === 'game' && (
+    <div className="game-platform-filter">
+      <label htmlFor="game-platform-filter">{t('Plataforma')}</label>
+      <NativeSelect
+        id="game-platform-filter"
+        value={platform || ''}
+        onChange={(event) => setRouteField('platform', event.target.value || undefined)}
+      >
+        <option value="">{t('Todas as plataformas')}</option>
+        {platform && !gamePlatforms.some((option) => option.key === platform) && (
+          <option value={platform}>
+            {t('Plataforma selecionada sem jogos nesta lista')}
+          </option>
+        )}
+        {gamePlatforms.map((option) => (
+          <option key={option.key} value={option.key}>
+            {option.key === missingPlatform
+              ? t('Não informada')
+              : option.name}{' '}
+            ({option.count})
+          </option>
+        ))}
+      </NativeSelect>
+      {platform && !showSavedFilters && (
+        <Button
+          variant="ghost"
+          onClick={() => setRouteField('platform', undefined)}
+        >
+          {t('Limpar filtro')}
+        </Button>
+      )}
+    </div>
+  );
+  const titlesForFilters = cardItems.filter(item =>
+    (category === 'all' || item.kind === category) &&
+    (category !== 'game' || matchesPlatform(item, platform)) &&
+    matchesCollection(item, view),
+  );
+  const savedFilters = useSavedTitleFilters(titlesForFilters, showSavedFilters && !detailItem, category, onExpired);
+  const visible = titlesForFilters.filter(
     (item) =>
-      (category === 'all' || item.kind === category) &&
-      (category !== 'game' || matchesPlatform(item, platform)) &&
-      matchesCollection(item, view) &&
+      savedFilters.matches(item, item.stars) &&
       [
         item.title,
         item.originalTitle || '',
@@ -1424,51 +1465,9 @@ function Home({
                         </p>
                       </fieldset>
                     )}
-                    {category === 'game' && (
-                      <div className="game-platform-filter">
-                        <label htmlFor="game-platform-filter">
-                          {t('Plataforma')}
-                        </label>
-                        <NativeSelect
-                          id="game-platform-filter"
-                          value={platform || ''}
-                          onChange={(event) =>
-                            setRouteField(
-                              'platform',
-                              event.target.value || undefined,
-                            )
-                          }
-                        >
-                          <option value="">{t('Todas as plataformas')}</option>
-                          {platform &&
-                            !gamePlatforms.some(
-                              (option) => option.key === platform,
-                            ) && (
-                              <option value={platform}>
-                                {t(
-                                  'Plataforma selecionada sem jogos nesta lista',
-                                )}
-                              </option>
-                            )}
-                          {gamePlatforms.map((option) => (
-                            <option key={option.key} value={option.key}>
-                              {option.key === missingPlatform
-                                ? t('Não informada')
-                                : option.name}{' '}
-                              ({option.count})
-                            </option>
-                          ))}
-                        </NativeSelect>
-                        {platform && (
-                          <Button
-                            variant="ghost"
-                            onClick={() => setRouteField('platform', undefined)}
-                          >
-                            {t('Limpar filtro')}
-                          </Button>
-                        )}
-                      </div>
-                    )}
+                    {showSavedFilters ? (
+                      <SavedTitleFilters filters={savedFilters} leading={platformFilter} />
+                    ) : platformFilter}
                     {(notice || error) && (
                       <div className="home-error" role="alert">
                         {notice || error}
@@ -1490,7 +1489,7 @@ function Home({
                         )}
                       </div>
                     )}
-                    {loading ? (
+                    {loading || savedFilters.loading ? (
                       <PageLoading label={t('Carregando sua coleção…')} />
                     ) : error && !items.length ? null : visible.length ? (
                       <div
@@ -1567,7 +1566,10 @@ function Home({
                                   />
                                 )}
                                 <div className="cover-bottom-content">
-                                  {(item.rewatching || item.rewatchWanted) && (
+                                  {item.abandoned && item.kind !== 'game' && (
+                                    <span className="rewatch-tag">{t('Abandonado')}</span>
+                                  )}
+                                  {!item.abandoned && (item.rewatching || item.rewatchWanted) && (
                                     <span className="rewatch-tag">
                                       {item.rewatching
                                         ? t(
@@ -1577,7 +1579,7 @@ function Home({
                                         : t('Quero rever')}
                                     </span>
                                   )}
-                                  {item.priority &&
+                                  {!item.abandoned && item.priority &&
                                     item.priority !== 'none' && (
                                       <span
                                         className="backlog-priority"
@@ -1596,7 +1598,7 @@ function Home({
                                   {/* Sem páginas registradas, mostramos um selo de estado,
                                     nunca uma barra que possa sugerir leitura concluída. */}
                                   {item.kind === 'book' &&
-                                    item.status === 'active' && (
+                                    item.status === 'active' && !item.abandoned && (
                                       <div className="book-reading-marker">
                                         <strong>
                                           <BookOpen aria-hidden="true" />
@@ -1609,7 +1611,7 @@ function Home({
                                     <div className="game-playing-marker">
                                       <strong>
                                         <Gamepad2 aria-hidden="true" />
-                                        {statusNames.game[item.status]}
+                                        {item.abandoned ? t('Abandonado') : statusNames.game[item.status]}
                                       </strong>
                                       <small>
                                         {Math.floor(
@@ -1719,10 +1721,10 @@ function Home({
                                   }
                                 >
                                   <span
-                                    className={`item-status ${item.status}`}
+                                    className={`item-status ${item.abandoned ? 'abandoned' : item.status}`}
                                   >
                                     <span />
-                                    {item.rewatching
+                                    {item.abandoned ? t('Abandonado') : item.rewatching
                                       ? t('Reassistindo')
                                       : item.kind === 'series' &&
                                           item.caughtUp &&
@@ -1739,7 +1741,7 @@ function Home({
                                     originalTitle={item.originalTitle}
                                   />
                                 </div>
-                                {item.kind === 'series' && (
+                                {item.kind === 'series' && !item.abandoned && (
                                   <SeriesResume
                                     item={item}
                                     compact={compactCards}

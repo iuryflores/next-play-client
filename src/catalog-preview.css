@@ -118,6 +118,33 @@
   width: 16px;
   height: 16px;
 }
+.catalog-streaming-filter > .catalog-filter-field {
+  /* O país ocupa uma coluna curta e deixa os serviços quebrarem em várias linhas. */
+  max-width: 240px;
+  margin-top: 12px;
+}
+.catalog-origin-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+  gap: 12px;
+  max-width: 540px;
+  margin-top: 12px;
+}
+.catalog-group-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.catalog-watch-access {
+  min-width: 0;
+  margin: 12px 0;
+  padding: 0;
+  border: 0;
+}
+.catalog-watch-access legend {
+  font-weight: 600;
+}
 .catalog-search > form {
   flex-wrap: wrap;
 }
@@ -127,4 +154,23 @@
   > form:not(.has-platform-filter)
   .catalog-search-field {
   grid-column: 1 / -1;
+}
+
+.add-title-page .catalog-search > form.catalog-year-form {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.catalog-rating-fields {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+  gap: 10px;
+}
+.catalog-rating-hint {
+  grid-column: 1 / -1;
+  color: var(--ink-muted);
+}
+@media (max-width: 640px) {
+  .add-title-page .catalog-search > form.catalog-year-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }

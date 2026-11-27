@@ -33,6 +33,11 @@ import {
 import CatalogSearch, { type CatalogTitle } from './CatalogSearch';
 import { ApiError } from './auth';
 import {
+  missingPlatform,
+  platformKey,
+  platformOptions,
+} from './game-platform-filter';
+import {
   collectorRequest,
   type CopyInput,
   type CollectorKind,
@@ -44,6 +49,7 @@ import CollectorBookDetails from './CollectorBookDetails';
 import { t } from './i18n';
 import { notifySaved } from './notifications';
 import PageLoading from './PageLoading';
+import SavedTitleFilters, { useSavedTitleFilters } from './SavedTitleFilters';
 import { prepareCollectorPhoto } from './collector-photo';
 import './collector.css';
 
@@ -100,6 +106,7 @@ export default function Collector({
   const [search, setSearch] = useState('');
   const [kind, setKind] = useState<CollectorKind | 'all'>('all');
   const [format, setFormat] = useState('all');
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [objectCategory, setObjectCategory] = useState('all');
   const [photoPreview, setPhotoPreview] = useState('');
   const [photoBusy, setPhotoBusy] = useState(false);
@@ -137,13 +144,32 @@ export default function Collector({
       });
     return () => controller.abort();
   }, [revision]);
-  const visible = copies.filter(
+  const gamePlatforms = platformOptions(copies);
+  const showPlatforms = kind === 'all' || kind === 'game';
+  // Uma edição ou exclusão pode remover a última cópia de uma plataforma selecionada.
+  const activePlatforms = new Set(
+    gamePlatforms.map(({ key }) => key).filter((key) => selectedPlatforms.includes(key)),
+  );
+  const showSavedFilters = kind !== 'other' && kind !== 'book';
+  const titlesForFilters = copies.filter(
     (copy) =>
       (kind === 'all' || copy.kind === kind) &&
       (format === 'all' || copy.format === format) &&
+      (!showPlatforms ||
+        activePlatforms.size === 0 ||
+        (copy.kind === 'game' && activePlatforms.has(platformKey(copy.platform)))) &&
       (kind !== 'other' ||
         objectCategory === 'all' ||
-        normalize(copy.category || '') === objectCategory) &&
+        normalize(copy.category || '') === objectCategory),
+  );
+  const savedFilters = useSavedTitleFilters(titlesForFilters, showSavedFilters, kind, onExpired);
+  // Cópias de uma mesma obra herdam a nota do acompanhamento pelo vínculo exato de catálogo.
+  const personalRatings = new Map(readingItems
+    .filter(item => item.catalogId)
+    .map(item => [item.catalogId, item.stars]));
+  const visible = titlesForFilters.filter(
+    (copy) =>
+      savedFilters.matches(copy, copy.catalogId ? personalRatings.get(copy.catalogId) : undefined) &&
       normalize(
         [copy.title, copy.platform, copy.edition, copy.category].join(' '),
       ).includes(normalize(search)),
@@ -378,6 +404,39 @@ export default function Collector({
             </div>
             <TabsContent value={kind}>
               <div className="collector-filters">
+                {showPlatforms && gamePlatforms.length > 0 && (
+                  <fieldset className="collector-platforms">
+                    <legend>{t('Plataformas')}</legend>
+                    <div className="collector-platform-options">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        aria-pressed={activePlatforms.size === 0}
+                        onClick={() => setSelectedPlatforms([])}
+                      >
+                        {t('Todas as plataformas')}
+                      </Button>
+                      {gamePlatforms.map(({ key, name }) => (
+                        <label key={key}>
+                          <input
+                            type="checkbox"
+                            checked={selectedPlatforms.includes(key)}
+                            onChange={() =>
+                              setSelectedPlatforms((current) =>
+                                current.includes(key)
+                                  ? current.filter((selected) => selected !== key)
+                                  : [...current, key],
+                              )
+                            }
+                          />
+                          {key === missingPlatform
+                            ? t('Sem plataforma informada')
+                            : name}
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
+                )}
                 <label>
                   {t('Buscar na coleção')}
                   <Input
@@ -417,6 +476,7 @@ export default function Collector({
                     </NativeSelect>
                   </label>
                 )}
+                {showSavedFilters && <SavedTitleFilters filters={savedFilters} />}
               </div>
               {error && (
                 <div className="home-error" role="alert">
@@ -432,7 +492,7 @@ export default function Collector({
                   </Button>
                 </div>
               )}
-              {loading ? (
+              {loading || savedFilters.loading ? (
                 <PageLoading label={t('Carregando coleção…')} />
               ) : !visible.length ? (
                 <div className="collection-empty">

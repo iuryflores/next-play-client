@@ -99,6 +99,8 @@ function activityLabel(type: string) {
     'season-watched': 'Temporada marcada como assistida',
     'episodes-watched': 'Episódios marcados como assistidos',
     'episodes-unwatched': 'Marcação de episódios removida',
+    abandoned: 'Abandonou o acompanhamento',
+    resumed: 'Retomou o acompanhamento',
   };
   return (
     t(labels[action] || 'Atividade registrada') +

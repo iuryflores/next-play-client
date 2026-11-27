@@ -4,6 +4,7 @@ type Part = {
   catalogId?: string;
   parentGameCatalogId?: string;
   archived?: boolean;
+  abandoned?: boolean;
   status: string;
   playtimeMinutes?: number;
   lastPlayedOn?: string | null;
@@ -22,7 +23,9 @@ export function groupGames<T extends Part>(
     while (current.parentGameCatalogId) {
       const parent = games.get(current.parentGameCatalogId);
       // Sem pai acompanhado, ou arquivado separadamente, a parte continua acessível em seu próprio card.
-      if (!parent || Boolean(parent.archived) !== Boolean(item.archived)) break;
+      // Uma DLC abandonada separadamente precisa continuar visível no filtro de abandonados.
+      if (!parent || Boolean(parent.archived) !== Boolean(item.archived) ||
+          Boolean(parent.abandoned) !== Boolean(item.abandoned)) break;
       if (seen.has(parent.id)) return item;
       seen.add(parent.id);
       current = parent;

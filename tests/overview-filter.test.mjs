@@ -17,9 +17,10 @@ test('combina status por união, sem incluir arquivados implicitamente', () => {
     },
     { id: 'active', kind: 'book', status: 'active' },
     { id: 'completed', kind: 'game', status: 'completed' },
+    { id: 'abandoned', kind: 'series', status: 'active', abandoned: true },
     { id: 'archived', kind: 'movie', status: 'active', archived: true },
   ];
-  for (let mask = 0; mask < 16; mask++) {
+  for (let mask = 0; mask < 2 ** overviewStatuses.length; mask++) {
     const selected = overviewStatuses.filter((_, index) => mask & (1 << index));
     assert.deepEqual(
       items
@@ -66,6 +67,7 @@ test('filtros combinados e seleção vazia sobrevivem à URL e aos detalhes', ()
     [],
     ['active'],
     ['active', 'completed'],
+    ['active', 'abandoned'],
     overviewStatuses,
   ]) {
     const route = {
@@ -88,6 +90,16 @@ test('filtros combinados e seleção vazia sobrevivem à URL e aos detalhes', ()
     ).statuses,
     ['active'],
   );
+});
+
+test('abandono não muda o progresso e pode ser combinado com outros estados na visão geral', () => {
+  const title = { kind: 'series', status: 'active', episodeProgress: { watched: 3 }, abandoned: true };
+  assert.equal(matchesOverview(title, ['active']), false);
+  assert.equal(matchesOverview(title, ['active', 'abandoned']), true);
+  assert.equal(matchesOverview({ ...title, rewatching: true }, ['active']), false);
+  assert.equal(matchesOverview({ ...title, archived: true }, ['abandoned']), false);
+  assert.equal(matchesOverview({ ...title, archived: true }, ['archived']), true);
+  assert.equal(matchesOverview({ ...title, abandoned: false }, defaultOverviewStatuses), true);
 });
 
 test('obras futuras ficam em Em breve e entram na visão geral na data da estreia', () => {

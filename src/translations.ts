@@ -206,6 +206,11 @@ Histórico de status|Status history|Historial de estados
 As datas indicam quando cada alteração foi registrada no app.|Dates show when each change was recorded in the app.|Las fechas indican cuándo se registró cada cambio en la aplicación.
 Adicionado ao acompanhamento|Added to tracking|Añadido al seguimiento
 Retomou o acompanhamento|Resumed tracking|Retomó el seguimiento
+Abandonado|Dropped|Abandonado
+Abandonados|Dropped|Abandonados
+Abandonou o acompanhamento|Dropped the title|Abandonó el seguimiento
+Marcar como abandonado|Mark as dropped|Marcar como abandonado
+Retomar acompanhamento|Resume tracking|Retomar seguimiento
 Concluiu o jogo|Finished the game|Terminó el juego
 Voltou para Para depois|Moved back to backlog|Volvió a Para después
 Voltou a jogar|Started playing again|Volvió a jugar
@@ -1404,6 +1409,10 @@ Atores|Actors|Actores
 Diretores|Directors|Directores
 Autores|Authors|Autores
 Franquia|Franchise|Franquicia
+Franquia e universo|Franchise and universe|Franquicia y universo
+Ex.: MCU|E.g. MCU|P. ej., UCM
+Aplicar filtros|Apply filters|Aplicar filtros
+Limpar filtros|Clear filters|Borrar filtros
 Ranking de franquias|Franchise ranking|Clasificación de franquicias
 Coleções de filmes identificadas pelo TMDB e franquias declaradas por você. Cobertura parcial até atualizar ou completar os dados; agrupamentos manuais e do catálogo permanecem separados.|Movie collections identified by TMDB and franchises declared by you. Coverage is partial until updated; manual and catalog groups stay separate.|Colecciones de películas de TMDB y franquicias declaradas por ti. Cobertura parcial hasta actualizar; agrupaciones manuales y del catálogo separadas.
 Créditos manuais são privados e declarados por você; até vinte nomes por categoria. Não comprovam identidade de homônimos. Franquias manuais podem reunir qualquer mídia.|Manual credits are private and declared by you, up to twenty names per category. They do not verify namesake identities. Manual franchises can include any media.|Los créditos manuales son privados y declarados por ti, hasta veinte nombres por categoría. No verifican identidades de homónimos. Las franquicias manuales incluyen cualquier medio.
@@ -1414,6 +1423,37 @@ Diferença|Difference|Diferencia
 Notas pessoais convertidas para 0–100. Tomatometer mede aprovação da crítica, não qualidade equivalente à sua nota. As consultas inequívocas feitas nos detalhes alimentam este quadro.|Personal ratings converted to 0–100. Tomatometer measures critic approval, not equivalent quality. Unambiguous lookups in title details populate this table.|Notas personales convertidas a 0–100. Tomatometer mide aprobación crítica, no calidad equivalente. Las consultas inequívocas en los detalles alimentan esta tabla.
 Sua nota em escala percentual: {0}%. Diferença para a crítica: {1} pontos percentuais.|Your rating as a percentage: {0}%. Difference from critics: {1} percentage points.|Tu nota en porcentaje: {0}%. Diferencia con la crítica: {1} puntos porcentuales.
 Comunidade|Community|Comunidad
+Minha nota|My rating|Mi puntuación
+Fonte da avaliação|Rating source|Fuente de la valoración
+Todas as avaliações|All ratings|Todas las valoraciones
+Nota mínima|Minimum rating|Valoración mínima
+Classificação máxima (Brasil)|Maximum age rating (Brazil)|Clasificación máxima (Brasil)
+Classificação indicativa|Age rating|Clasificación por edad
+Todas as classificações|All age ratings|Todas las clasificaciones
+Livre|General audiences|Para todo público
+Até {0} anos|Up to age {0}|Hasta {0} años
+{0} anos|Age {0}+|{0} años
+Serviços de streaming|Streaming services|Servicios de streaming
+Forma de acesso|Access type|Forma de acceso
+Idioma e país de origem|Language and country of origin|Idioma y país de origen
+Idioma original|Original language|Idioma original
+País de origem|Country of origin|País de origen
+Todos os idiomas|All languages|Todos los idiomas
+Todos os países|All countries|Todos los países
+Carregando idiomas e países…|Loading languages and countries…|Cargando idiomas y países…
+Não foi possível carregar idiomas e países.|Could not load languages and countries.|No se pudieron cargar los idiomas y países.
+Grátis (com ou sem anúncios)|Free (with or without ads)|Gratis (con o sin anuncios)
+Aluguel|Rental|Alquiler
+Compra|Purchase|Compra
+Selecione até 8 serviços. Sem forma de acesso selecionada, o filtro por serviços usa assinatura.|Select up to 8 services. With no access type selected, filtering by service uses subscription offers.|Selecciona hasta 8 servicios. Si no eliges una forma de acceso, el filtro por servicios usa ofertas de suscripción.
+Não foi possível carregar os serviços de streaming.|Could not load streaming services.|No se pudieron cargar los servicios de streaming.
+Carregando serviços de streaming…|Loading streaming services…|Cargando servicios de streaming…
+Nenhum serviço de streaming encontrado para este país.|No streaming services found for this country.|No se encontraron servicios de streaming para este país.
+Limpar serviços|Clear services|Quitar servicios
+Dados de disponibilidade fornecidos por|Availability data provided by|Datos de disponibilidad proporcionados por
+A crítica inclui títulos com nota do Rotten Tomatoes já vinculada.|Critic results include titles with a linked Rotten Tomatoes score.|La crítica incluye títulos con una puntuación de Rotten Tomatoes ya vinculada.
+Nenhum título combina com os filtros nas páginas consultadas. Use Ver mais para continuar.|No titles match the filters on the pages checked. Select Show more to continue.|Ningún título coincide con los filtros en las páginas consultadas. Selecciona Ver más para continuar.
+Nenhum título combina com os filtros selecionados.|No titles match the selected filters.|Ningún título coincide con los filtros seleccionados.
 Criar conversa ou votação|Create discussion or poll|Crear conversación o votación
 Discussão|Discussion|Discusión
 Teoria|Theory|Teoría
@@ -1540,6 +1580,8 @@ Trailer e avaliações|Trailer and ratings|Tráiler y valoraciones
 Adicionar como assistido|Add as watched|Añadir como vista
 Filmes e séries|Movies and shows|Películas y series
 Produtora|Production company|Productora
+Produtora ou desenvolvedora|Production company or developer|Productora o desarrolladora
+Alguns metadados não puderam ser carregados.|Some metadata could not be loaded.|No se pudieron cargar algunos metadatos.
 Ex.: Marvel, Pixar…|E.g.: Marvel, Pixar…|Ej.: Marvel, Pixar…
 Selecione até 8 gêneros. Os resultados podem pertencer a qualquer um deles.|Select up to 8 genres. Results can belong to any of them.|Selecciona hasta 8 géneros. Los resultados pueden pertenecer a cualquiera de ellos.
 Carregando gêneros…|Loading genres…|Cargando géneros…

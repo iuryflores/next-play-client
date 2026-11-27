@@ -27,7 +27,14 @@ import {
 import { useRef } from 'react';
 import { appendSuggestionPage, shuffleSuggestions } from './suggestions';
 import BookSearch from './BookSearch';
+import StreamingFilters, { useStreamingDirectory } from './StreamingFilters';
+import TitleOriginFilters from './TitleOriginFilters';
+import MaxAgeFilter from './MaxAgeFilter';
+import TitleGroupFilters, { type TitleGroups } from './TitleGroupFilters';
+
 export interface CatalogTitle {
+  ageRating?: number;
+  rating?: number;
   platforms?: string[];
   genres?: string[];
   catalogId: string;
@@ -186,6 +193,18 @@ function MediaCatalogSearch({
   const [genreError, setGenreError] = useState('');
   const [genreRevision, setGenreRevision] = useState(0);
   const [company, setCompany] = useState('');
+  const [groups, setGroups] = useState<TitleGroups>({ franchise: '', universe: '' });
+  const franchise = groups.franchise;
+  const universe = kind === 'game' ? '' : groups.universe;
+  const groupFilterActive = Boolean(franchise || universe);
+  const [originalLanguage, setOriginalLanguage] = useState('');
+  const [originCountry, setOriginCountry] = useState('');
+  const originActive = Boolean(originalLanguage || originCountry);
+  const [streamingOpen, setStreamingOpen] = useState(false);
+  const [watchRegion, setWatchRegion] = useState('BR');
+  const [selectedStreaming, setSelectedStreaming] = useState<number[]>([]);
+  const [watchAccess, setWatchAccess] = useState<string[]>([]);
+  const watchFilterActive = Boolean(selectedStreaming.length || watchAccess.length);
   const providerNext = useRef<Record<string, number | null>>({});
   const expired = useEffectEvent(onExpired);
   useEffect(() => {
@@ -224,8 +243,27 @@ function MediaCatalogSearch({
       });
     return () => controller.abort();
   }, [kind, mixed, genreRevision]);
+  const streamingDirectory = useStreamingDirectory(streamingOpen, mixed ? 'all' : kind, watchRegion, onExpired);
+  const streamingIdsFor = useEffectEvent((category: string) =>
+    streamingDirectory.providers?.filter(provider => provider.kind === category && selectedStreaming.includes(provider.id))
+      .map(provider => provider.id) ?? [],
+  );
   const [query, setQuery] = useState('');
   const [platform, setPlatform] = useState('');
+  const [year, setYear] = useState('');
+  const [maxAge, setMaxAge] = useState('');
+  const [ratingSource, setRatingSource] = useState<'' | 'critic' | 'community' | 'personal'>('');
+  const [minRating, setMinRating] = useState('');
+  const ratingLabel = ratingSource === 'critic'
+    ? t('Crítica')
+    : ratingSource === 'community' ? t('Comunidade') : t('Minha nota');
+  const ratingOptions = ratingSource === 'critic'
+    ? [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    : ratingSource === 'community' ? [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5] : [1, 2, 3, 4, 5];
+  const ratingText = (value: number) => ratingSource === 'critic'
+    ? `${new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(value)}/100`
+    : `${new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(value)}/5`;
+  const latestYear = new Date().getFullYear() + 5;
   const [results, setResults] = useState<CatalogTitle[]>([]);
   const [busy, setBusy] = useState(true);
   const [searched, setSearched] = useState(false);
@@ -248,6 +286,8 @@ function MediaCatalogSearch({
     }));
   }
   const suggestionEnd = useSuggestionScroll({
+    // O observador limita novas consultas enquanto o fim continua visível,
+    // inclusive quando filtros fazem um lote voltar vazio.
     enabled: nextPage !== null,
     loading: busy,
     blocked: Boolean(error),
@@ -255,6 +295,17 @@ function MediaCatalogSearch({
       kind,
       mixed,
       platform,
+      year,
+      maxAge,
+      franchise,
+      universe,
+      ratingSource,
+      minRating,
+      selectedStreaming,
+      watchAccess,
+      originalLanguage,
+      originCountry,
+      watchRegion,
       selectedGenres,
       request.term,
       request.company,
@@ -275,7 +326,7 @@ function MediaCatalogSearch({
   });
   const exclude = useEffectEvent(
     (candidate: CatalogTitle) =>
-      Boolean(findOwned(items, candidate)) ||
+      (!ratingSource && Boolean(findOwned(items, candidate))) ||
       results.some((item) => item.catalogId === candidate.catalogId),
   );
   const batchSize = useEffectEvent((page: number) =>
@@ -286,6 +337,17 @@ function MediaCatalogSearch({
     let active = true;
     const params = new URLSearchParams({ kind });
     if (kind === 'game' && platform) params.set('platform', platform);
+    if (year) params.set('year', year);
+    if (maxAge) params.set('maxAge', maxAge);
+    if (franchise) params.set('franchise', franchise);
+    if (universe) params.set('universe', universe);
+    // A origem da obra é independente do país em que o usuário quer assistir.
+    if (originalLanguage) params.set('originalLanguage', originalLanguage);
+    if (originCountry) params.set('originCountry', originCountry);
+    if (ratingSource) {
+      params.set('ratingSource', ratingSource);
+      params.set('minRating', minRating);
+    }
     const page = request.page;
     params.set('page', String(page));
     if (request.term) params.set('q', request.term);
@@ -303,6 +365,10 @@ function MediaCatalogSearch({
               // Um gênero inexistente na categoria não pode remover silenciosamente o filtro escolhido.
               if (selectedGenres.length && !genreIds.length)
                 return { category, results: [], nextPage: null };
+              const streamingIds = streamingIdsFor(category);
+              // No modo misto um serviço pode existir apenas em uma das categorias.
+              if (selectedStreaming.length && !streamingIds.length)
+                return { category, results: [], nextPage: null };
               const categoryParams = new URLSearchParams(params);
               categoryParams.set('kind', category);
               categoryParams.set('page', String(apiPage));
@@ -310,8 +376,15 @@ function MediaCatalogSearch({
                 categoryParams.set('genres', genreIds.join(','));
               if (request.company)
                 categoryParams.set('company', request.company);
+              if (streamingIds.length) {
+                categoryParams.set('streamingProviders', streamingIds.join(','));
+              }
+              if (watchFilterActive) {
+                categoryParams.set('watchRegion', watchRegion);
+              }
+              if (watchAccess.length) categoryParams.set('watchAccess', watchAccess.join(','));
               const endpoint =
-                selectedGenres.length || request.company
+                selectedGenres.length || request.company || year || ratingSource || maxAge || watchFilterActive || originActive || groupFilterActive
                   ? 'browse'
                   : request.term
                     ? 'search'
@@ -322,7 +395,7 @@ function MediaCatalogSearch({
                   credentials: 'same-origin',
                   signal: AbortSignal.any([
                     controller.signal,
-                    AbortSignal.timeout(20000),
+                    AbortSignal.timeout(maxAge || groupFilterActive ? 50000 : 20000),
                   ]),
                 },
               );
@@ -374,7 +447,8 @@ function MediaCatalogSearch({
               : null,
           };
         }
-        const searchPage = request.term ? await fetchPage(page) : null;
+        // Disponibilidade e classificação podem exigir consultas por título; carrega uma página por vez.
+        const searchPage = request.term || watchFilterActive || maxAge || groupFilterActive ? await fetchPage(page) : null;
         const batch = searchPage
           ? { ...searchPage, hasMore: searchPage.nextPage !== null }
           : await suggestionBatch(
@@ -412,7 +486,7 @@ function MediaCatalogSearch({
       active = false;
       controller.abort();
     };
-  }, [kind, mixed, platform, selectedGenres, request]);
+  }, [kind, mixed, platform, year, maxAge, franchise, universe, groupFilterActive, ratingSource, minRating, selectedGenres, selectedStreaming, watchAccess, watchFilterActive, watchRegion, originalLanguage, originCountry, originActive, request]);
   function load(term: string, companyTerm = request.company) {
     providerNext.current = {};
     buffer.current = { pending: [], next: 1 };
@@ -435,10 +509,7 @@ function MediaCatalogSearch({
   }
   return (
     <div className="catalog-search">
-      <form
-        onSubmit={search}
-        className={kind === 'game' ? 'has-platform-filter' : undefined}
-      >
+      <form onSubmit={search} className="catalog-year-form">
         <div className="catalog-filter-field">
           <label htmlFor="catalog-kind">
             {t(' O que você quer adicionar? ')}
@@ -457,6 +528,14 @@ function MediaCatalogSearch({
               setGenreError('');
               setCompany('');
               setSelectedGenres([]);
+              setSelectedStreaming([]);
+              if (event.target.value === 'game') {
+                setStreamingOpen(false);
+                setWatchAccess([]);
+                setOriginalLanguage('');
+                setOriginCountry('');
+                setMaxAge('');
+              }
               setMixed(event.target.value === 'screen');
               load('', '');
               setKind(
@@ -536,6 +615,76 @@ function MediaCatalogSearch({
               placeholder={t('Ex.: Marvel, Pixar…')}
             />
           </div>
+        )}
+        <div className="catalog-filter-field">
+          <label htmlFor="catalog-year">{t('Ano de lançamento')}</label>
+          <NativeSelect
+            id="catalog-year"
+            value={year}
+            onChange={(event) => {
+              setYear(event.target.value);
+              // Reinicia os resultados e os cursores, mantendo a busca e os demais filtros.
+              load(request.term);
+            }}
+          >
+            <option value="">{t('Todos os anos')}</option>
+            {Array.from(
+              { length: latestYear - 1880 + 1 },
+              (_, index) => latestYear - index,
+            ).map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </NativeSelect>
+        </div>
+        <div className="catalog-rating-fields">
+          {kind !== 'game' && (
+            <MaxAgeFilter value={maxAge} onChange={value => {
+              setMaxAge(value);
+              load(request.term);
+            }} />
+          )}
+          <div className="catalog-filter-field">
+            <label htmlFor="catalog-rating-source">{t('Fonte da avaliação')}</label>
+            <NativeSelect
+              id="catalog-rating-source"
+              value={ratingSource}
+              onChange={(event) => {
+                const source = event.target.value as typeof ratingSource;
+                setRatingSource(source);
+                setMinRating(source === 'critic' ? '70' : source ? '3' : '');
+                load(request.term);
+              }}
+            >
+              <option value="">{t('Todas as avaliações')}</option>
+              <option value="critic">{t('Crítica')}</option>
+              <option value="community">{t('Comunidade')}</option>
+              <option value="personal">{t('Minha nota')}</option>
+            </NativeSelect>
+          </div>
+          {ratingSource && (
+            <div className="catalog-filter-field">
+              <label htmlFor="catalog-min-rating">{t('Nota mínima')}</label>
+              <NativeSelect
+                id="catalog-min-rating"
+                value={minRating}
+                onChange={(event) => {
+                  setMinRating(event.target.value);
+                  load(request.term);
+                }}
+              >
+                {ratingOptions.map((value) => (
+                  <option key={value} value={value}>{ratingText(value)}</option>
+                ))}
+              </NativeSelect>
+            </div>
+          )}
+        </div>
+        {ratingSource === 'critic' && kind !== 'game' && (
+          <small className="catalog-rating-hint">
+            {t('A crítica inclui títulos com nota do Rotten Tomatoes já vinculada.')}
+          </small>
         )}
         <div className="catalog-filter-field catalog-search-field">
           <label htmlFor="catalog-query">{t(' Buscar no catálogo ')}</label>
@@ -631,10 +780,39 @@ function MediaCatalogSearch({
           </Button>
         )}
       </details>
+      <TitleGroupFilters value={groups} allowUniverse={kind !== 'game'} onApply={value => {
+        setGroups(value);
+        load(request.term);
+      }} />
+      {kind !== 'game' && (
+        <TitleOriginFilters
+          originalLanguage={originalLanguage}
+          originCountry={originCountry}
+          onLanguage={value => { setOriginalLanguage(value); load(request.term); }}
+          onCountry={value => { setOriginCountry(value); load(request.term); }}
+          onExpired={onExpired}
+        />
+      )}
+      {kind !== 'game' && (
+        <StreamingFilters
+          country={watchRegion}
+          services={selectedStreaming}
+          access={watchAccess}
+          directory={streamingDirectory}
+          onOpen={setStreamingOpen}
+          onCountry={country => {
+            setWatchRegion(country);
+            setSelectedStreaming([]);
+            load(request.term);
+          }}
+          onServices={services => { setSelectedStreaming(services); load(request.term); }}
+          onAccess={access => { setWatchAccess(access); load(request.term); }}
+        />
+      )}
       <p>
         {request.term
           ? t('Resultados para “{0}”', request.term)
-          : selectedGenres.length || request.company
+          : selectedGenres.length || request.company || year || ratingSource || maxAge || watchFilterActive || originActive || groupFilterActive
             ? t('Títulos que combinam com seus filtros')
             : items.some((item) => item.kind === kind && item.genres?.length)
               ? t('Sugestões inspiradas nos gêneros da sua coleção')
@@ -706,6 +884,12 @@ function MediaCatalogSearch({
                 title={item.title}
                 originalTitle={item.originalTitle}
               />
+              {ratingSource && item.rating !== undefined && (
+                <small>{ratingLabel} · {ratingText(item.rating)}</small>
+              )}
+              {item.ageRating !== undefined && (
+                <small>{t('Classificação indicativa')} · {item.ageRating === 0 ? t('Livre') : t('{0} anos', item.ageRating)}</small>
+              )}
               <small>
                 {item.year || t('Ano não informado')} · {categories[item.kind]}{' '}
                 · {item.kind === 'game' ? 'IGDB' : 'TMDB'}
@@ -747,7 +931,11 @@ function MediaCatalogSearch({
       </div>
       {searched && !busy && !results.length && !error && (
         <p>
-          {t('Nenhum resultado. Tente outro nome ou cadastre manualmente.')}
+          {ratingSource || maxAge || watchFilterActive || originActive || groupFilterActive
+            ? nextPage !== null
+              ? t('Nenhum título combina com os filtros nas páginas consultadas. Use Ver mais para continuar.')
+              : t('Nenhum título combina com os filtros selecionados.')
+            : t('Nenhum resultado. Tente outro nome ou cadastre manualmente.')}
         </p>
       )}
       {nextPage !== null && (

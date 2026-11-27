@@ -3,6 +3,7 @@ type CollectionItem = ReleaseInfo & {
   kind: string;
   status: string;
   archived?: boolean;
+  abandoned?: boolean;
   rewatchWanted?: boolean;
   rewatching?: boolean;
   watchedBefore?: boolean;
@@ -106,6 +107,7 @@ export function matchesView(item: CollectionItem, view: string) {
   // A intenção aparece no backlog; a repetição ativa aparece no acompanhamento,
   // mantendo o título entre os concluídos por sua visualização anterior.
   if (view === 'completed') return finished || Boolean(item.watchedBefore);
+  if (item.abandoned) return false;
   if (item.rewatching) return view === 'all' || view === 'active';
   if (view === 'planned' && item.rewatchWanted) return true;
   const upcoming = !finished && Boolean(upcomingRelease(item));
@@ -123,11 +125,12 @@ export function matchesView(item: CollectionItem, view: string) {
   return item.status === view;
 }
 
-export type OverviewStatus = 'planned' | 'active' | 'completed' | 'archived';
+export type OverviewStatus = 'planned' | 'active' | 'completed' | 'abandoned' | 'archived';
 export const overviewStatuses: OverviewStatus[] = [
   'planned',
   'active',
   'completed',
+  'abandoned',
   'archived',
 ];
 // A visão inicial prioriza o que ainda falta iniciar ou concluir.
@@ -137,6 +140,8 @@ export function matchesOverview(
   item: CollectionItem,
   statuses: readonly OverviewStatus[],
 ) {
+  // Abandono explícito prevalece sobre episódios vistos, repetições e estreias.
+  if (item.abandoned && !item.archived) return statuses.includes('abandoned');
   // Obras futuras ficam em Em breve; na data da estreia passam a respeitar os filtros de status.
   // Sem data ou indicação de lançamento futuro, não presumimos que a obra ainda não estreou.
   if (upcomingRelease(item)) return false;

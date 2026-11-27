@@ -1,0 +1,48 @@
+.saved-title-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 14px 12px;
+  grid-column: 1 / -1;
+  margin-bottom: 16px;
+}
+.collector-filters > .saved-title-filters {
+  margin-bottom: 0;
+}
+/* A altura fixa da segunda linha alinha os campos mesmo quando um rótulo quebra. */
+.saved-title-filters > div:not(.saved-title-filter-warning) {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  align-items: end;
+  gap: 6px;
+}
+.saved-title-filters > .game-platform-filter {
+  margin: 0;
+}
+.saved-title-filters > div [data-slot='native-select-wrapper'] {
+  width: 100%;
+  min-width: 0;
+}
+.saved-title-filters [data-slot='native-select'],
+.saved-title-filters [data-slot='input'],
+.collector-filters > label > [data-slot='input'] {
+  min-height: 44px;
+}
+.saved-title-filters > div > label {
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+.saved-title-filter-warning {
+  grid-column: 1 / -1;
+  font-size: 13px;
+}
+.saved-title-filters > .title-origin-filter,
+.saved-title-filters > .catalog-streaming-filter,
+.saved-title-filters > .title-group-filter {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+.saved-title-filters .catalog-genre-options label {
+  /* Mantém as caixas de seleção ao lado dos nomes dentro dos filtros da coleção. */
+  display: flex;
+}

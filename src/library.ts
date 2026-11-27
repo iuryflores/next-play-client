@@ -15,6 +15,7 @@ export interface LibraryItem {
   id: string;
   title: string;
   originalTitle?: string;
+  abandoned?: boolean;
   authors?: string[];
   publisher?: string;
   isbn?: string;
@@ -104,6 +105,7 @@ export async function libraryRequest<T>(
     | 'rating'
     | 'playtime'
     | 'archive'
+    | 'abandoned'
     | 'upcoming'
     | 'runtime'
     | 'production-companies'

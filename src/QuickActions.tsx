@@ -208,9 +208,9 @@ export default function QuickActions({
       {owned && !compact && (
         <small className="quick-status">
           {t(' Na coleção · ')}
-          {owned.rewatching
-            ? t('Reassistindo')
-            : statusNames[owned.kind][owned.status]}
+          {owned.abandoned
+            ? t('Abandonado')
+            : owned.rewatching ? t('Reassistindo') : statusNames[owned.kind][owned.status]}
         </small>
       )}
       <Button

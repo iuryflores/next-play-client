@@ -109,6 +109,35 @@
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
   gap: 18px;
 }
+.collector-platforms {
+  grid-column: 1 / -1;
+  min-width: 0;
+  color: var(--ink-muted, #c8bdd5);
+  font-size: 13px;
+}
+.collector-platform-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.collector-page .collector-platform-options label {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+.collector-platform-options input {
+  accent-color: var(--primary);
+}
+.collector-platform-options button[aria-pressed='true'],
+.collector-page .collector-platform-options label:has(input:checked) {
+  border-color: var(--primary);
+}
 .collector-card {
   min-width: 0;
   display: flex;

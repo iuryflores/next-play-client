@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Archive, ArchiveRestore, Trash2 } from 'lucide-react';
+import { Archive, ArchiveRestore, CircleStop, Play, Trash2 } from 'lucide-react';
 import IconAction from './IconAction';
 import { Button } from '@/components/ui/button';
 import {
@@ -27,12 +27,20 @@ export default function CollectionActions({
   const [confirm, setConfirm] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  async function run(remove: boolean) {
+  async function run(action: 'remove' | 'archive' | 'abandon') {
     if (busy) return;
     setBusy(true);
     setError('');
     try {
-      if (remove) {
+      if (action === 'abandon') {
+        const result = await libraryRequest<{ item: LibraryItem }>(
+          'PATCH', item.id, { abandoned: !item.abandoned }, 'abandoned',
+        );
+        // Preserva o progresso calculado da série, que não faz parte desta atualização.
+        changed({ ...item, abandoned: result.item.abandoned, updatedAt: result.item.updatedAt });
+        return;
+      }
+      if (action === 'remove') {
         await libraryRequest('DELETE', item.id);
         removed(item.id);
       } else {
@@ -61,7 +69,15 @@ export default function CollectionActions({
   return (
     <>
       {item.archived && <p>{t('Arquivado')}</p>}
+      {item.abandoned && <p>{t('Abandonado')}</p>}
       <div className="title-details-actions">
+        <IconAction
+          icon={item.abandoned ? Play : CircleStop}
+          label={t(item.abandoned ? 'Retomar acompanhamento' : 'Marcar como abandonado')}
+          variant="ghost"
+          disabled={busy}
+          onClick={() => void run('abandon')}
+        />
         <IconAction
           className="archive-title-action"
           icon={item.archived ? ArchiveRestore : Archive}
@@ -70,7 +86,7 @@ export default function CollectionActions({
           )}
           variant="ghost"
           disabled={busy}
-          onClick={() => void run(false)}
+          onClick={() => void run('archive')}
         />
         <IconAction
           icon={Trash2}
@@ -113,7 +129,7 @@ export default function CollectionActions({
             <Button
               variant="destructive"
               disabled={busy}
-              onClick={() => void run(true)}
+              onClick={() => void run('remove')}
             >
               {t(busy ? 'Salvando…' : 'Confirmar remoção')}
             </Button>

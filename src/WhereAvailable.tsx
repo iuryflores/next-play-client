@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { NativeSelect } from '@/components/ui/native-select';
 import { t, language } from './i18n';
 import { detectLocationCountry } from './location-country';
+import { watchCountries } from './watch-countries';
 import './where-available.css';
 type Availability = {
   kind: string;
@@ -299,38 +300,14 @@ export default function WhereAvailable({
                 setLocationNotice('');
               }}
             >
-              {![
-                'BR',
-                'PT',
-                'US',
-                'ES',
-                'GB',
-                'CA',
-                'AR',
-                'MX',
-                'FR',
-                'DE',
-                'JP',
-              ].includes(country) && (
+              {!watchCountries.some(([code]) => code === country) && (
                 <option value={country}>
                   {new Intl.DisplayNames([language], { type: 'region' }).of(
                     country,
                   ) || country}
                 </option>
               )}
-              {[
-                ['BR', 'Brasil'],
-                ['PT', 'Portugal'],
-                ['US', 'Estados Unidos'],
-                ['ES', 'Espanha'],
-                ['GB', 'Reino Unido'],
-                ['CA', 'Canadá'],
-                ['AR', 'Argentina'],
-                ['MX', 'México'],
-                ['FR', 'França'],
-                ['DE', 'Alemanha'],
-                ['JP', 'Japão'],
-              ].map(([code, name]) => (
+              {watchCountries.map(([code, name]) => (
                 <option value={code} key={code}>
                   {t(name)}
                 </option>

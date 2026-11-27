@@ -65,6 +65,7 @@ export default function TitleDetails({
   const followingSeries =
     item.kind === 'series' &&
     !item.archived &&
+    !item.abandoned &&
     item.status !== 'completed' &&
     !item.caughtUp &&
     (item.status === 'active' ||
